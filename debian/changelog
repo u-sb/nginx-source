@@ -41,6 +41,12 @@ nginx (1.2.0-1) UNRELEASED; urgency=low
   * debian/conf/sites-available/default:
     + Added allow directive for ipv6 localhost. (Closes: #664271)
 
+  [Kartik Mistry]
+  * debian/control:
+    + wrap-and-sort.
+  * debian/copyright:
+    + Added missing copyrights, minor formatting fixes.
+
  -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Mon, 07 May 2012 22:51:42 +0200
 
 nginx (1.1.19-1) unstable; urgency=high
