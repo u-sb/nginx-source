@@ -20,8 +20,8 @@ Build-Depends: autotools-dev,
                libperl-dev,
                libssl-dev,
                libxslt1-dev,
-               zlib1g-dev,
-               po-debconf
+               po-debconf,
+               zlib1g-dev
 Standards-Version: 3.9.3
 Homepage: http://nginx.net
 Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/nginx/trunk
@@ -252,9 +252,14 @@ Description: Debugging symbols for nginx (naxsi)
 Package: nginx-naxsi-ui
 Architecture: all
 Priority: extra
-Depends: nginx-naxsi (>= ${source:Version}), dbconfig-common, daemon, python-mysqldb, python-twisted-web, ${misc:Depends}
+Depends: daemon,
+         dbconfig-common,
+         nginx-naxsi (>= ${source:Version}),
+         python-mysqldb,
+         python-twisted-web,
+         ${misc:Depends}
 Recommends: mysql-server
-Provides: httpd, nginx, naxsi
+Provides: httpd, naxsi, nginx
 Conflicts: nginx-extras, nginx-full, nginx-light
 Description: naxsi UI for nginx-naxsi
  naxsi-ui is the autolearn daemon and the webUI for the package nginx-naxsi.
