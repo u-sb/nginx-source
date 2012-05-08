@@ -24,8 +24,8 @@ Build-Depends: autotools-dev,
                po-debconf
 Standards-Version: 3.9.3
 Homepage: http://nginx.net
-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/nginx/trunk
-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/nginx/trunk
+Vcs-Git: git://anonscm.debian.org/collab-maint/nginx.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/nginx.git;a=summary
 
 Package: nginx
 Architecture: all
