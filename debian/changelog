@@ -1,7 +1,7 @@
 nginx (1.2.0-1) UNRELEASED; urgency=low
 
   [Cyril Lavier]
-  * New upstream release
+  * New upstream release (Closes: #670306)
   * debian/modules/chunkin-nginx-module:
     + Updated chunkin-nginx-module to v0.23rc2-3-g85eca98.
   * debian/modules/headers-more-module:
