@@ -26,7 +26,8 @@ nginx (1.2.0-1) UNRELEASED; urgency=low
     + Corrected the URL and version number for nginx-auth-pam.
     + Corrected the version number for nginx-dav-ext-module.
   * debian/naxsi-ui-extract, debian/naxsi-ui-intercept,
-    debian/nginx-naxsi-ui.*, debian/rules:
+    debian/nginx-naxsi-ui.*, debian/naxsi-ui-extract.1,
+    debian/naxsi-ui-intercept.1, debian/rules:
     + Added nginx-naxsi-ui package containing the learning daemon
       and the WebUI.
   * debian/nginx-common.nginx.default, debian/nginx-common.nginx.init:
@@ -34,6 +35,8 @@ nginx (1.2.0-1) UNRELEASED; urgency=low
   * debian/po:
     + Added needed files for using po-debconf.
     + Added French translation.
+  * debian/control:
+    + Applied the modifications given after the review by Justin Rye.
 
   [Michael Lustfield]
   * debian/conf/uwsgi_params:
