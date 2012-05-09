@@ -199,7 +199,7 @@ Priority: extra
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
 Provides: httpd, nginx
 Conflicts: nginx-extras, nginx-full, nginx-light
-Description: small, powerful, scalable web/proxy server
+Description: nginx web/proxy server (version with naxsi)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
  and as a proxy to reduce the load on back-end HTTP or mail servers.
