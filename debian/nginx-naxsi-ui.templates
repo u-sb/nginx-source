@@ -1,5 +1,6 @@
 Template: nginx-naxsi-ui/dbhost
 Type: string
 Default: localhost
-_Description: Host where the database is located:
- If you leave this field empty, the default host ('localhost') will be used.
+_Description: Database host for naxsi:
+ Please specify the hostname of the server where the naxsi Web Application
+ Firewall's database should be located.
