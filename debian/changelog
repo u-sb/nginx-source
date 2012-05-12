@@ -49,6 +49,9 @@ nginx (1.2.0-1) UNRELEASED; urgency=low
     + wrap-and-sort.
   * debian/copyright:
     + Added missing copyrights, minor formatting fixes.
+  * debian/nginx-common.nginx.init:
+    + Added ulimit for restarts, Thanks to Daniel Roschka
+      <danielroschka@phoenitydawn.de> for patch. (Closes: #673580)
 
  -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Mon, 07 May 2012 22:51:42 +0200
 
