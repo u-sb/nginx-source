@@ -1,7 +1,8 @@
 nginx (1.2.0-1) UNRELEASED; urgency=low
 
   [Cyril Lavier]
-  * New upstream release (Closes: #670306)
+  * New upstream release. (Closes: #670306)
+    + 1.2.x is stable release now.
   * debian/modules/chunkin-nginx-module:
     + Updated chunkin-nginx-module to v0.23rc2-3-g85eca98.
   * debian/modules/headers-more-module:
@@ -18,13 +19,8 @@ nginx (1.2.0-1) UNRELEASED; urgency=low
     + Updated nginx-upload-progress to v0.9.0-0-ga788dea.
   * debian/modules/naxsi:
     + Updated naxsi to 0.46
-  * debian/modules/README.Modules-versions.
-    + Updated versions for chunkin-nginx-module, headers-more-module,
-      nginx-development-kit, nginx-echo, nginx-lua, 
-      nginx-upstream-fair and nginx-upload-progress.
-    + Corrected the URL for nginx-development-kit.
-    + Corrected the URL and version number for nginx-auth-pam.
-    + Corrected the version number for nginx-dav-ext-module.
+  * debian/modules/README.Modules-versions:
+    + Updated versions and URLs for modules.
   * debian/naxsi-ui-extract, debian/naxsi-ui-intercept,
     debian/nginx-naxsi-ui.*, debian/naxsi-ui-extract.1,
     debian/naxsi-ui-intercept.1, debian/rules:
