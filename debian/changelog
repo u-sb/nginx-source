@@ -1,4 +1,4 @@
-nginx (1.2.0-1) UNRELEASED; urgency=low
+nginx (1.2.0-1) unstable; urgency=low
 
   [Cyril Lavier]
   * New upstream release. (Closes: #670306)
@@ -52,7 +52,7 @@ nginx (1.2.0-1) UNRELEASED; urgency=low
     + Added patch to fix deprecated "listen" directive, Thanks to
       Guillaume Plessis <gui@dotdeb.org> for patch. (Closes: #672632)
 
- -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Mon, 07 May 2012 22:51:42 +0200
+ -- Kartik Mistry <kartik@debian.org>  Mon, 14 May 2012 11:15:00 +0530
 
 nginx (1.1.19-1) unstable; urgency=high
 
