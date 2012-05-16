@@ -1,3 +1,13 @@
+nginx (1.2.0-2) UNRELEASED; urgency=low
+
+  [Kartik Mistry]
+  * debian/nginx.1:
+    + Updated with description taken from debian/control.
+  * debian/po/cs.po:
+    + Added Czech translation of PO debconf template. (Closes: #673120)
+
+ -- Kartik Mistry <kartik@debian.org>  Wed, 16 May 2012 16:49:22 +0530
+
 nginx (1.2.0-1) unstable; urgency=low
 
   [Cyril Lavier]
