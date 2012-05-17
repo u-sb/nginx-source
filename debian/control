@@ -209,10 +209,10 @@ Description: nginx web/proxy server (version with naxsi)
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
  Charset, Empty GIF, FastCGI, Geo, Gzip, Headers, Index, Limit Requests,
- Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI, Split
- Clients, SSI, Upstream, User ID, UWSGI.
+ Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, Split
+ Clients, SSI, Upstream, User ID.
  .
- OPTIONAL HTTP MODULES: Gzip Precompression, IPv6, Stub Status, SSL.
+ OPTIONAL HTTP MODULES: IPv6, Stub Status, SSL.
  .
  THIRD PARTY MODULES: Naxsi, Cache Purge, Upstream Fair.
 
