@@ -11,6 +11,10 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
     + Added status module to nginx-naxsi. (Closes: #672998)
   * debian/control: 
     + Updated nginx-naxsi module list.
+  * debian/po/de.po:
+    + Added German translation of PO debconf template. (Closes: #673861)
+  * debian/po/ru.po:
+    + Added Russian translation of PO debconf template. (Closes: #674188)
 
  -- Kartik Mistry <kartik@debian.org>  Wed, 16 May 2012 16:49:22 +0530
 
