@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+
+if [ -f /usr/share/debconf/confmodule ]; then
+    . /usr/share/debconf/confmodule
+fi
+
+if [ -f /usr/share/dbconfig-common/dpkg/postrm.mysql ]; then
+    . /usr/share/dbconfig-common/dpkg/postrm.mysql
+    dbc_go nginx-naxsi-ui $@
+fi
+
+
+
+if [ "$1" == "purge" ]; then
+    rm -rf /etc/dbconfig-common/nginx-naxsi-ui.conf
+    if which ucf >/dev/null 2>&1; then
+      ucf --purge /etc/dbconfig-common/nginx-naxsi-ui.conf
+      ucfr --purge nginx-naxsi-ui /etc/dbconfig-common/nginx-naxsi-ui.conf
+    fi
+fi
+
+#DEBHELPER#
