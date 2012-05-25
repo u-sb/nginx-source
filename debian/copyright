@@ -5,7 +5,7 @@ Upstream-Contact: Igor Sysoev <igor@sysoev.ru>
 
 Files: *
 Copyright: 2002-2012 Igor Sysoev
-Copyright: 2011,2012 Nginx, Inc.
+           2011,2012 Nginx, Inc.
 License:
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -48,14 +48,14 @@ License:
 
 Files: modules/nginx-upload-progress/ngx_http_uploadprogress_module.c
 Copyright: 2007, Brice Figureau
-Copyright: 2002-2007, Igor Sysoev
+           2002-2007, Igor Sysoev
 License:
  Same as upstream license.
 
 Files: modules/agentzh-chunkin-nginx-module-*/*
  modules/agentzh-headers-more-nginx-module-*/*
 Copyright: 2009, Taobao Inc., Alibaba Group <http://www.taobao.com>.
-Copyright: 2009-2011, Zhang "agentzh" Yichun (章亦春) <agentzh@gmail.com>.
+           2009-2011, Zhang "agentzh" Yichun (章亦春) <agentzh@gmail.com>.
 License:
  Same as upstream license.
 
@@ -143,11 +143,11 @@ License: GPL-2+ with OpenSSL exception
  "/usr/share/common-licenses/GPL-3"
 
 Files: debian/*
-Copyright: © 2006-2010, Jose Parrella <joseparrella@cantv.net>,
+Copyright: 2006-2010, Jose Parrella <joseparrella@cantv.net>,
                         Fabio Tranchitella <kobold@debian.org>,
-           © 2009-2012, Kartik Mistry <kartik@debian.org>,
-           © 2012, Michael Lustfield <michael@lustfield.net>,
-                   Dmitry E. Oboukhov <unera@debian.org>,
-                   Cyril Lavier <cyril.lavier@davromaniak.eu>.
+           2009-2012, Kartik Mistry <kartik@debian.org>,
+           2012, Michael Lustfield <michael@lustfield.net>,
+                 Dmitry E. Oboukhov <unera@debian.org>,
+                 Cyril Lavier <cyril.lavier@davromaniak.eu>.
 License:
  Same as upstream license.

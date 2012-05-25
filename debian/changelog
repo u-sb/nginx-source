@@ -7,11 +7,13 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
     + Added Czech translation of PO debconf template. (Closes: #673120)
   * debian/po/da.po:
     + Added Danish translation of PO debconf template. (Closes: #674461)
+  * debian/copyright:
+    + Removed duplicate Copyright fields.
 
   [Cyril Lavier]
   * debian/rules:
     + Added status module to nginx-naxsi. (Closes: #672998)
-  * debian/control: 
+  * debian/control:
     + Updated nginx-naxsi module list.
   * debian/po/de.po:
     + Added German translation of PO debconf template. (Closes: #673861)
