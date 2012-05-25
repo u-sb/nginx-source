@@ -5,6 +5,8 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
     + Updated with description taken from debian/control.
   * debian/po/cs.po:
     + Added Czech translation of PO debconf template. (Closes: #673120)
+  * debian/po/da.po:
+    + Added Danish translation of PO debconf template. (Closes: #674461)
 
   [Cyril Lavier]
   * debian/rules:
