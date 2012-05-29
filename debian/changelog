@@ -11,6 +11,9 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
     + Added Portuguese translation of PO debconf template. (Closes: #674609)
   * debian/copyright:
     + Removed duplicate Copyright fields.
+  * debian/modules/nginx-lua:
+    + Updated to latest upstream git tag 0.5.0rc29-6446ee71b8, Fix for worker
+      process crashes (Closes: #674928)
 
   [Cyril Lavier]
   * debian/rules:
