@@ -9,6 +9,8 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
     + Added Danish translation of PO debconf template. (Closes: #674461)
   * debian/po/pt.po:
     + Added Portuguese translation of PO debconf template. (Closes: #674609)
+  * debian/po/sv.po:
+    + Added Swedish translation of PO debconf template. (Closes: #675107)
   * debian/copyright:
     + Removed duplicate Copyright fields.
   * debian/modules/nginx-lua:
