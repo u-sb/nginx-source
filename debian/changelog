@@ -7,8 +7,12 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
     + Added Czech translation of PO debconf template. (Closes: #673120)
   * debian/po/da.po:
     + Added Danish translation of PO debconf template. (Closes: #674461)
+  * debian/po/nl.po:
+    + Added Dutch translation of PO debconf template. (Closes: #675314)
   * debian/po/pt.po:
     + Added Portuguese translation of PO debconf template. (Closes: #674609)
+  * debian/po/sk.po:
+    + Added Slovak translation of PO debconf template. (Closes: #677282)
   * debian/po/sv.po:
     + Added Swedish translation of PO debconf template.
       (Closes: #675107, #677032)
