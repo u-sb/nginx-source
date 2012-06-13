@@ -10,12 +10,16 @@ nginx (1.2.0-2) UNRELEASED; urgency=low
   * debian/po/pt.po:
     + Added Portuguese translation of PO debconf template. (Closes: #674609)
   * debian/po/sv.po:
-    + Added Swedish translation of PO debconf template. (Closes: #675107)
+    + Added Swedish translation of PO debconf template.
+      (Closes: #675107, #677032)
   * debian/copyright:
     + Removed duplicate Copyright fields.
   * debian/modules/nginx-lua:
     + Updated to latest upstream git tag 0.5.0rc29-6446ee71b8, Fix for worker
       process crashes (Closes: #674928)
+  * debian/nginx-naxsi-ui.templates, debian/po/templates.pot:
+    + Updated debconf template after review from l10n-english team.
+      (Closes: #675237)
 
   [Cyril Lavier]
   * debian/rules:
