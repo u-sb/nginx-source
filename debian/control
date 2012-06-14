@@ -88,7 +88,7 @@ Description: nginx web/proxy server (standard version)
  Clients, SSI, Upstream, User ID, UWSGI.
  .
  OPTIONAL HTTP MODULES: Addition, Debug, GeoIP, Gzip Precompression, HTTP
- Sub, Image Filter, IPv6, RealIP, Stub Status, WebDAV, XSLT.
+ Sub, Image Filter, IPv6, RealIP, SSL, Stub Status, WebDAV, XSLT.
  .
  MAIL MODULES: Mail Core, IMAP, POP3, SMTP, SSL.
  .

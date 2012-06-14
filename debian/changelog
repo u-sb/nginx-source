@@ -31,6 +31,7 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
     + Added status module to nginx-naxsi. (Closes: #672998)
   * debian/control:
     + Updated nginx-naxsi module list.
+    + Updated nginx-full module list. (Closes: #677128)
   * debian/po/de.po:
     + Added German translation of PO debconf template. (Closes: #673861)
   * debian/po/ru.po:
