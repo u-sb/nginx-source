@@ -36,6 +36,8 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
     + Added German translation of PO debconf template. (Closes: #673861)
   * debian/po/ru.po:
     + Added Russian translation of PO debconf template. (Closes: #674188)
+  * debian/nginx-naxsi-ui.postrm, debian/nginx-naxsi-ui.prerm:
+    + Added postrm and prerm scripts for nginx-naxsi-ui. (Closes: #673787)
 
  -- Kartik Mistry <kartik@debian.org>  Wed, 16 May 2012 16:49:22 +0530
 
