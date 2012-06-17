@@ -7,7 +7,8 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
   * debian/po/cs.po:
     + Added Czech translation of PO debconf template. (Closes: #673120)
   * debian/po/da.po:
-    + Added Danish translation of PO debconf template. (Closes: #674461, #677806)
+    + Added Danish translation of PO debconf template.
+      (Closes: #674461, #677806)
   * debian/po/nl.po:
     + Added Dutch translation of PO debconf template. (Closes: #675314)
   * debian/po/pt.po:
@@ -25,6 +26,9 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
   * debian/nginx-naxsi-ui.templates, debian/po/templates.pot:
     + Updated debconf template after review from l10n-english team.
       (Closes: #675237)
+    + Do not add empty line.
+  * debian/po/*.po:
+    + Refreshed after template update.
 
   [Cyril Lavier]
   * debian/rules:
@@ -33,7 +37,8 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
     + Updated nginx-naxsi module list.
     + Updated nginx-full module list. (Closes: #677128)
   * debian/po/de.po:
-    + Added German translation of PO debconf template. (Closes: #673861, #677790)
+    + Added German translation of PO debconf template.
+      (Closes: #673861, #677790)
   * debian/po/ru.po:
     + Added Russian translation of PO debconf template. (Closes: #674188)
   * debian/nginx-naxsi-ui.postrm, debian/nginx-naxsi-ui.prerm:
