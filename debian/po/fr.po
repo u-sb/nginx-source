@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nginx\n"
 "Report-Msgid-Bugs-To: nginx@packages.debian.org\n"
-"POT-Creation-Date: 2012-05-09 09:26+0200\n"
+"POT-Creation-Date: 2012-06-17 20:16+0530\n"
 "PO-Revision-Date: 2012-05-09 09:32+0100\n"
 "Last-Translator: Cyril Lavier <cyril.lavier@davromaniak.eu>\n"
 "Language-Team: \n"
@@ -19,12 +19,17 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-msgid "Database host for naxsi:"
-msgstr "Serveur hébergeant la base de données pour naxsi :"
+#| msgid ""
+#| "Please specify the hostname of the server where the naxsi Web Application "
+#| "Firewall's database should be located."
+msgid "Please specify the hostname of the server that will host the database"
+msgstr ""
+"Merci de fournir l'adresse du serveur qui doit accueillir la base de données "
+"de la l'application de pare-feu web naxsi."
 
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-msgid "Please specify the hostname of the server where the naxsi Web Application Firewall's database should be located."
-msgstr "Merci de fournir l'adresse du serveur qui doit accueillir la base de données de la l'application de pare-feu web naxsi."
-
+#| msgid "Database host for naxsi:"
+msgid "Database host for naxsi:);"
+msgstr "Serveur hébergeant la base de données pour naxsi :"

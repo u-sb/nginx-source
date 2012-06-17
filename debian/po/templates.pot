@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nginx\n"
 "Report-Msgid-Bugs-To: nginx@packages.debian.org\n"
-"POT-Creation-Date: 2012-06-11 08:18+0200\n"
+"POT-Creation-Date: 2012-06-17 20:16+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,14 +19,12 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../nginx-naxsi-ui.templates:2001
-msgid "Database host for naxsi:"
+#: ../nginx-naxsi-ui.templates:1001
+msgid "Please specify the hostname of the server that will host the database"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../nginx-naxsi-ui.templates:2001
-msgid ""
-"Please specify the hostname of the server that will host the database for "
-"the naxsi web application firewall."
+#: ../nginx-naxsi-ui.templates:1001
+msgid "Database host for naxsi:);"
 msgstr ""
