@@ -44,7 +44,11 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
   * debian/nginx-naxsi-ui.postrm, debian/nginx-naxsi-ui.prerm:
     + Added postrm and prerm scripts for nginx-naxsi-ui. (Closes: #673787)
 
- -- Kartik Mistry <kartik@debian.org>  Wed, 16 May 2012 16:49:22 +0530
+  [Michael Lustfield]
+  * debian/nginx-common.preinst:
+    + Copied install stuff to upgrade in case statement. (LP: #1014506)
+
+ -- Michael Lustfield <michael@lustfield.net>  Mon, 18 Jun 2012 22:33:24 +0000
 
 nginx (1.2.0-1) unstable; urgency=low
 
