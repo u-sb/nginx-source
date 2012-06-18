@@ -49,8 +49,10 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
     + Copied install stuff to upgrade in case statement. (LP: #1014506)
   * debian/rules
     + Added --with-pcre-jit to build. (LP: #915344)
+  * debian/conf/sites-available/default:
+    + Changed default try_files example. (LP: #969207)
 
- -- Michael Lustfield <michael@lustfield.net>  Mon, 18 Jun 2012 22:42:14 +0000
+ -- Michael Lustfield <michael@lustfield.net>  Mon, 18 Jun 2012 22:51:15 +0000
 
 nginx (1.2.0-1) unstable; urgency=low
 
