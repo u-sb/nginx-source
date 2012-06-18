@@ -47,8 +47,10 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
   [Michael Lustfield]
   * debian/nginx-common.preinst:
     + Copied install stuff to upgrade in case statement. (LP: #1014506)
+  * debian/rules
+    + Added --with-pcre-jit to build. (LP: #915344)
 
- -- Michael Lustfield <michael@lustfield.net>  Mon, 18 Jun 2012 22:33:24 +0000
+ -- Michael Lustfield <michael@lustfield.net>  Mon, 18 Jun 2012 22:42:14 +0000
 
 nginx (1.2.0-1) unstable; urgency=low
 

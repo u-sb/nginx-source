@@ -67,6 +67,7 @@ config.status.full: config.env.full config.sub config.guess
 	    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
 	    --lock-path=/var/lock/nginx.lock \
 	    --pid-path=/var/run/nginx.pid \
+	    --with-pcre-jit \
 	    --with-debug \
 	    --with-http_addition_module \
 	    --with-http_dav_module \
@@ -101,6 +102,7 @@ config.status.light: config.env.light config.sub config.guess
 	    --http-proxy-temp-path=/var/lib/nginx/proxy \
 	    --lock-path=/var/lock/nginx.lock \
 	    --pid-path=/var/run/nginx.pid \
+	    --with-pcre-jit \
 	    --with-http_gzip_static_module \
 	    --with-http_ssl_module \
 	    --with-ipv6 \
@@ -133,6 +135,7 @@ config.status.extras: config.env.extras config.sub config.guess
 	    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
 	    --lock-path=/var/lock/nginx.lock \
 	    --pid-path=/var/run/nginx.pid \
+	    --with-pcre-jit \
 	    --with-debug \
 	    --with-http_addition_module \
 	    --with-http_dav_module \
@@ -181,6 +184,7 @@ config.status.naxsi: config.env.naxsi config.sub config.guess
 	    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
 	    --lock-path=/var/lock/nginx.lock \
 	    --pid-path=/var/run/nginx.pid \
+	    --with-pcre-jit \
 	    --with-http_ssl_module \
 	    --without-mail_pop3_module \
 	    --without-mail_smtp_module \
