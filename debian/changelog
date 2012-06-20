@@ -11,6 +11,8 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
       (Closes: #674461, #677806)
   * debian/po/nl.po:
     + Added Dutch translation of PO debconf template. (Closes: #675314)
+  * debian/po/pl.po:
+    + Added Polish translation of PO debconf template. (Closes: #678156)
   * debian/po/pt.po:
     + Added Portuguese translation of PO debconf template. (Closes: #674609)
   * debian/po/sk.po:
