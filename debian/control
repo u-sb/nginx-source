@@ -29,7 +29,8 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/nginx.git;a=summar
 
 Package: nginx
 Architecture: all
-Depends: nginx-full | nginx-light, ${misc:Depends}
+Depends: nginx-full | nginx-light,
+         ${misc:Depends}
 Description: small, powerful, scalable web/proxy server
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -41,7 +42,8 @@ Description: small, powerful, scalable web/proxy server
 Package: nginx-doc
 Architecture: all
 Section: doc
-Depends: lsb-base (>= 3.2-14), ${misc:Depends}
+Depends: lsb-base (>= 3.2-14),
+         ${misc:Depends}
 Description: small, powerful, scalable web/proxy server - documentation
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -51,7 +53,8 @@ Description: small, powerful, scalable web/proxy server - documentation
 
 Package: nginx-common
 Architecture: all
-Depends: lsb-base (>= 3.2-14), ${misc:Depends}
+Depends: lsb-base (>= 3.2-14),
+         ${misc:Depends}
 Replaces: nginx (<< 0.8.54-4),
           nginx-extras (<< 0.8.54-4),
           nginx-full (<< 0.8.54-4),
@@ -70,9 +73,14 @@ Description: small, powerful, scalable web/proxy server - common files
 
 Package: nginx-full
 Architecture: any
-Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Provides: httpd, nginx
-Conflicts: nginx-extras, nginx-light, nginx-naxsi
+Depends: nginx-common (= ${source:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: httpd,
+          nginx
+Conflicts: nginx-extras,
+           nginx-light,
+           nginx-naxsi
 Description: nginx web/proxy server (standard version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -84,22 +92,26 @@ Description: nginx web/proxy server (standard version)
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
  Charset, Empty GIF, FastCGI, Geo, Gzip, Headers, Index, Limit Requests,
- Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI, Split
- Clients, SSI, Upstream, User ID, UWSGI.
+ Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI,
+ Split Clients, SSI, Upstream, User ID, UWSGI.
  .
- OPTIONAL HTTP MODULES: Addition, Debug, GeoIP, Gzip Precompression, HTTP
- Sub, Image Filter, IPv6, RealIP, SSL, Stub Status, WebDAV, XSLT.
+ OPTIONAL HTTP MODULES: Addition, Debug, GeoIP, Gzip Precompression,
+ HTTP Sub, Image Filter, IPv6, Real IP, SSL, Stub Status, Substitution,
+ WebDAV, XSLT.
  .
  MAIL MODULES: Mail Core, IMAP, POP3, SMTP, SSL.
  .
- THIRD PARTY MODULES: Echo, Upstream Fair Queue, DAV Ext.
+ THIRD PARTY MODULES: Auth PAM, DAV Ext, Echo, Upstream Fair Queue.
 
 Package: nginx-full-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: nginx-full (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-extras-dbg, nginx-light-dbg, nginx-naxsi-dbg
+Depends: nginx-full (= ${binary:Version}),
+         ${misc:Depends}
+Conflicts: nginx-extras-dbg,
+           nginx-light-dbg,
+           nginx-naxsi-dbg
 Description: nginx web/proxy server (standard version) - debugging symbols
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -111,9 +123,14 @@ Description: nginx web/proxy server (standard version) - debugging symbols
 Package: nginx-light
 Architecture: any
 Priority: extra
-Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Provides: httpd, nginx
-Conflicts: nginx-extras, nginx-full, nginx-naxsi
+Depends: nginx-common (= ${source:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: httpd,
+          nginx
+Conflicts: nginx-extras,
+           nginx-full,
+           nginx-naxsi
 Description: nginx web/proxy server (basic version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -123,10 +140,9 @@ Description: nginx web/proxy server (basic version)
  minimal set of features and modules.
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Charset,
- Empty GIF, FastCGI, Gzip, Headers, Index, Log, Map, Proxy, Rewrite, Split
- Clients, Upstream, User ID.
+ Empty GIF, FastCGI, Gzip, Headers, Index, Log, Map, Proxy, Rewrite, Upstream.
  .
- OPTIONAL HTTP MODULES: Gzip Precompression, IPv6, Stub Status, SSL.
+ OPTIONAL HTTP MODULES: Gzip Precompression, IPv6, SSL, Stub Status.
  .
  THIRD PARTY MODULES: Echo.
 
@@ -134,8 +150,11 @@ Package: nginx-light-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: nginx-light (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-extras-dbg, nginx-full-dbg, nginx-naxsi-dbg
+Depends: nginx-light (= ${binary:Version}),
+         ${misc:Depends}
+Conflicts: nginx-extras-dbg,
+           nginx-full-dbg,
+           nginx-naxsi-dbg
 Description: nginx web/proxy server (basic version) - debugging symbols
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -152,8 +171,11 @@ Depends: nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
-Provides: httpd, nginx
-Conflicts: nginx-full, nginx-light, nginx-naxsi
+Provides: httpd,
+          nginx
+Conflicts: nginx-full,
+           nginx-light,
+           nginx-naxsi
 Description: nginx web/proxy server (extended version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -165,25 +187,28 @@ Description: nginx web/proxy server (extended version)
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
  Charset, Empty GIF, FastCGI, Geo, Gzip, Headers, Index, Limit Requests,
- Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI, Split
- Clients, SSI, Upstream, User ID, UWSGI.
+ Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI,
+ Split Clients, SSI, Upstream, User ID, UWSGI.
  .
- OPTIONAL HTTP MODULES: Addition, Debug, WebDAV, Flash Streaming Video,
- GeoIP, Gzip Precompression, HTTP Sub, Image Filter, MP4, RealIP, Stub
- Status, SSL, XSLT, IPv6, Embedded Perl, Secure Link, Random Index.
+ OPTIONAL HTTP MODULES: Addition, Debug, Embedded Perl, FLV, GeoIP,
+ Gzip Precompression, Image Filter, IPv6, MP4, Random Index, Real IP,
+ Secure Link, SSL, Stub Status, Substitution, WebDAV, XSLT.
  .
- MAIL MODULES: Mail Core, POP3, IMAP, SMTP, SSL.
+ MAIL MODULES: Mail Core, IMAP, POP3, SMTP, SSL.
  .
- THIRD PARTY MODULES: Echo, Embedded Lua, http push, Nginx Development
- Kit, Upload module, Upload Progress, HttpHeadersMore, Upstream Fair
- Queue, Chunkin, Auth PAM, DAV Ext
+ THIRD PARTY MODULES: Auth PAM, Chunkin, DAV Ext, Echo, Embedded Lua,
+ HttpHeadersMore, http push, Nginx Development Kit, Upload module,
+ Upload Progress, Upstream Fair Queue.
 
 Package: nginx-extras-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: nginx-extras (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-full-dbg, nginx-light-dbg, nginx-naxsi-dbg
+Depends: nginx-extras (= ${binary:Version}),
+         ${misc:Depends}
+Conflicts: nginx-full-dbg,
+           nginx-light-dbg,
+           nginx-naxsi-dbg
 Description: nginx web/proxy server (extended version) - debugging symbols
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -196,9 +221,14 @@ Description: nginx web/proxy server (extended version) - debugging symbols
 Package: nginx-naxsi
 Architecture: any
 Priority: extra
-Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Provides: httpd, nginx
-Conflicts: nginx-extras, nginx-full, nginx-light
+Depends: nginx-common (= ${source:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Provides: httpd,
+          nginx
+Conflicts: nginx-extras,
+           nginx-full,
+           nginx-light
 Description: nginx web/proxy server (version with naxsi)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -208,11 +238,11 @@ Description: nginx web/proxy server (version with naxsi)
  the naxsi Web Application Firewall module.
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
- Charset, Empty GIF, FastCGI, Geo, Gzip, Headers, Index, Limit Requests,
- Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, Split
- Clients, SSI, Upstream, User ID.
+ Charset, Core, Empty GIF, FastCGI, Geo, Gzip, Headers, Index,
+ Limit Requests, Limit Zone, Log, Map, Memcached, Proxy, Referer,
+ Rewrite, Split Clients, SSI, Upstream, User ID.
  .
- OPTIONAL HTTP MODULES: IPv6, Stub Status, SSL.
+ OPTIONAL HTTP MODULES: IPv6, SSL, Stub Status.
  .
  THIRD PARTY MODULES: Naxsi, Cache Purge, Upstream Fair.
 
@@ -220,8 +250,11 @@ Package: nginx-naxsi-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: nginx-naxsi (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-extras-dbg, nginx-full-dbg, nginx-light-dbg
+Depends: nginx-naxsi (= ${binary:Version}),
+         ${misc:Depends}
+Conflicts: nginx-extras-dbg,
+           nginx-full-dbg,
+           nginx-light-dbg
 Description: nginx web/proxy server (version with naxsi) - debugging symbols
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -241,8 +274,12 @@ Depends: daemon,
          python-twisted-web,
          ${misc:Depends}
 Recommends: mysql-server
-Provides: httpd, naxsi, nginx
-Conflicts: nginx-extras, nginx-full, nginx-light
+Provides: httpd,
+          naxsi,
+          nginx
+Conflicts: nginx-extras,
+           nginx-full,
+           nginx-light
 Description: nginx web/proxy server - naxsi configuration front-end
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
