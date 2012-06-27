@@ -1,6 +1,7 @@
-nginx (1.2.1-2) UNRELEASED; urgency=low
+nginx (1.2.1-2) unstable; urgency=medium
 
   [Cyril Lavier]
+  * Urgency set to medium, security bug in naxsi module, fix via upstream.
   * debian/modules/naxsi:
     + Updated naxsi module to version 0.46-1 fixing the following security
       issue : potential file disclosure in nx_extract.
