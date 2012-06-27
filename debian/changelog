@@ -2,7 +2,8 @@ nginx (1.2.1-2) UNRELEASED; urgency=low
 
   [Cyril Lavier]
   * debian/modules/naxsi:
-    + Updated naxsi module to version 0.46-1
+    + Updated naxsi module to version 0.46-1 fixing the following security
+      issue : potential file disclosure in nx_extract.
 
  -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Wed, 27 Jun 2012 13:52:03 +0200
 
