@@ -10,12 +10,15 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
   * debian/po/da.po:
     + Added Danish translation of PO debconf template.
       (Closes: #674461, #677806)
+  * debian/po/it.po:
+    + Added Italian translation of PO debconf template. (Closes: #679185)
   * debian/po/nl.po:
     + Added Dutch translation of PO debconf template. (Closes: #675314)
   * debian/po/pl.po:
     + Added Polish translation of PO debconf template. (Closes: #678156)
   * debian/po/pt.po:
-    + Added Portuguese translation of PO debconf template. (Closes: #674609)
+    + Added Portuguese translation of PO debconf template.
+      (Closes: #674609, #679149)
   * debian/po/sk.po:
     + Added Slovak translation of PO debconf template. (Closes: #677282)
   * debian/po/sv.po:
@@ -62,7 +65,7 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
     + Changed a few things so files are only purged on purge. (Closes: #678060)
       - Thanks Jeroen Dekkers <jeroen@dekkers.ch>
 
- -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Sat, 23 Jun 2012 18:56:42 +0200
+ -- Kartik Mistry <kartik@debian.org>  Wed, 27 Jun 2012 09:12:08 +0530
 
 nginx (1.2.0-1) unstable; urgency=low
 
