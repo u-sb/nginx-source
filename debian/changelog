@@ -1,6 +1,7 @@
-nginx (1.2.1-1) UNRELEASED; urgency=low
+nginx (1.2.1-1) unstable; urgency=medium
 
   [Kartik Mistry]
+  * Urgency set to medium, RC bug fix.
   * New upstream release (Closes: #677396)
   * debian/nginx.1:
     + Updated with description taken from debian/control.
@@ -65,7 +66,7 @@ nginx (1.2.1-1) UNRELEASED; urgency=low
     + Changed a few things so files are only purged on purge. (Closes: #678060)
       - Thanks Jeroen Dekkers <jeroen@dekkers.ch>
 
- -- Kartik Mistry <kartik@debian.org>  Wed, 27 Jun 2012 09:12:08 +0530
+ -- Kartik Mistry <kartik@debian.org>  Wed, 27 Jun 2012 09:24:50 +0530
 
 nginx (1.2.0-1) unstable; urgency=low
 
