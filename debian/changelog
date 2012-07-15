@@ -1,3 +1,14 @@
+nginx (1.2.1-2.1) unstable; urgency=low
+
+  * Non-maintainer upload to deal with the goal of 100% translated
+    debconf templates for 7 languages in wheezy.
+  * Drop nasty ^M characters from the templates file. They break
+    debconf-updatepo and therefore translations. Closes: #681381
+  * As a consequence, fix translations as some of them had been
+    "updated" in the meantime wrt broken templates
+
+ -- Christian Perrier <bubulle@debian.org>  Thu, 12 Jul 2012 21:23:57 +0200
+
 nginx (1.2.1-2) unstable; urgency=medium
 
   [Cyril Lavier]
