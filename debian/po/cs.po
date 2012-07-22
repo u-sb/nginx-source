@@ -2,13 +2,13 @@
 # Copyright (C) 2012 Michal Simunek <michal.simunek@gmail.com>
 # This file is distributed under the same license as the nginx package.
 # Michal Simunek <michal.simunek@gmail.com>, 2012.
-# 
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: nginx 1.2.0-1\n"
+"Project-Id-Version: nginx 1.2.0-2\n"
 "Report-Msgid-Bugs-To: nginx@packages.debian.org\n"
-"POT-Creation-Date: 2012-06-17 20:16+0530\n"
-"PO-Revision-Date: 2012-05-16 11:31+0200\n"
+"POT-Creation-Date: 2012-07-12 12:34-0600\n"
+"PO-Revision-Date: 2012-06-23 11:31+0200\n"
 "Last-Translator: Michal Simunek <michal.simunek@gmail.com>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "Language: cs\n"
@@ -19,17 +19,15 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-#| msgid ""
-#| "Please specify the hostname of the server where the naxsi Web Application "
-#| "Firewall's database should be located."
-msgid "Please specify the hostname of the server that will host the database"
-msgstr ""
-"Zadejte prosím název hostitele serveru, kde se má nacházet databáze webového "
-"firewallu naxsi."
+msgid "Database host for naxsi:"
+msgstr "Hostitel databáze pro naxsi:"
 
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-#| msgid "Database host for naxsi:"
-msgid "Database host for naxsi:);"
-msgstr "Hostitel databáze pro naxsi:"
+msgid ""
+"Please specify the hostname of the server that will host the database for "
+"the naxsi web application firewall."
+msgstr ""
+"Zadejte prosím název hostitele serveru, který bude hostovat databázi "
+"webového firewallu naxsi."
