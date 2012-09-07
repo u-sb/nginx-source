@@ -1,5 +1,6 @@
 nginx (1.2.3-0) UNRELEASED; urgency=medium
 
+  * New upstream release. (Closes: #683704)
   * debian/nginx-common.nginx.init
     + Added --retry to start-stop-daemon. (Closes: #682360)
     + Added $named to Required-Start/Stop. (Closes: #679879)
@@ -14,7 +15,8 @@ nginx (1.2.3-0) UNRELEASED; urgency=medium
     + Updated French translation file. (Closes: #679601)
   * debian/logrotate:
     + Removed semicolon after an fi statement. (Closes: #683870)
-  * New upstream release. (Closes: #683704)
+  * debian/copyright:
+    + Removed trailing slash from File: fields.
 
  -- Michael Lustfield <michael@lustfield.net>  Wed, 08 Aug 2012 23:43:38 +0000
 
