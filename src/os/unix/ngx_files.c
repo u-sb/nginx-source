@@ -139,7 +139,7 @@ ngx_open_tempfile(u_char *name, ngx_uint_t persistent, ngx_uint_t access)
               access ? access : 0600);
 
     if (fd != -1 && !persistent) {
-        unlink((const char *) name);
+        (void) unlink((const char *) name);
     }
 
     return fd;
@@ -413,9 +413,7 @@ ngx_trylock_fd(ngx_fd_t fd)
 {
     struct flock  fl;
 
-    fl.l_start = 0;
-    fl.l_len = 0;
-    fl.l_pid = 0;
+    ngx_memzero(&fl, sizeof(struct flock));
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;
 
@@ -432,9 +430,7 @@ ngx_lock_fd(ngx_fd_t fd)
 {
     struct flock  fl;
 
-    fl.l_start = 0;
-    fl.l_len = 0;
-    fl.l_pid = 0;
+    ngx_memzero(&fl, sizeof(struct flock));
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;
 
@@ -451,9 +447,7 @@ ngx_unlock_fd(ngx_fd_t fd)
 {
     struct flock  fl;
 
-    fl.l_start = 0;
-    fl.l_len = 0;
-    fl.l_pid = 0;
+    ngx_memzero(&fl, sizeof(struct flock));
     fl.l_type = F_UNLCK;
     fl.l_whence = SEEK_SET;
 
