@@ -17,8 +17,9 @@ nginx (1.2.2-1) UNRELEASED; urgency=low
     + Removed semicolon after an fi statement. (Closes: #683870)
   * debian/copyright:
     + Removed trailing slash from File: fields.
+  * Changed /var/run to /run in multiple files. (LP: #1050516)
 
- -- Michael Lustfield <michael@lustfield.net>  Wed, 08 Aug 2012 23:43:38 +0000
+ -- Michael Lustfield <michael@lustfield.net>  Fri, 12 Oct 2012 02:15:17 +0000
 
 nginx (1.2.1-2.2) unstable; urgency=low
 
