@@ -3,7 +3,8 @@ set -e
 
 case "$1" in
   configure)
-    if [ -z $2 ] && [ ! -e /etc/nginx/sites-enabled/default ]; then
+    if [ -z $2 ] && [ ! -e /etc/nginx/sites-enabled/default ] &&
+       [ -d /etc/nginx/sites-enabled ] && [ -d /etc/nginx/sites-available ]; then
       ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
     fi
     ;;
