@@ -6,7 +6,8 @@ nginx (1.2.4-0) UNRELEASED; urgency=low
     + Added $named to Required-Start/Stop. (Closes: #679879)
     + Added some other modifications after testing. (LP: #1033856)
   * debian/rules:
-    + Added -DFORTIFY_SOURCE=2 -fstack-protector to build flags. (Closes: #680712)
+    + Added -DFORTIFY_SOURCE=2 -fstack-protector to build flags.
+      (Closes: #680712)
   * debian/nginx-common.install:
     + Moved default docs to /usr/share/nginx/html. (Closes: #1031515)
   * debian/rules:
