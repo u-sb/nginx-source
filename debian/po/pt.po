@@ -1,12 +1,12 @@
- # Copyright (C) 2012 Cyril Lavier
- # This file is distributed under the same license as the nginx-naxsi-ui package.
- # Pedro Ribeiro <p.m42.ribeiro@gmail.com>, 2012.
+# Copyright (C) 2012 Cyril Lavier
+# This file is distributed under the same license as the nginx-naxsi-ui package.
+# Pedro Ribeiro <p.m42.ribeiro@gmail.com>, 2012.
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: nginx\n"
 "Report-Msgid-Bugs-To: nginx@packages.debian.org\n"
-"POT-Creation-Date: 2012-07-12 12:34-0600\n"
+"POT-Creation-Date: 2012-10-29 23:21+0000\n"
 "PO-Revision-Date: 2012-06-26 19:14+0100\n"
 "Last-Translator: Pedro Ribeiro <p.m42.ribeiro@gmail.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-msgid "Database host for naxsi:"
-msgstr "Servidor de base de dados para o naxsi:"
+#, fuzzy
+#| msgid ""
+#| "Please specify the hostname of the server that will host the database for "
+#| "the naxsi web application firewall."
+msgid "Please specify the hostname of the server that will host the database"
+msgstr ""
+"Indique, por favor, o nome da máquina do servidor que irá alojar a base de "
+"dados para a firewall da aplicação web naxsi."
 
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-msgid ""
-"Please specify the hostname of the server that will host the database for "
-"the naxsi web application firewall."
-msgstr ""
-"Indique, por favor, o nome da máquina do servidor que irá alojar a base de "
-"dados para a firewall da aplicação web naxsi."
+#, fuzzy
+#| msgid "Database host for naxsi:"
+msgid "Database host for naxsi:);"
+msgstr "Servidor de base de dados para o naxsi:"

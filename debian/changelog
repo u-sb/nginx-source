@@ -26,6 +26,7 @@ nginx (1.2.4-1) UNRELEASED; urgency=low
     + Added sites-enabled/available directory checks. (Closes: #688410)
       - Thanks Andreas Marschke <andreas.marschke@gmail.com>
     + Moved the symlink creation to nginx-common.
+  * Updated debconf templates.
 
   [Kartik Mistry]
   * Acknowledged NMUs (Closes: #681758, #681381)
