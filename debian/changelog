@@ -1,5 +1,6 @@
 nginx (1.2.4-1) UNRELEASED; urgency=low
 
+  [Michael Lustfield]
   * New upstream release. (Closes: #683704)
   * debian/nginx-common.nginx.init
     + Added --retry to start-stop-daemon. (Closes: #682360)
@@ -19,6 +20,9 @@ nginx (1.2.4-1) UNRELEASED; urgency=low
   * debian/copyright:
     + Removed trailing slash from File: fields.
   * Changed /var/run to /run in multiple files. (LP: #1050516)
+
+  [Kartik Mistry]
+  * Acknowledged NMUs (Closes: #681758, #681381)
 
  -- Michael Lustfield <michael@lustfield.net>  Fri, 12 Oct 2012 02:15:17 +0000
 
