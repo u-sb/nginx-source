@@ -20,6 +20,8 @@ nginx (1.2.4-1) UNRELEASED; urgency=low
   * debian/copyright:
     + Removed trailing slash from File: fields.
   * Changed /var/run to /run in multiple files. (LP: #1050516)
+  * debian/nginx-common.dirs:
+    + Added /run to .dirs to avoid conflicts with backports. (LP: #1072641)
 
   [Kartik Mistry]
   * Acknowledged NMUs (Closes: #681758, #681381)
