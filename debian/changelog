@@ -27,6 +27,8 @@ nginx (1.2.4-1) UNRELEASED; urgency=low
       - Thanks Andreas Marschke <andreas.marschke@gmail.com>
     + Moved the symlink creation to nginx-common.
   * Updated debconf templates.
+  * conf/sites-available/default:
+    + Updated root to point at /usr/share/nginx/html instead of www.
 
   [Kartik Mistry]
   * Acknowledged NMUs (Closes: #681758, #681381)
