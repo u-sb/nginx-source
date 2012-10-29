@@ -1,4 +1,4 @@
-nginx (1.2.4-0) UNRELEASED; urgency=low
+nginx (1.2.4-1) UNRELEASED; urgency=low
 
   * New upstream release. (Closes: #683704)
   * debian/nginx-common.nginx.init
