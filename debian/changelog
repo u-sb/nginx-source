@@ -1,3 +1,10 @@
+nginx (1.2.4-2) UNRELEASED; urgency=low
+
+  * debian/conf/nginx.conf:
+    + Fixed pid path to /run/nginx.pid in config.
+
+ -- Kartik Mistry <kartik@debian.org>  Wed, 31 Oct 2012 19:34:22 +0530
+
 nginx (1.2.4-1) unstable; urgency=low
 
   [ Michael Lustfield ]
