@@ -1,7 +1,7 @@
 # Copyright (C) 2012 Cyril Lavier
 # This file is distributed under the same license as the nginx-naxsi-ui package.
 # Pedro Ribeiro <p.m42.ribeiro@gmail.com>, 2012.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nginx\n"
@@ -18,11 +18,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-#, fuzzy
-#| msgid ""
-#| "Please specify the hostname of the server that will host the database for "
-#| "the naxsi web application firewall."
-msgid "Please specify the hostname of the server that will host the database"
+msgid ""
+"Please specify the hostname of the server that will host the database for "
+"the naxsi web application firewall."
 msgstr ""
 "Indique, por favor, o nome da máquina do servidor que irá alojar a base de "
 "dados para a firewall da aplicação web naxsi."
@@ -30,7 +28,5 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-#, fuzzy
-#| msgid "Database host for naxsi:"
-msgid "Database host for naxsi:);"
+msgid "Database host for naxsi:"
 msgstr "Servidor de base de dados para o naxsi:"

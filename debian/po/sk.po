@@ -19,11 +19,9 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-#, fuzzy
-#| msgid ""
-#| "Please specify the hostname of the server that will host the database for "
-#| "the naxsi web application firewall."
-msgid "Please specify the hostname of the server that will host the database"
+msgid ""
+"Please specify the hostname of the server that will host the database for "
+"the naxsi web application firewall."
 msgstr ""
 "Prosím, zadajte názov servera, ktorý bude hostiteľom databázy webového "
 "aplikačného firewallu naxsi."
@@ -31,7 +29,5 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../nginx-naxsi-ui.templates:1001
-#, fuzzy
-#| msgid "Database host for naxsi:"
-msgid "Database host for naxsi:);"
+msgid "Database host for naxsi:"
 msgstr "Hostiteľ databázy naxsi:"

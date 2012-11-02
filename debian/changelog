@@ -1,7 +1,13 @@
-nginx (1.2.4-1) UNRELEASED; urgency=low
+nginx (1.2.4-2) UNRELEASED; urgency=low
 
-  [Michael Lustfield]
-  * New upstream release. (Closes: #683704)
+  * debian/conf/nginx.conf:
+    + Fixed pid path to /run/nginx.pid in config.
+
+ -- Kartik Mistry <kartik@debian.org>  Wed, 31 Oct 2012 19:34:22 +0530
+
+nginx (1.2.4-1) unstable; urgency=low
+
+  [ Michael Lustfield ]
   * debian/nginx-common.nginx.init
     + Added --retry to start-stop-daemon. (Closes: #682360)
     + Added $named to Required-Start/Stop. (Closes: #679879)
@@ -30,11 +36,14 @@ nginx (1.2.4-1) UNRELEASED; urgency=low
   * conf/sites-available/default:
     + Updated root to point at /usr/share/nginx/html instead of www.
 
-  [Kartik Mistry]
+  [ Kartik Mistry ]
   * Acknowledged NMUs (Closes: #681758, #681381)
-  * Uploaded latest version (Closes: #683704)
+  * New upstream release (Closes: #683704)
+  * debian/po/*.po:
+    + Removed ^M characters from headers.
+    + Fixed all files with recent unneeded template change.
 
- -- Michael Lustfield <michael@lustfield.net>  Fri, 12 Oct 2012 02:15:17 +0000
+ -- Kartik Mistry <kartik@debian.org>  Tue, 30 Oct 2012 10:10:34 +0530
 
 nginx (1.2.1-2.2) unstable; urgency=low
 
