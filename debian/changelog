@@ -1,12 +1,12 @@
-nginx (1.2.4-2) UNRELEASED; urgency=low
+nginx (1.2.4-2) unstable; urgency=low
 
   * debian/conf/nginx.conf:
     + Fixed pid path to /run/nginx.pid in config.
   * debian/po/*.po, debian/nginx-naxsi-ui.templates, debian/po/templates.pot:
     + Fixed ^M characters in template file. Thanks to Christian Perrier
-      <bubulle@debian.org> for help (Closes: #692191)
+      <bubulle@debian.org> for help (Closes: #692191, #692335)
 
- -- Kartik Mistry <kartik@debian.org>  Wed, 31 Oct 2012 19:34:22 +0530
+ -- Kartik Mistry <kartik@debian.org>  Mon, 05 Nov 2012 13:05:34 +0530
 
 nginx (1.2.4-1) unstable; urgency=low
 
