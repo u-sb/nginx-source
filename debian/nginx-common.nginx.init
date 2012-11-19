@@ -42,55 +42,64 @@ start() {
 			# Set the ulimits
 			ulimit $ULIMIT
 		fi
+		log_daemon_msg "Starting $DESC" "$NAME"
 		start-stop-daemon --start --quiet --pidfile /run/$NAME.pid \
 			--retry 5 --exec $DAEMON -- $DAEMON_OPTS || true
+		log_end_msg $?
 }
 
 stop() {
+		log_daemon_msg "Stopping $DESC" "$NAME"
 		start-stop-daemon --stop --quiet --pidfile /run/$NAME.pid \
 			--retry 5 --exec $DAEMON || true
+		log_end_msg $?
 }
 
 case "$1" in
 	start)
-		echo -n "Starting $DESC: "
 		start
-		echo "$NAME."
 		;;
 
 	stop)
-		echo -n "Stopping $DESC: "
 		stop
-		echo "$NAME."
 		;;
 
 	restart|force-reload)
-		echo -n "Restarting $DESC: "
+		log_daemon_msg "Restarting $DESC"
 		stop
 		sleep 1
-		echo "$NAME."
 		start
+		log_end_msg 0
 		;;
 
 	reload)
-		echo -n "Reloading $DESC configuration: "
+		log_daemon_msg "Reloading $DESC configuration..."
 		test_nginx_config
 		start-stop-daemon --stop --signal HUP --quiet --pidfile /run/$NAME.pid \
 			--exec $DAEMON || true
-		echo "$NAME."
+		log_end_msg 0
 		;;
 
 	configtest|testconfig)
-		echo -n "Testing $DESC configuration: "
+		log_daemon_msg "Testing $DESC configuration"
 		if test_nginx_config; then
-			echo "$NAME."
+			log_daemon_msg "$NAME"
 		else
 			exit $?
 		fi
+		log_end_msg $?
 		;;
 
 	status)
 		status_of_proc -p /run/$NAME.pid "$DAEMON" nginx && exit 0 || exit $?
+		status=$?
+
+		if [ $status -eq 0 ]; then
+			log_success_msg "$DESC is running"
+		else
+			log_failure_msg "$DESC is not running"
+		fi
+		exit $status
 		;;
 
 	*)
