@@ -1,7 +1,12 @@
 nginx (1.2.4-3) UNRELEASED; urgency=low
 
+  [ Kartik Mistry ]
   * debian/nginx-common.nginx.init:
     + Used log_*_msg instead of echo for better init messages.
+
+  [ Cyril Lavier ]
+  * debian/rules
+    + Added RealIP module in nginx-naxsi (Closes: #693302).
 
  -- Kartik Mistry <kartik@debian.org>  Mon, 19 Nov 2012 17:51:06 +0530
 
