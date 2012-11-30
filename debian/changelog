@@ -1,6 +1,7 @@
-nginx (1.2.4-4) UNRELEASED; urgency=low
+nginx (1.2.5-1) UNRELEASED; urgency=low
 
   [ Kartik Mistry ]
+  * New upstream release.
   * debian/nginx-common.nginx.init:
     + Used log_*_msg instead of echo for better init messages.
 
