@@ -1,4 +1,4 @@
-nginx (1.2.4-3) UNRELEASED; urgency=low
+nginx (1.2.4-4) UNRELEASED; urgency=low
 
   [ Kartik Mistry ]
   * debian/nginx-common.nginx.init:
@@ -8,7 +8,11 @@ nginx (1.2.4-3) UNRELEASED; urgency=low
   * debian/rules
     + Added RealIP module in nginx-naxsi (Closes: #693302).
 
- -- Kartik Mistry <kartik@debian.org>  Mon, 19 Nov 2012 17:51:06 +0530
+  [ Michael Lustfield ]
+  * debian/conf/sites-available/default
+    + Uncommented listen lines to make server block default.
+
+ -- Michael Lustfield <michael@lustfield.net>  Fri, 30 Nov 2012 01:22:37 +0000
 
 nginx (1.2.4-2) unstable; urgency=low
 
