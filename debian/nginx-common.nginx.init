@@ -26,13 +26,15 @@ set -e
 
 . /lib/lsb/init-functions
 
+PID=$(awk -F'[ ;]' '/[^#]pid/ {print $2}' /etc/nginx/nginx.conf)
+
 test_nginx_config() {
-	if $DAEMON -t $DAEMON_OPTS >/dev/null 2>&1; then
-		return 0
-	else
 		$DAEMON -t $DAEMON_OPTS
-		return $?
-	fi
+		retvar=$?
+		if [ ! -S "$PID" ]; then
+			rm -f $PID
+		fi
+		return $retvar
 }
 
 start() {

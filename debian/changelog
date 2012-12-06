@@ -4,6 +4,8 @@ nginx (1.2.5-1) UNRELEASED; urgency=low
   * New upstream release.
   * debian/nginx-common.nginx.init:
     + Used log_*_msg instead of echo for better init messages.
+    + Fix: function test_nginx_config doesn't clean pid file at the end. Patch
+      from Piotr Rogoża <piotr.rogoza@weii.tu.koszalin.pl> (Closes: #695119)
 
   [ Cyril Lavier ]
   * debian/rules
@@ -13,7 +15,7 @@ nginx (1.2.5-1) UNRELEASED; urgency=low
   * debian/conf/sites-available/default
     + Uncommented listen lines to make server block default.
 
- -- Michael Lustfield <michael@lustfield.net>  Fri, 30 Nov 2012 01:22:37 +0000
+ -- Kartik Mistry <kartik@debian.org>  Thu, 06 Dec 2012 18:20:41 +0530
 
 nginx (1.2.4-2) unstable; urgency=low
 
