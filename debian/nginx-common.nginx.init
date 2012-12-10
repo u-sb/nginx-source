@@ -26,58 +26,66 @@ set -e
 
 . /lib/lsb/init-functions
 
+PID=$(awk -F'[ ;]' '/[^#]pid/ {print $2}' /etc/nginx/nginx.conf)
+if [ -z "$PID" ]
+then
+  PID=/run/nginx.pid
+fi
+
+# Check if the ULIMIT is set in /etc/default/nginx
+if [ -n "$ULIMIT" ]; then
+  # Set the ulimits
+  ulimit $ULIMIT
+fi
+
 test_nginx_config() {
-	if $DAEMON -t $DAEMON_OPTS >/dev/null 2>&1; then
-		return 0
-	else
-		$DAEMON -t $DAEMON_OPTS
-		return $?
-	fi
+		$DAEMON -t $DAEMON_OPTS >/dev/null 2>&1
+		retvar=$?
+		if [ $retvar -ne 0 ]
+		then
+			exit $retvar
+		fi
 }
 
 start() {
-		test_nginx_config
-		# Check if the ULIMIT is set in /etc/default/nginx
-		if [ -n "$ULIMIT" ]; then
-			# Set the ulimits
-			ulimit $ULIMIT
-		fi
-		log_daemon_msg "Starting $DESC" "$NAME"
-		start-stop-daemon --start --quiet --pidfile /run/$NAME.pid \
-			--retry 5 --exec $DAEMON -- $DAEMON_OPTS || true
-		log_end_msg $?
+		start-stop-daemon --start --quiet --pidfile $PID \
+			--retry 5 --exec $DAEMON --oknodo -- $DAEMON_OPTS
 }
 
 stop() {
-		log_daemon_msg "Stopping $DESC" "$NAME"
-		start-stop-daemon --stop --quiet --pidfile /run/$NAME.pid \
-			--retry 5 --exec $DAEMON || true
-		log_end_msg $?
+		start-stop-daemon --stop --quiet --pidfile $PID \
+			--retry 5 --oknodo --exec $DAEMON
 }
 
 case "$1" in
 	start)
+		test_nginx_config
+		log_daemon_msg "Starting $DESC" "$NAME"
 		start
+		log_end_msg $?
 		;;
 
 	stop)
+		log_daemon_msg "Stopping $DESC" "$NAME"
 		stop
+		log_end_msg $?
 		;;
 
 	restart|force-reload)
-		log_daemon_msg "Restarting $DESC"
+		test_nginx_config
+		log_daemon_msg "Restarting $DESC" "$NAME"
 		stop
 		sleep 1
 		start
-		log_end_msg 0
+		log_end_msg $?
 		;;
 
 	reload)
-		log_daemon_msg "Reloading $DESC configuration..."
 		test_nginx_config
-		start-stop-daemon --stop --signal HUP --quiet --pidfile /run/$NAME.pid \
-			--exec $DAEMON || true
-		log_end_msg 0
+		log_daemon_msg "Reloading $DESC configuration" "$NAME"
+		start-stop-daemon --stop --signal HUP --quiet --pidfile $PID \
+			--oknodo --exec $DAEMON
+		log_end_msg $?
 		;;
 
 	configtest|testconfig)
@@ -91,15 +99,7 @@ case "$1" in
 		;;
 
 	status)
-		status_of_proc -p /run/$NAME.pid "$DAEMON" nginx && exit 0 || exit $?
-		status=$?
-
-		if [ $status -eq 0 ]; then
-			log_success_msg "$DESC is running"
-		else
-			log_failure_msg "$DESC is not running"
-		fi
-		exit $status
+		status_of_proc -p $PID "$DAEMON" nginx
 		;;
 
 	*)
