@@ -38,23 +38,33 @@ ngx_http_lua_capture_filter_init(ngx_conf_t *cf)
 static ngx_int_t
 ngx_http_lua_capture_header_filter(ngx_http_request_t *r)
 {
-    ngx_http_post_subrequest_t      *ps;
+    ngx_http_post_subrequest_t      *psr;
     ngx_http_lua_ctx_t              *old_ctx;
     ngx_http_lua_ctx_t              *ctx;
+
+    ngx_http_lua_post_subrequest_data_t      *psr_data;
+
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "lua capture header filter, uri \"%V\"", &r->uri);
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_lua_module);
 
     dd("old ctx: %p", ctx);
 
     if (ctx == NULL || ! ctx->capture) {
-        ps = r->post_subrequest;
-        if (ps != NULL && ps->handler == ngx_http_lua_post_subrequest &&
-                ps->data != NULL)
+
+        psr = r->post_subrequest;
+
+        if (psr != NULL
+            && psr->handler == ngx_http_lua_post_subrequest
+            && psr->data != NULL)
         {
             /* the lua ctx has been cleared by ngx_http_internal_redirect,
              * resume it from the post_subrequest data
              */
-            old_ctx = ps->data;
+            psr_data = psr->data;
+
+            old_ctx = psr_data->ctx;
 
             if (ctx == NULL) {
                 ctx = old_ctx;
@@ -62,19 +72,19 @@ ngx_http_lua_capture_header_filter(ngx_http_request_t *r)
 
             } else {
                 ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                        "lua restoring ctx with capture %d, index %d",
-                        old_ctx->capture, old_ctx->index);
+                               "lua restoring ctx with capture %d, index %d",
+                               old_ctx->capture, old_ctx->index);
 
                 ctx->capture = old_ctx->capture;
                 ctx->index = old_ctx->index;
-                ps->data = ctx;
+                psr_data->ctx = ctx;
             }
         }
     }
 
     if (ctx && ctx->capture) {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                "lua capturing response body");
+                       "lua capturing response body");
 
         /* force subrequest response body buffer in memory */
         r->filter_need_in_memory = 1;
@@ -93,6 +103,9 @@ ngx_http_lua_capture_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
     ngx_http_lua_ctx_t              *ctx;
     ngx_http_lua_ctx_t              *pr_ctx;
 
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "lua capture body filter, uri \"%V\"", &r->uri);
+
     if (in == NULL) {
         return ngx_http_lua_next_body_filter(r, NULL);
     }
@@ -107,13 +120,15 @@ ngx_http_lua_capture_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
 
     if (ctx->run_post_subrequest) {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                "lua body filter skipped because post subrequest already run");
+                       "lua body filter skipped because post subrequest "
+                       "already run");
         return NGX_OK;
     }
 
     if (r->parent == NULL) {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                "lua body filter skipped because no parent request found");
+                       "lua body filter skipped because no parent request "
+                       "found");
 
         return NGX_ERROR;
     }
@@ -124,8 +139,8 @@ ngx_http_lua_capture_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
     }
 
     ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-            "lua capture body filter capturing response body, uri \"%V\"",
-            &r->uri);
+                   "lua capture body filter capturing response body, uri "
+                   "\"%V\"", &r->uri);
 
     rc = ngx_http_lua_add_copy_chain(r, pr_ctx, &ctx->body, in);
     if (rc != NGX_OK) {
@@ -134,6 +149,6 @@ ngx_http_lua_capture_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
 
     ngx_http_lua_discard_bufs(r->pool, in);
 
-    return ngx_http_lua_flush_postponed_outputs(r);
+    return NGX_OK;
 }
 

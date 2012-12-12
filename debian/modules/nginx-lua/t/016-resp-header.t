@@ -74,13 +74,13 @@ Hel
     location /read {
         content_by_lua '
             ngx.status = 302;
-            ngx.header["Location"] = "http://www.taobao.com/foo";
+            ngx.header["Location"] = "http://google.com/foo";
         ';
     }
 --- request
 GET /read
 --- response_headers
-Location: http://www.taobao.com/foo
+Location: http://google.com/foo
 --- response_body
 --- error_code: 302
 
@@ -782,4 +782,44 @@ Accept-Encoding: gzip
 Content-Type: text/plain
 --- response_body
 Hello, world, my dear friend!
+
+
+
+=== TEST 40: no transform underscores (write)
+--- config
+    lua_transform_underscores_in_response_headers off;
+    location = /t {
+        content_by_lua '
+            ngx.header.foo_bar = "Hello"
+            ngx.say(ngx.header.foo_bar)
+            ngx.say(ngx.header["foo-bar"])
+        ';
+    }
+--- request
+    GET /t
+--- raw_response_headers_like eval
+"\r\nfoo_bar: Hello\r\n"
+--- response_body
+Hello
+nil
+
+
+
+=== TEST 41: with transform underscores (write)
+--- config
+    lua_transform_underscores_in_response_headers on;
+    location = /t {
+        content_by_lua '
+            ngx.header.foo_bar = "Hello"
+            ngx.say(ngx.header.foo_bar)
+            ngx.say(ngx.header["foo-bar"])
+        ';
+    }
+--- request
+    GET /t
+--- raw_response_headers_like eval
+"\r\nfoo-bar: Hello\r\n"
+--- response_body
+Hello
+Hello
 

@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # this file is mostly meant to be used by the author himself.
 
 root=`pwd`
-version=${1:-1.0.5}
+version=${1:-1.2.1}
 home=~
 force=$2
 
@@ -23,7 +23,7 @@ time ngx-build $force $version \
         --with-http_ssl_module \
             --add-module=$root/../ndk-nginx-module \
             --add-module=$root/../set-misc-nginx-module \
-            --with-ld-opt="-L$PCRE_LIB -Wl,-rpath,$PCRE_LIB:/opt/drizzle/lib:/home/lz/lib:/usr/local/openresty-debug/luajit/lib:/usr/local/lib" \
+            --with-ld-opt="-L$PCRE_LIB -Wl,-rpath,$PCRE_LIB:$LIBDRIZZLE_LIB:$LUAJIT_LIB:/usr/local/lib" \
             --without-mail_pop3_module \
             --without-mail_imap_module \
             --without-mail_smtp_module \
@@ -43,6 +43,7 @@ time ngx-build $force $version \
                 --add-module=$home/work/nginx/ngx_http_upstream_keepalive-0.7 \
                 --add-module=$root/../rds-json-nginx-module \
                 --add-module=$root/../coolkit-nginx-module \
+                --add-module=$root/../redis2-nginx-module \
           --with-select_module \
           --with-poll_module \
           --with-rtsig_module \

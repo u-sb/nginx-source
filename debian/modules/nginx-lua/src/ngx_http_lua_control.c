@@ -5,61 +5,27 @@
 
 #include "ngx_http_lua_control.h"
 #include "ngx_http_lua_util.h"
+#include "ngx_http_lua_coroutine.h"
 
 
 static int ngx_http_lua_ngx_exec(lua_State *L);
 static int ngx_http_lua_ngx_redirect(lua_State *L);
 static int ngx_http_lua_ngx_exit(lua_State *L);
+static int ngx_http_lua_on_abort(lua_State *L);
 
 
 void
 ngx_http_lua_inject_control_api(ngx_log_t *log, lua_State *L)
 {
-    ngx_int_t         rc;
-
     /* ngx.redirect */
 
     lua_pushcfunction(L, ngx_http_lua_ngx_redirect);
-    lua_setfield(L, -2, "_redirect");
-
-#if 1
-    {
-        const char    buf[] = "ngx._redirect(...) ngx._check_aborted()";
-
-        rc = luaL_loadbuffer(L, buf, sizeof(buf) - 1, "ngx.redirect");
-    }
-
-    if (rc != NGX_OK) {
-        ngx_log_error(NGX_LOG_CRIT, log, 0,
-                      "failed to load Lua code for ngx.redirect(): %i",
-                      rc);
-
-    } else {
-        lua_setfield(L, -2, "redirect");
-    }
-#endif
+    lua_setfield(L, -2, "redirect");
 
     /* ngx.exec */
 
     lua_pushcfunction(L, ngx_http_lua_ngx_exec);
-    lua_setfield(L, -2, "_exec");
-
-#if 1
-    {
-        const char    buf[] = "ngx._exec(...) ngx._check_aborted()";
-
-        rc = luaL_loadbuffer(L, buf, sizeof(buf) - 1, "ngx.exec");
-    }
-
-    if (rc != NGX_OK) {
-        ngx_log_error(NGX_LOG_CRIT, log, 0,
-                      "failed to load Lua code for ngx.exec(): %i",
-                      rc);
-
-    } else {
-        lua_setfield(L, -2, "exec");
-    }
-#endif
+    lua_setfield(L, -2, "exec");
 
     lua_pushcfunction(L, ngx_http_lua_ngx_exit);
     lua_setfield(L, -2, "throw_error"); /* deprecated */
@@ -67,24 +33,12 @@ ngx_http_lua_inject_control_api(ngx_log_t *log, lua_State *L)
     /* ngx.exit */
 
     lua_pushcfunction(L, ngx_http_lua_ngx_exit);
-    lua_setfield(L, -2, "_exit");
+    lua_setfield(L, -2, "exit");
 
-#if 1
-    {
-        const char    buf[] = "ngx._exit(...) ngx._check_aborted()";
+    /* ngx.on_abort */
 
-        rc = luaL_loadbuffer(L, buf, sizeof(buf) - 1, "ngx.exit");
-    }
-
-    if (rc != NGX_OK) {
-        ngx_log_error(NGX_LOG_CRIT, log, 0,
-                      "failed to load Lua code for ngx.exit(): %i",
-                      rc);
-
-    } else {
-        lua_setfield(L, -2, "exit");
-    }
-#endif
+    lua_pushcfunction(L, ngx_http_lua_on_abort);
+    lua_setfield(L, -2, "on_abort");
 }
 
 
@@ -108,7 +62,8 @@ ngx_http_lua_ngx_exec(lua_State *L)
                 n);
     }
 
-    lua_getglobal(L, GLOBALS_SYMBOL_REQUEST);
+    lua_pushlightuserdata(L, &ngx_http_lua_request_key);
+    lua_rawget(L, LUA_GLOBALSINDEX);
     r = lua_touserdata(L, -1);
     lua_pop(L, 1);
 
@@ -137,6 +92,15 @@ ngx_http_lua_ngx_exec(lua_State *L)
     uri.len = len;
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_lua_module);
+    if (ctx == NULL) {
+        return luaL_error(L, "no ctx found");
+    }
+
+    ngx_http_lua_check_context(L, ctx, NGX_HTTP_LUA_CONTEXT_REWRITE
+                               | NGX_HTTP_LUA_CONTEXT_ACCESS
+                               | NGX_HTTP_LUA_CONTEXT_CONTENT);
+
+    ngx_http_lua_check_if_abortable(L, ctx);
 
     if (ngx_http_parse_unsafe_uri(r, &uri, &args, &flags)
         != NGX_OK)
@@ -169,6 +133,11 @@ ngx_http_lua_ngx_exec(lua_State *L)
 
             dd("user_args: %.*s", (int) user_args.len, user_args.data);
 
+            break;
+
+        case LUA_TNIL:
+            user_args.data = NULL;
+            user_args.len = 0;
             break;
 
         default:
@@ -248,7 +217,8 @@ ngx_http_lua_ngx_redirect(lua_State *L)
         rc = NGX_HTTP_MOVED_TEMPORARILY;
     }
 
-    lua_getglobal(L, GLOBALS_SYMBOL_REQUEST);
+    lua_pushlightuserdata(L, &ngx_http_lua_request_key);
+    lua_rawget(L, LUA_GLOBALSINDEX);
     r = lua_touserdata(L, -1);
     lua_pop(L, 1);
 
@@ -260,6 +230,12 @@ ngx_http_lua_ngx_redirect(lua_State *L)
     if (ctx == NULL) {
         return luaL_error(L, "no request ctx found");
     }
+
+    ngx_http_lua_check_context(L, ctx, NGX_HTTP_LUA_CONTEXT_REWRITE
+                               | NGX_HTTP_LUA_CONTEXT_ACCESS
+                               | NGX_HTTP_LUA_CONTEXT_CONTENT);
+
+    ngx_http_lua_check_if_abortable(L, ctx);
 
     if (ctx->headers_sent) {
         return luaL_error(L, "attempt to call ngx.redirect after sending out "
@@ -317,7 +293,8 @@ ngx_http_lua_ngx_exit(lua_State *L)
         return luaL_error(L, "expecting one argument");
     }
 
-    lua_getglobal(L, GLOBALS_SYMBOL_REQUEST);
+    lua_pushlightuserdata(L, &ngx_http_lua_request_key);
+    lua_rawget(L, LUA_GLOBALSINDEX);
     r = lua_touserdata(L, -1);
     lua_pop(L, 1);
 
@@ -330,11 +307,34 @@ ngx_http_lua_ngx_exit(lua_State *L)
         return luaL_error(L, "no request ctx found");
     }
 
+    ngx_http_lua_check_context(L, ctx, NGX_HTTP_LUA_CONTEXT_REWRITE
+                               | NGX_HTTP_LUA_CONTEXT_ACCESS
+                               | NGX_HTTP_LUA_CONTEXT_CONTENT);
+
     rc = (ngx_int_t) luaL_checkinteger(L, 1);
 
-    if (rc >= NGX_HTTP_SPECIAL_RESPONSE && ctx->headers_sent) {
-        return luaL_error(L, "attempt to call ngx.exit after sending "
-                "out the headers");
+    if (ctx->no_abort
+        && rc != NGX_ERROR
+        && rc != NGX_HTTP_CLOSE
+        && rc != NGX_HTTP_REQUEST_TIME_OUT
+        && rc != NGX_HTTP_CLIENT_CLOSED_REQUEST)
+    {
+        return luaL_error(L, "attempt to abort with pending subrequests");
+    }
+
+    if (ctx->headers_sent
+        && rc >= NGX_HTTP_SPECIAL_RESPONSE
+        && rc != NGX_HTTP_REQUEST_TIME_OUT
+        && rc != NGX_HTTP_CLIENT_CLOSED_REQUEST
+        && rc != NGX_HTTP_CLOSE)
+    {
+        if (rc != (ngx_int_t) r->headers_out.status) {
+            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "attempt to "
+                          "set status %i via ngx.exit after sending out the "
+                          "response status %ui", rc, r->headers_out.status);
+        }
+
+        rc = NGX_HTTP_OK;
     }
 
     ctx->exit_code = rc;
@@ -345,5 +345,64 @@ ngx_http_lua_ngx_exit(lua_State *L)
 
     dd("calling yield");
     return lua_yield(L, 0);
+}
+
+
+static int
+ngx_http_lua_on_abort(lua_State *L)
+{
+    ngx_http_request_t           *r;
+    ngx_http_lua_ctx_t           *ctx;
+    ngx_http_lua_co_ctx_t        *coctx = NULL;
+    ngx_http_lua_loc_conf_t      *llcf;
+
+    lua_pushlightuserdata(L, &ngx_http_lua_request_key);
+    lua_rawget(L, LUA_GLOBALSINDEX);
+    r = lua_touserdata(L, -1);
+    lua_pop(L, 1);
+
+    if (r == NULL) {
+        return luaL_error(L, "no request found");
+    }
+
+    ctx = ngx_http_get_module_ctx(r, ngx_http_lua_module);
+    if (ctx == NULL) {
+        return luaL_error(L, "no request ctx found");
+    }
+
+    if (ctx->on_abort_co_ctx) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "duplicate call");
+        return 2;
+    }
+
+    llcf = ngx_http_get_module_loc_conf(r, ngx_http_lua_module);
+    if (!llcf->check_client_abort) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "lua_check_client_abort is off");
+        return 2;
+    }
+
+    ngx_http_lua_coroutine_create_helper(L, r, ctx, &coctx);
+
+    lua_pushlightuserdata(L, &ngx_http_lua_coroutines_key);
+    lua_rawget(L, LUA_REGISTRYINDEX);
+    lua_pushvalue(L, -2);
+
+    dd("on_wait thread 1: %p", lua_tothread(L, -1));
+
+    coctx->co_ref = luaL_ref(L, -2);
+    lua_pop(L, 1);
+
+    coctx->is_uthread = 1;
+    ctx->on_abort_co_ctx = coctx;
+
+    dd("on_wait thread 2: %p", coctx->co);
+
+    coctx->co_status = NGX_HTTP_LUA_CO_SUSPENDED;
+    coctx->parent_co_ctx = ctx->cur_co_ctx;
+
+    lua_pushinteger(L, 1);
+    return 1;
 }
 

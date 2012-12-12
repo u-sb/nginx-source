@@ -7,9 +7,11 @@ use Test::Nginx::Socket;
 #workers(2);
 #log_level('warn');
 
-repeat_each(2);
+repeat_each(5);
 
-plan tests => repeat_each() * (blocks() * 2);
+plan tests => repeat_each() * (blocks() * 2 + 1);
+
+our $HtmlDir = html_dir;
 
 #no_diff();
 #no_long_string();
@@ -309,6 +311,10 @@ baz
     }
 --- request
     GET /re
+--- stap2
+F(ngx_http_lua_ngx_re_gmatch_iterator) { println("iterator") }
+F(ngx_http_lua_ngx_re_gmatch_gc) { println("gc") }
+F(ngx_http_lua_ngx_re_gmatch_cleanup) { println("cleanup") }
 --- response_body
 hello
 okay
@@ -404,4 +410,104 @@ done
     GET /re
 --- response_body
 hello
+
+
+
+=== TEST 18: gmatch matched but no iterate and early forced GC
+--- config
+    location /re {
+        content_by_lua '
+            local a = {}
+            for i = 1, 3 do
+                it = ngx.re.gmatch("hello, world", "[a-z]+")
+                it()
+                collectgarbage()
+                table.insert(a, {"hello", "world"})
+            end
+            ngx.say("done")
+        ';
+    }
+--- request
+    GET /re
+--- response_body
+done
+
+
+
+=== TEST 19: gmatch iterator used by another request
+--- http_config eval
+    "lua_package_path '$::HtmlDir/?.lua;;';"
+--- config
+    location /main {
+        content_by_lua '
+            package.loaded.foo = nil
+
+            local res = ngx.location.capture("/t")
+            if res.status == 200 then
+                ngx.print(res.body)
+            else
+                ngx.say("sr failed: ", res.status)
+            end
+
+            res = ngx.location.capture("/t")
+            if res.status == 200 then
+                ngx.print(res.body)
+            else
+                ngx.say("sr failed: ", res.status)
+            end
+        ';
+    }
+
+    location /t {
+        content_by_lua '
+            local foo = require "foo"
+            local m = foo.go()
+            ngx.say(m and "matched" or "no")
+        ';
+    }
+--- user_files
+>>> foo.lua
+module("foo", package.seeall)
+
+local it
+
+function go()
+    if not it then
+        it = ngx.re.gmatch("hello, world", "[a-z]+")
+    end
+
+    return it()
+end
+--- request
+    GET /main
+--- response_body
+matched
+sr failed: 500
+--- error_log
+attempt to use ngx.re.gmatch iterator in a request that did not create it
+
+
+
+=== TEST 20: gmatch (empty matched string)
+--- config
+    location /re {
+        content_by_lua '
+            for m in ngx.re.gmatch("hello", "a|") do
+                if m then
+                    ngx.say("matched: [", m[0], "]")
+                else
+                    ngx.say("not matched: ", m)
+                end
+            end
+        ';
+    }
+--- request
+    GET /re
+--- response_body
+matched: []
+matched: []
+matched: []
+matched: []
+matched: []
+matched: []
 
