@@ -5,7 +5,13 @@ nginx (1.2.6-1) UNRELEASED; urgency=low
   * debian/nginx-common.nginx.init:
     + Used log_*_msg instead of echo for better init messages.
     + Added patch to check start-stop-daemon exit status, Thanks to
-      Sergey B Kirpichev <skirpichev@gmail.com> (Closes: #695374)
+      Sergey B Kirpichev <skirpichev@gmail.com> (Closes: #695374).
+  * debian/po/ja.po:
+    + Added new Japanese translation. Thanks to victory <victory.deb@gmail.com>
+      (Closes: #692481).
+  * debian/po/pt_BR.po:
+    + Added new Brazilian Portuguese translation. Thanks to
+      Adriano Rafael Gomes <adrianorg@gmail.com> (Closes: #692481).
 
   [ Cyril Lavier ]
   * debian/rules
@@ -25,7 +31,7 @@ nginx (1.2.6-1) UNRELEASED; urgency=low
   * debian/conf/sites-available/default
     + Uncommented listen lines to make server block default.
 
- -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Wed, 12 Dec 2012 11:41:42 +0100
+ -- Kartik Mistry <kartik@debian.org>  Mon, 17 Dec 2012 12:35:35 +0530
 
 nginx (1.2.4-2) unstable; urgency=low
 
