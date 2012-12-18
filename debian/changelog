@@ -1,4 +1,4 @@
-nginx (1.2.6-1) UNRELEASED; urgency=low
+nginx (1.2.6-1) unstable; urgency=low
 
   [ Kartik Mistry ]
   * New upstream release.
@@ -31,7 +31,7 @@ nginx (1.2.6-1) UNRELEASED; urgency=low
   * debian/conf/sites-available/default
     + Uncommented listen lines to make server block default.
 
- -- Kartik Mistry <kartik@debian.org>  Mon, 17 Dec 2012 12:35:35 +0530
+ -- Kartik Mistry <kartik@debian.org>  Tue, 18 Dec 2012 10:29:18 +0530
 
 nginx (1.2.4-2) unstable; urgency=low
 
