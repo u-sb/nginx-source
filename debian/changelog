@@ -10,6 +10,7 @@ nginx (1.2.6-3) UNRELEASED; urgency=low
   [ Michael Lustfield ]
   * debian/conf/sites-available/default:
     + Added ipv6_only=on to default server block. (LP: #1132678)
+    + Added default_server to ipv4 default server block. Now matches ipv6.
 
  -- Michael Lustfield <michael@lustfield.net>  Mon, 11 Mar 2013 22:40:30 +0000
 
