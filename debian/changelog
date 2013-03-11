@@ -1,4 +1,4 @@
-nginx (1.2.6-2) UNRELEASED; urgency=low
+nginx (1.2.6-3) UNRELEASED; urgency=low
 
   [ Kartik Mistry ]
   * debian/logrotate:
@@ -7,7 +7,11 @@ nginx (1.2.6-2) UNRELEASED; urgency=low
   * debian/rules:
     + Added cache purge module to nginx-extras.
 
- -- Kartik Mistry <kartik@debian.org>  Wed, 16 Jan 2013 10:50:33 +0530
+  [ Michael Lustfield ]
+  * debian/conf/sites-available/default:
+    + Added ipv6_only=on to default server block. (LP: #1132678)
+
+ -- Michael Lustfield <michael@lustfield.net>  Mon, 11 Mar 2013 22:40:30 +0000
 
 nginx (1.2.6-1) unstable; urgency=low
 
