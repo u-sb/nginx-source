@@ -6,6 +6,9 @@ nginx (1.2.6-3) UNRELEASED; urgency=low
       RjY <rjy@users.sourceforge.net> for patch (Closes: #696440)
   * debian/rules:
     + Added cache purge module to nginx-extras.
+  * debian/control:
+    + Suggests: nginx-docs. Thanks to colliar <colliar4ever@aol.com> for
+      reporting bug (Closes: #702923)
 
   [ Michael Lustfield ]
   * debian/conf/sites-available/default:
@@ -14,7 +17,7 @@ nginx (1.2.6-3) UNRELEASED; urgency=low
   * debian/rules:
     + Removed obsolete --with-md5 and --with-sha1
 
- -- Michael Lustfield <michael@lustfield.net>  Mon, 11 Mar 2013 22:40:30 +0000
+ -- Kartik Mistry <kartik@debian.org>  Wed, 13 Mar 2013 08:23:49 +0530
 
 nginx (1.2.6-1) unstable; urgency=low
 
