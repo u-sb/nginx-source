@@ -1,4 +1,4 @@
-nginx (1.2.6-3) UNRELEASED; urgency=low
+nginx (1.2.6-4) UNRELEASED; urgency=low
 
   [ Kartik Mistry ]
   * debian/logrotate:
@@ -16,8 +16,10 @@ nginx (1.2.6-3) UNRELEASED; urgency=low
     + Added default_server to ipv4 default server block. Now matches ipv6.
   * debian/rules:
     + Removed obsolete --with-md5 and --with-sha1
+  * debian/contral:
+    + Added Suggests: nginx-doc to packages. (Closes: #702923)
 
- -- Kartik Mistry <kartik@debian.org>  Wed, 13 Mar 2013 08:23:49 +0530
+ -- Michael Lustfield <michael@lustfield.net>  Tue, 16 Apr 2013 02:59:27 +0000
 
 nginx (1.2.6-1) unstable; urgency=low
 

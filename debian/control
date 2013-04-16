@@ -82,6 +82,7 @@ Provides: httpd,
 Conflicts: nginx-extras,
            nginx-light,
            nginx-naxsi
+Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (standard version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -132,6 +133,7 @@ Provides: httpd,
 Conflicts: nginx-extras,
            nginx-full,
            nginx-naxsi
+Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (basic version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -177,6 +179,7 @@ Provides: httpd,
 Conflicts: nginx-full,
            nginx-light,
            nginx-naxsi
+Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (extended version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
