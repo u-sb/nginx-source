@@ -1,6 +1,7 @@
-nginx (1.2.6-2) UNRELEASED; urgency=low
+nginx (1.2.8-1) UNRELEASED; urgency=low
 
   [ Kartik Mistry ]
+  * New upstream release.
   * debian/logrotate:
     + Set default log to keep for 52 weeks instead of 52 days. Thanks to
       RjY <rjy@users.sourceforge.net> for patch (Closes: #696440)
