@@ -1,7 +1,8 @@
-nginx (1.2.8-1) UNRELEASED; urgency=low
+nginx (1.2.8-1) unstable; urgency=low
 
   [ Kartik Mistry ]
   * New upstream release.
+  * Refreshed debian/patches/perl-use-dpkg-buildflags.patch
   * debian/logrotate:
     + Set default log to keep for 52 weeks instead of 52 days. Thanks to
       RjY <rjy@users.sourceforge.net> for patch (Closes: #696440)
@@ -18,7 +19,7 @@ nginx (1.2.8-1) UNRELEASED; urgency=low
   * debian/rules:
     + Removed obsolete --with-md5 and --with-sha1
 
- -- Michael Lustfield <michael@lustfield.net>  Tue, 16 Apr 2013 02:59:27 +0000
+ -- Kartik Mistry <kartik@debian.org>  Tue, 23 Apr 2013 09:24:50 +0530
 
 nginx (1.2.6-1) unstable; urgency=low
 
