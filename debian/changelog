@@ -1,6 +1,6 @@
 nginx (1.4.0-2) UNRELEASED; urgency=low
 
-  [ Ondrej Sury ]
+  [ Ondřej Surý ]
   * debian/modules/:
     + Updated nginx-echo, nginx-cache-purge and naxsi modules.
     + Removed useless .gitignore, .gitmodules files.
