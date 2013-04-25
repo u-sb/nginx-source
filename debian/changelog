@@ -1,7 +1,11 @@
-nginx (1.2.8-1) unstable; urgency=low
+nginx (1.4.0-1) experimental; urgency=low
 
   [ Kartik Mistry ]
-  * New upstream release.
+  * New upstream release (Closes: #706127).
+  * debian/rules, debian/modules/:
+    + Removed chunkin-nginx-module as it no longer supported for nginx 1.3.9+
+    + Updated nginx-lua module to 0.8.0
+    + Patched nginx-upload module as described in modules/README file.
   * Refreshed debian/patches/perl-use-dpkg-buildflags.patch
   * debian/logrotate:
     + Set default log to keep for 52 weeks instead of 52 days. Thanks to
@@ -19,7 +23,7 @@ nginx (1.2.8-1) unstable; urgency=low
   * debian/rules:
     + Removed obsolete --with-md5 and --with-sha1
 
- -- Kartik Mistry <kartik@debian.org>  Tue, 23 Apr 2013 09:24:50 +0530
+ -- Kartik Mistry <kartik@debian.org>  Thu, 25 Apr 2013 12:51:45 +0530
 
 nginx (1.2.6-1) unstable; urgency=low
 
