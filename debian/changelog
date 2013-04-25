@@ -15,6 +15,9 @@ nginx (1.4.0-1) experimental; urgency=low
   * debian/control:
     + Suggests: nginx-docs. Thanks to colliar <colliar4ever@aol.com> for
       reporting bug (Closes: #702923)
+  * debian/copyright:
+    + Updated copyright year.
+    + Fixed broken license text.
 
   [ Michael Lustfield ]
   * debian/conf/sites-available/default:

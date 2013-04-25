@@ -4,8 +4,8 @@ Source: http://nginx.net/
 Upstream-Contact: Igor Sysoev <igor@sysoev.ru>
 
 Files: *
-Copyright: 2002-2012 Igor Sysoev
-           2011,2012 Nginx, Inc.
+Copyright: 2002-2013 Igor Sysoev
+           2011-2013 Nginx, Inc.
 License:
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,6 +25,7 @@ License:
  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Files: contrib/geo2nginx.pl
 Copyright: 2005, Andrei Nigmatulin
