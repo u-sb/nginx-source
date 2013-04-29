@@ -73,6 +73,8 @@ ngx_atomic_t   ngx_stat_reading0;
 ngx_atomic_t  *ngx_stat_reading = &ngx_stat_reading0;
 ngx_atomic_t   ngx_stat_writing0;
 ngx_atomic_t  *ngx_stat_writing = &ngx_stat_writing0;
+ngx_atomic_t   ngx_stat_waiting0;
+ngx_atomic_t  *ngx_stat_waiting = &ngx_stat_waiting0;
 
 #endif
 
@@ -511,7 +513,8 @@ ngx_event_module_init(ngx_cycle_t *cycle)
            + cl          /* ngx_stat_requests */
            + cl          /* ngx_stat_active */
            + cl          /* ngx_stat_reading */
-           + cl;         /* ngx_stat_writing */
+           + cl          /* ngx_stat_writing */
+           + cl;         /* ngx_stat_waiting */
 
 #endif
 
@@ -558,6 +561,7 @@ ngx_event_module_init(ngx_cycle_t *cycle)
     ngx_stat_active = (ngx_atomic_t *) (shared + 6 * cl);
     ngx_stat_reading = (ngx_atomic_t *) (shared + 7 * cl);
     ngx_stat_writing = (ngx_atomic_t *) (shared + 8 * cl);
+    ngx_stat_waiting = (ngx_atomic_t *) (shared + 9 * cl);
 
 #endif
 
@@ -891,6 +895,10 @@ ngx_events_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_uint_t            i;
     ngx_conf_t            pcf;
     ngx_event_module_t   *m;
+
+    if (*(void **) conf) {
+        return "is duplicate";
+    }
 
     /* count the number of the event modules and set up their indices */
 

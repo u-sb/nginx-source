@@ -209,6 +209,13 @@ ngx_http_map_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     }
 
     name = value[2];
+
+    if (name.data[0] != '$') {
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                           "invalid variable name \"%V\"", &name);
+        return NGX_CONF_ERROR;
+    }
+
     name.len--;
     name.data++;
 
@@ -220,7 +227,7 @@ ngx_http_map_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     var->get_handler = ngx_http_map_variable;
     var->data = (uintptr_t) map;
 
-    pool = ngx_create_pool(16384, cf->log);
+    pool = ngx_create_pool(NGX_DEFAULT_POOL_SIZE, cf->log);
     if (pool == NULL) {
         return NGX_CONF_ERROR;
     }
