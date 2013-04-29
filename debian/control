@@ -274,10 +274,8 @@ Priority: extra
 Depends: daemon,
          dbconfig-common,
          nginx-naxsi (>= ${source:Version}),
-         python-mysqldb,
          python-twisted-web,
          ${misc:Depends}
-Recommends: mysql-server
 Provides: httpd,
           naxsi,
           nginx
