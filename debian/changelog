@@ -29,6 +29,9 @@ nginx (1.4.0-2) UNRELEASED; urgency=low
       database engine switching from MySQL to SQLite.
   * debian/control:
     + Removed dependencies against MySQL.
+  * debian/rules, debian/modules/ngx_http_substitutions_filter_module,
+    debian/README.Modules-versions:
+    + Added http_substitutions_filter module. (Closes: #706456)
 
  -- Kartik Mistry <kartik@debian.org>  Fri, 26 Apr 2013 09:48:41 +0530
 
