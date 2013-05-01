@@ -1,4 +1,4 @@
-nginx (1.4.0-2) UNRELEASED; urgency=low
+nginx (1.4.0-2) experimental; urgency=low
 
   [ Ondřej Surý ]
   * debian/modules/:
@@ -33,7 +33,7 @@ nginx (1.4.0-2) UNRELEASED; urgency=low
     debian/README.Modules-versions:
     + Added http_substitutions_filter module. (Closes: #706456)
 
- -- Kartik Mistry <kartik@debian.org>  Fri, 26 Apr 2013 09:48:41 +0530
+ -- Kartik Mistry <kartik@debian.org>  Wed, 01 May 2013 10:48:43 +0530
 
 nginx (1.4.0-1) experimental; urgency=low
 
