@@ -1,4 +1,4 @@
-nginx (1.4.1-1) UNRELEASED; urgency=low
+nginx (1.4.1-1) unstable; urgency=low
 
   * New upstream release:
     + Fixes arbitrary code execution (CVE-2013-2028).
@@ -6,7 +6,7 @@ nginx (1.4.1-1) UNRELEASED; urgency=low
   * debian/control:
     + Updated Standards-Version to 3.9.4
 
- -- Kartik Mistry <kartik@debian.org>  Tue, 07 May 2013 19:31:09 +0530
+ -- Kartik Mistry <kartik@debian.org>  Tue, 07 May 2013 19:53:46 +0530
 
 nginx (1.4.0-2) experimental; urgency=low
 
