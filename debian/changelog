@@ -1,3 +1,10 @@
+nginx (1.4.1-2) UNRELEASED; urgency=low
+
+  * debian/conf/sites-available/default:
+    + Fixed typo in listen ipv6only=on (Closes: #707684)
+
+ -- Kartik Mistry <kartik@debian.org>  Mon, 13 May 2013 08:36:07 +0530
+
 nginx (1.4.1-1) unstable; urgency=low
 
   * New upstream release:
