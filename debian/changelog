@@ -1,7 +1,13 @@
 nginx (1.4.1-2) UNRELEASED; urgency=low
 
+  [ Kartik Mistry]
   * debian/conf/sites-available/default:
     + Fixed typo in listen ipv6only=on (Closes: #707684)
+
+  [ Cyril Lavier ]
+  * debian/control:
+    + Replaced the build-dep libgd2-noxpm-dev to libgd2-dev as part of
+      the libgd2-{xpm,noxpm}-dev -> libgd2-dev transition.
 
  -- Kartik Mistry <kartik@debian.org>  Mon, 13 May 2013 08:36:07 +0530
 
