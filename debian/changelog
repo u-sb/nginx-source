@@ -8,6 +8,9 @@ nginx (1.4.1-2) UNRELEASED; urgency=low
   * debian/control:
     + Replaced the build-dep libgd2-noxpm-dev to libgd2-dev as part of
       the libgd2-{xpm,noxpm}-dev -> libgd2-dev transition.
+  * debian/nginx-naxsi-ui.preinst, debian/conf/naxsi-ui.conf.jessie:
+    + Added preinst script and renamed the new config file to avoid
+      prompting the user. (Closes: #707291)
 
  -- Kartik Mistry <kartik@debian.org>  Mon, 13 May 2013 08:36:07 +0530
 
