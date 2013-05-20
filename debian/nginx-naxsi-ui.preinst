@@ -5,7 +5,6 @@ case "$1" in
   upgrade)
     # If this is an upgrade, save the current config file, then overwrite it with the new one.
     mv /etc/nginx/naxsi-ui.conf /etc/nginx/naxsi-ui.conf.before_upgrade_to_jessie
-    echo "Display some message here"
     mv /etc/nginx/naxsi-ui.conf.jessie /etc/nginx/naxsi-ui.conf
     ;;
   *)
