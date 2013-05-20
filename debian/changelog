@@ -1,6 +1,7 @@
-nginx (1.4.1-2) UNRELEASED; urgency=low
+nginx (1.4.1-2) UNRELEASED; urgency=medium
 
   [ Kartik Mistry]
+  * Urgency set to medium due to Security and RC bugs.
   * debian/conf/sites-available/default:
     + Fixed typo in listen ipv6only=on (Closes: #707684)
 
