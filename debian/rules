@@ -242,7 +242,7 @@ install: mime-types
 	dh_installdirs
 	dh_install
 
-binary-indep: install
+binary-indep: build install
 	dh_testdir
 	dh_testroot
 	dh_installman -i
