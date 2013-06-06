@@ -17,7 +17,7 @@ nginx (1.4.1-2) unstable; urgency=medium
     + Made "debian/rules binary" enough to build binary package.
       (Closes: #708522)
 
- -- Kartik Mistry <kartik@debian.org>  Wed, 05 Jun 2013 19:48:52 +0530
+ -- Kartik Mistry <kartik@debian.org>  Thu, 06 Jun 2013 12:55:23 +0530
 
 nginx (1.4.1-1) unstable; urgency=low
 
