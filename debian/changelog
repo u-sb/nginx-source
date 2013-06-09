@@ -1,12 +1,15 @@
-nginx (1.4.1-3) UNRELEASED; urgency=low
+nginx (1.4.1-3) unstable; urgency=low
 
+  [ Kartik Mistry ]
   * debian/control:
-    +  Changed libgd2-dev build-dep to libgd2-dev|libgd2-noxpm-dev allow
-       backporting (Closes: #711505)
-  * debian/nginx-naxsi-ui.preinst
-    +  Added argument "install" to the preinst script. (Closes: #711590)
+    + Changed libgd2-dev build-dep to libgd2-dev|libgd2-noxpm-dev allow
+      backporting (Closes: #711505)
 
- -- Kartik Mistry <kartik@debian.org>  Fri, 07 Jun 2013 19:31:46 +0530
+  [ Cyril Lavier ]
+  * debian/nginx-naxsi-ui.preinst
+    + Added argument "install" to the preinst script. (Closes: #711590)
+
+ -- Kartik Mistry <kartik@debian.org>  Sun, 09 Jun 2013 13:07:52 +0530
 
 nginx (1.4.1-2) unstable; urgency=medium
 
