@@ -1,7 +1,9 @@
 nginx (1.4.1-4) UNRELEASED; urgency=low
 
-  * debian/nginx-naxsi-ui.postinst, debian/nginx-naxsi-ui.preinst
+  * debian/nginx-naxsi-ui.postinst, debian/nginx-naxsi-ui.preinst:
     + Added missing arguments to have clean postinst/preinst scripts.
+  * debian/conf/fastcgi_params:
+    + Defined fastcgi param HTTPS the same as upstream defaut (Closes: #712989).
 
  -- Cyril Lavier <cyril.lavier@davromaniak.eu>  Wed, 12 Jun 2013 10:31:42 +0200
 
