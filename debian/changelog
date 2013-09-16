@@ -13,6 +13,9 @@ nginx (1.4.2-1) UNRELEASED; urgency=low
 
   [ Christos Trochalakis ]
   * New upstream release. (Closes: #722640)
+  * debian/nginx-common.nginx.init:
+    + Better pidfile extraction from nginx.conf. We now accept multiple
+      spaces and tabs as a field seperator.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sat, 14 Sep 2013 10:39:24 +0300
 
