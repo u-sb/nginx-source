@@ -15,7 +15,7 @@ nginx (1.4.2-1) UNRELEASED; urgency=low
   * New upstream release. (Closes: #722640)
   * debian/nginx-common.nginx.init:
     + Better pidfile extraction from nginx.conf. We now accept multiple
-      spaces and tabs as a field seperator.
+      spaces and tabs as a field separator.
   * debian/modules/nginx-auth-pam:
     + Fixed upstream bug. (Closes: #721702)
   * debian/watch:
