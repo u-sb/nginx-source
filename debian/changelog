@@ -20,6 +20,9 @@ nginx (1.4.2-1) UNRELEASED; urgency=low
     + Fixed upstream bug. (Closes: #721702)
   * debian/watch:
     + Only check for stable releases.
+  * debian/conf/sites-available/default:
+    + Correctly fallback to 404 when the requested file is missing.
+      (Closes: #724232)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sat, 14 Sep 2013 10:39:24 +0300
 
