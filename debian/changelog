@@ -23,6 +23,9 @@ nginx (1.4.2-1) UNRELEASED; urgency=low
   * debian/conf/sites-available/default:
     + Correctly fallback to 404 when the requested file is missing.
       (Closes: #724232)
+  * debian/logrotate:
+    + Gracefully handle empty pidfile in logrotate script.
+      (Closes: #696797)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sat, 14 Sep 2013 10:39:24 +0300
 
