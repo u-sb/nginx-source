@@ -10,6 +10,7 @@ Uploaders: Jose Parrella <bureado@debian.org>,
            Christos Trochalakis <yatiohi@ideopolis.gr>
 Build-Depends: autotools-dev,
                debhelper (>= 7),
+               dh-systemd (>= 1.5),
                dpkg-dev (>= 1.15.5),
                libexpat-dev,
                libgd2-dev | libgd2-noxpm-dev,
