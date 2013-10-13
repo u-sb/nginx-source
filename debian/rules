@@ -231,10 +231,8 @@ clean:
 	rm -f config.sub config.guess
 	dh_clean
 	rm -rf $(CURDIR)/debian/build-*
-mime-types:
-	
 
-install: mime-types
+install:
 	dh_testdir
 	dh_testroot
 	dh_prep
