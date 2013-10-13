@@ -228,7 +228,6 @@ build: build-indep build-arch
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
 	rm -f config.sub config.guess
 	dh_clean
 	rm -rf $(CURDIR)/debian/build-*
