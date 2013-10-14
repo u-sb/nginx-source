@@ -13,6 +13,8 @@ nginx (1.4.3-2) UNRELEASED; urgency=low
     + *-stamp files are deleted by dh_clean.
     + Remove unused mime-types target.
     + Remove not needed config.sub and config.guess targets.
+  * debian/nginx-common.dirs:
+    + Don't ship an empty /run dir.
 
  -- Kartik Mistry <kartik@debian.org>  Fri, 11 Oct 2013 20:46:27 +0530
 
