@@ -251,6 +251,7 @@ binary-arch: install build-dbg
 	dh_testroot
 	dh_installchangelogs -a -k CHANGES
 	dh_installdocs -a
+	dh_lintian -a
 	dh_link -aA
 	dh_compress -a
 	dh_perl -a
