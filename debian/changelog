@@ -1,4 +1,4 @@
-nginx (1.4.3-2) UNRELEASED; urgency=low
+nginx (1.4.3-2) unstable; urgency=low
 
   [ Kartik Mistry ]
   * Renamed debian/nginx-common.service to debian/nginx-common.nginx.service so
@@ -18,7 +18,7 @@ nginx (1.4.3-2) UNRELEASED; urgency=low
   * debian/nginx-{light,full,extras}.lintian-overrides:
     + Override false lintian spelling error warning.
 
- -- Kartik Mistry <kartik@debian.org>  Fri, 11 Oct 2013 20:46:27 +0530
+ -- Kartik Mistry <kartik@debian.org>  Wed, 16 Oct 2013 14:58:11 +0530
 
 nginx (1.4.3-1) unstable; urgency=low
 
