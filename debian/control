@@ -176,7 +176,7 @@ Description: nginx web/proxy server (extended version)
  Split Clients, SSI, Upstream, User ID, UWSGI.
  .
  OPTIONAL HTTP MODULES: Addition, Debug, Embedded Perl, FLV, GeoIP,
- Gzip Precompression, Image Filter, IPv6, MP4, Random Index, Real IP,
+ Gzip Precompression, Spdy, Image Filter, IPv6, MP4, Random Index, Real IP,
  Secure Link, SSL, Stub Status, Substitution, WebDAV, XSLT.
  .
  MAIL MODULES: Mail Core, IMAP, POP3, SMTP, SSL.

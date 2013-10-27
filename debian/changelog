@@ -1,5 +1,6 @@
 nginx (1.4.3-3) UNRELEASED; urgency=low
 
+  [ Christos Trochalakis ]
   * debian/nginx-*.postinst:
     + Wait for the new master to write its pid file before sending QUIT to the
       old master. This solves an issue with systemd and the upgrade mechanism.
@@ -8,7 +9,11 @@ nginx (1.4.3-3) UNRELEASED; urgency=low
       pid because the new master has not written it yet. As a result, it kills
       everything inside the cgroup, including the new master.
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 16 Oct 2013 22:13:31 +0300
+  [ Michael Lustfield ]
+  * debian/control:
+    + Added spdy to package description (Closes: #728038)
+
+ -- Michael Lustfield <michael@lustfield.net>  Sun, 27 Oct 2013 14:53:00 -0500
 
 nginx (1.4.3-2) unstable; urgency=low
 
