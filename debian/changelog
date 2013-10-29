@@ -12,6 +12,9 @@ nginx (1.4.3-3) UNRELEASED; urgency=low
   [ Michael Lustfield ]
   * debian/control:
     + Added spdy to package description (Closes: #728038)
+  * debian/nginx-common.nginx.init:
+    + Showing better start/stop messages. Thanks Pim van den Berg.
+      (Closes #728103)
 
  -- Michael Lustfield <michael@lustfield.net>  Sun, 27 Oct 2013 14:53:00 -0500
 
