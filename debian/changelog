@@ -8,6 +8,8 @@ nginx (1.4.3-3) UNRELEASED; urgency=low
       Systemd receives the SIGCHLD from the old master but it can't see the new
       pid because the new master has not written it yet. As a result, it kills
       everything inside the cgroup, including the new master.
+   * debian/modules/ngx-fancyindex:
+    + Upgrade Fancy Index module to v0.3.3 (Closes: #728721)
 
   [ Michael Lustfield ]
   * debian/control:
