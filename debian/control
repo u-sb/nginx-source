@@ -183,8 +183,7 @@ Description: nginx web/proxy server (extended version)
  .
  THIRD PARTY MODULES: Auth PAM, Chunkin, DAV Ext, Echo, Embedded Lua,
  Fancy Index, HttpHeadersMore, HTTP Substitution Filter, http push,
- Nginx Development Kit, Upload module, Upload Progress,
- Upstream Fair Queue.
+ Nginx Development Kit, Upload Progress, Upstream Fair Queue.
 
 Package: nginx-extras-dbg
 Architecture: any

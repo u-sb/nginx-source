@@ -10,6 +10,8 @@ nginx (1.4.3-3) UNRELEASED; urgency=low
       everything inside the cgroup, including the new master.
    * debian/modules/ngx-fancyindex:
     + Upgrade Fancy Index module to v0.3.3 (Closes: #728721)
+   * debian/control:
+    + Remove Upload module from nginx-extras description (Closes: #729003)
 
   [ Michael Lustfield ]
   * debian/control:
