@@ -1,4 +1,4 @@
-nginx (1.4.3-3) UNRELEASED; urgency=low
+nginx (1.4.4-1) UNRELEASED; urgency=low
 
   [ Christos Trochalakis ]
   * debian/nginx-*.postinst:
@@ -12,6 +12,7 @@ nginx (1.4.3-3) UNRELEASED; urgency=low
     + Upgrade Fancy Index module to v0.3.3 (Closes: #728721)
    * debian/control:
     + Remove Upload module from nginx-extras description (Closes: #729003)
+   * New upstream release. (Closes: #730012)
 
   [ Michael Lustfield ]
   * debian/control:
