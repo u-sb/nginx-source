@@ -1,27 +1,26 @@
-nginx (1.4.4-1) UNRELEASED; urgency=low
+nginx (1.4.4-1) unstable; urgency=low
 
   [ Christos Trochalakis ]
+  * New upstream release. (Closes: #730012)
   * debian/nginx-*.postinst:
     + Wait for the new master to write its pid file before sending QUIT to the
       old master. This solves an issue with systemd and the upgrade mechanism.
-
       Systemd receives the SIGCHLD from the old master but it can't see the new
       pid because the new master has not written it yet. As a result, it kills
       everything inside the cgroup, including the new master.
-   * debian/modules/ngx-fancyindex:
+  * debian/modules/ngx-fancyindex:
     + Upgrade Fancy Index module to v0.3.3 (Closes: #728721)
-   * debian/control:
+  * debian/control:
     + Remove Upload module from nginx-extras description (Closes: #729003)
-   * New upstream release. (Closes: #730012)
 
   [ Michael Lustfield ]
   * debian/control:
     + Added spdy to package description (Closes: #728038)
   * debian/nginx-common.nginx.init:
     + Showing better start/stop messages. Thanks Pim van den Berg.
-      (Closes #728103)
+      (Closes: #728103)
 
- -- Michael Lustfield <michael@lustfield.net>  Sun, 27 Oct 2013 14:53:00 -0500
+ -- Michael Lustfield <michael@lustfield.net>  Thu, 21 Nov 2013 19:25:50 +0530
 
 nginx (1.4.3-2) unstable; urgency=low
 
