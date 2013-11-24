@@ -1,7 +1,8 @@
-nginx (1.4.4-2) UNRELEASED; urgency=low
+nginx (1.4.4-3) UNRELEASED; urgency=low
 
   * debian/control:
-    + Added Provieds: httpd-cgi to packages. (Closes: #701508)
+    + Added Provides: httpd-cgi to packages. (Closes: #701508)
+    + Added other options to nginx depends. (Closes: #729860)
   * debian/nginx-common.nginx.init:
     + Added missing line from patch. (Closes: #728103)
   * debian/nginx-common.nginx.service:
@@ -9,7 +10,7 @@ nginx (1.4.4-2) UNRELEASED; urgency=low
   * debian/conf/sites-available/default:
     + Changed ssl_protocols and ssl_ciphers. (Closes: 730142)
 
- -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 14:20:49 -0600
+ -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 15:09:42 -0600
 
 nginx (1.4.4-1) unstable; urgency=low
 

@@ -31,7 +31,7 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/nginx.git;a=summar
 
 Package: nginx
 Architecture: all
-Depends: nginx-full | nginx-light, ${misc:Depends}
+Depends: nginx-full | nginx-light | nginx-extras | nginx-naxsi | nginx-naxsi-ui | nginx-custom, ${misc:Depends}
 Description: small, powerful, scalable web/proxy server
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
