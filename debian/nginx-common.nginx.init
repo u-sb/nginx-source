@@ -45,6 +45,7 @@ test_nginx_config() {
 
 		if [ $retvar -ne 0 ]
 		then
+			log_end_msg $retvar
 			exit $retvar
 		fi
 		set -e
