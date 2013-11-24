@@ -74,7 +74,7 @@ Description: small, powerful, scalable web/proxy server - common files
 Package: nginx-full
 Architecture: any
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Provides: httpd, nginx
+Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-light, nginx-naxsi
 Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (standard version)
@@ -118,7 +118,7 @@ Package: nginx-light
 Architecture: any
 Priority: extra
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Provides: httpd, nginx
+Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-full, nginx-naxsi
 Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (basic version)
@@ -158,7 +158,7 @@ Depends: nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
-Provides: httpd, nginx
+Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-full, nginx-light, nginx-naxsi
 Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (extended version)
@@ -204,7 +204,7 @@ Package: nginx-naxsi
 Architecture: any
 Priority: extra
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Provides: httpd, nginx
+Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-full, nginx-light
 Description: nginx web/proxy server (version with naxsi)
  Nginx ("engine X") is a high-performance web and reverse proxy server
@@ -246,7 +246,7 @@ Depends: daemon,
          nginx-naxsi (>= ${source:Version}),
          python-twisted-web,
          ${misc:Depends}
-Provides: httpd, naxsi, nginx
+Provides: httpd, httpd-cgi, naxsi, nginx
 Conflicts: nginx-extras, nginx-full, nginx-light
 Description: nginx web/proxy server - naxsi configuration front-end
  Nginx ("engine X") is a high-performance web and reverse proxy server
