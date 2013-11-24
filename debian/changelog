@@ -4,6 +4,8 @@ nginx (1.4.4-2) UNRELEASED; urgency=low
     + Added Provieds: httpd-cgi to packages. (Closes: #701508)
   * debian/nginx-common.nginx.init:
     + Added missing line from patch. (Closes: #728103)
+  * debian/nginx-common.nginx.service:
+    + Removed type=forking. (Closes: #728015)
 
  -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 14:20:49 -0600
 
