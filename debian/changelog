@@ -4,6 +4,12 @@ nginx (1.4.5-2) UNRELEASED; urgency=medium
   * debian/rules:
     + Avoid double declaration of hardening flags.
     + Expand buildflags so the build log is easier to follow.
+    + Switch to --with--cc-opt, --with-ld-opt configure flags.
+      Nginx is now compiled with --Werror, making all warnings
+      into errors.
+  * debian/patches/perl-use-dpkg-buildflags.patch:
+    + Rewrite patch to just just override LDDLFLAGS and not
+      CCFLAGS since this is handled by --with-cc-opt.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 18 Feb 2014 08:52:30 +0200
 

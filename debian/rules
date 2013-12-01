@@ -1,10 +1,12 @@
 #!/usr/bin/make -f
 
-CFLAGS:=$(shell dpkg-buildflags --get CFLAGS) $(shell dpkg-buildflags --get CPPFLAGS) -Wall
-LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
+debian_cflags:=$(shell dpkg-buildflags --get CFLAGS) $(shell dpkg-buildflags --get CPPFLAGS)
+debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS)
+
 # export necessary for (hardening) flags for perl
 # (src/http/modules/perl/Makefile.PL).
-export CFLAGS LDFLAGS
+DEBIAN_NGINX_PERL_LDFLAGS:= $(debian_ldflags)
+export DEBIAN_NGINX_PERL_LDFLAGS
 
 FLAVOURS:=full light extras naxsi
 
@@ -17,7 +19,7 @@ BASEDIR = $(CURDIR)
 
 DEB_BUILD_ARCH ?=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 ifeq ($(DEB_BUILD_ARCH),sparc)
-	CONFIGURE_OPTS = --with-cc-opt="-m32 -mcpu=ultrasparc"
+	debian_cflags += -m32 -mcpu=ultrasparc
 endif
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -40,7 +42,9 @@ config.env.%:
 	cp -Pa $(CURDIR)/man $(BUILDDIR_$*)/
 
 config.status.full: config.env.full
-	cd $(BUILDDIR_full) && CFLAGS="$(CFLAGS)" CORE_LINK="$(LDFLAGS)" ./configure  \
+	cd $(BUILDDIR_full) && ./configure  \
+	    --with-cc-opt="$(debian_cflags)" \
+	    --with-ld-opt="$(debian_ldflags)" \
 	    --prefix=/usr/share/nginx \
 	    --conf-path=/etc/nginx/nginx.conf \
 	    --error-log-path=/var/log/nginx/error.log \
@@ -77,7 +81,9 @@ config.status.full: config.env.full
 	touch $@
 
 config.status.light: config.env.light
-	cd $(BUILDDIR_light) && CFLAGS="$(CFLAGS)" CORE_LINK="$(LDFLAGS)" ./configure  \
+	cd $(BUILDDIR_light) && ./configure  \
+	    --with-cc-opt="$(debian_cflags)" \
+	    --with-ld-opt="$(debian_ldflags)" \
 	    --prefix=/usr/share/nginx \
 	    --conf-path=/etc/nginx/nginx.conf \
 	    --error-log-path=/var/log/nginx/error.log \
@@ -108,7 +114,9 @@ config.status.light: config.env.light
 	touch $@
 
 config.status.extras: config.env.extras
-	cd $(BUILDDIR_extras) && CFLAGS="$(CFLAGS)" CORE_LINK="$(LDFLAGS)" ./configure  \
+	cd $(BUILDDIR_extras) && ./configure  \
+	    --with-cc-opt="$(debian_cflags)" \
+	    --with-ld-opt="$(debian_ldflags)" \
 	    --prefix=/usr/share/nginx \
 	    --conf-path=/etc/nginx/nginx.conf \
 	    --error-log-path=/var/log/nginx/error.log \
@@ -157,7 +165,9 @@ config.status.extras: config.env.extras
 	touch $@
 
 config.status.naxsi: config.env.naxsi
-	cd $(BUILDDIR_naxsi) && CFLAGS="$(CFLAGS)" CORE_LINK="$(LDFLAGS)" ./configure  \
+	cd $(BUILDDIR_naxsi) && ./configure  \
+	    --with-cc-opt="$(debian_cflags)" \
+	    --with-ld-opt="$(debian_ldflags)" \
 	    --prefix=/usr/share/nginx \
 	    --conf-path=/etc/nginx/nginx.conf \
 	    --error-log-path=/var/log/nginx/error.log \
