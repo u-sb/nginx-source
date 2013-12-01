@@ -21,11 +21,6 @@ case "$1" in
     rm -f /etc/logrotate.d/nginx-light
     rm -f /etc/logrotate.d/nginx-extras
     rm -f /etc/logrotate.d/nginx-common
-    # http://bugs.debian.org/701112
-    if [ `stat -c '%U:%G.%a' /var/log/nginx` == 'root:root.755' ]; then
-      chown root:adm /var/log/nginx
-      chmod 750 /var/log/nginx
-    fi
     ;;
 
   abort-upgrade)
