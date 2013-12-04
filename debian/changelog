@@ -6,8 +6,6 @@ nginx (1.4.4-2) UNRELEASED; urgency=low
     + Added Spdy to nginx-full package description.
   * debian/nginx-common.nginx.init:
     + Added missing line from patch. (Closes: #728103)
-  * debian/nginx-common.nginx.service:
-    + Removed type=forking. (Closes: #728015)
   * debian/conf/sites-available/default:
     + Changed ssl_protocols and ssl_ciphers. (Closes: 730142)
   * debian/nginx-common.preinst:
