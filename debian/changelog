@@ -1,5 +1,6 @@
 nginx (1.4.4-2) UNRELEASED; urgency=low
 
+  [ Michael Lustfield ]
   * debian/control:
     + Added Provides: httpd-cgi to packages. (Closes: #701508)
     + Added other options to nginx depends. (Closes: #729860)
@@ -12,6 +13,10 @@ nginx (1.4.4-2) UNRELEASED; urgency=low
     + Modify permissions of /var/log/nginx. (Closes: #701112)
   * debian/rules:
     + Added spdy support to nginx-full. (Closes: #730432)
+
+  [ Christos Trochalakis ]
+  * debian/nginx-doc,docs, debian/nginx-common.NEWS:
+    + Ship NEWS with nginx-common instead of nginx-doc.
 
  -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 15:59:52 -0600
 
