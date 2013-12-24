@@ -17,6 +17,8 @@ nginx (1.4.4-2) UNRELEASED; urgency=low
   [ Christos Trochalakis ]
   * debian/nginx-doc,docs, debian/nginx-common.NEWS:
     + Ship NEWS with nginx-common instead of nginx-doc.
+  * debian/conf/proxy_params:
+    + Host header should be passed unmodified to the proxied server.
 
  -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 15:59:52 -0600
 
