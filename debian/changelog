@@ -28,8 +28,10 @@ nginx (1.4.4-2) unstable; urgency=low
   [ Kartik Mistry ]
   * debian/control:
     + Updated to Standards-Version 3.9.5
+  * debian/watch, debian/upstream-signing-key.pgp:
+    + Use upstream PGP signature to verify by watch file.
 
- -- Kartik Mistry <kartik@debian.org>  Thu, 26 Dec 2013 11:24:27 +0530
+ -- Kartik Mistry <kartik@debian.org>  Thu, 26 Dec 2013 16:58:20 +0530
 
 nginx (1.4.4-1) unstable; urgency=low
 
