@@ -246,8 +246,6 @@ Depends: daemon,
          nginx-naxsi (>= ${source:Version}),
          python-twisted-web,
          ${misc:Depends}
-Provides: httpd, httpd-cgi, naxsi, nginx
-Conflicts: nginx-extras, nginx-full, nginx-light
 Description: nginx web/proxy server - naxsi configuration front-end
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
