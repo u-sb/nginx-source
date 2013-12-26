@@ -1,4 +1,4 @@
-nginx-common (1.4.4-2) UNRELEASED; urgency=low
+nginx-common (1.4.4-2) unstable; urgency=low
 
   Per CVE-2013-0337 (bug #701112), we are changing /var/log/nginx permissions
   to root:adm 750. If you have manipulated these permissions in any way, you
@@ -11,7 +11,7 @@ nginx-common (1.4.4-2) UNRELEASED; urgency=low
     chmod 0755 /var/log/nginx
     dpkg-statoverride --add root adm 0755 /var/log/nginx
 
- -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 15:59:52 -0600
+ -- Michael Lustfield <michael@lustfield.net>  Sun, 24 Nov 2013 15:59:52 -0600
 
 nginx (1.4.1-2) unstable; urgency=medium
 

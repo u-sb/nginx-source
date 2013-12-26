@@ -1,4 +1,4 @@
-nginx (1.4.4-2) UNRELEASED; urgency=low
+nginx (1.4.4-2) unstable; urgency=low
 
   [ Michael Lustfield ]
   * debian/control:
@@ -25,7 +25,11 @@ nginx (1.4.4-2) UNRELEASED; urgency=low
   * debian/patches/guard-use-of-deprecated-openssl-definition.patch:
     + Fix FTBFS against the recent libssl-dev. (Closes: #733107)
 
- -- Michael Lustfield <michael@forge.lustfield.net>  Sun, 24 Nov 2013 15:59:52 -0600
+  [ Kartik Mistry ]
+  * debian/control:
+    + Updated to Standards-Version 3.9.5
+
+ -- Kartik Mistry <kartik@debian.org>  Thu, 26 Dec 2013 11:24:27 +0530
 
 nginx (1.4.4-1) unstable; urgency=low
 
