@@ -20,6 +20,8 @@ nginx (1.4.4-2) unstable; urgency=low
   * debian/conf/proxy_params:
     + Host header should be passed unmodified to the proxied server.
     + Pass X-Forwarded-Proto header to the proxied server.
+  * debian/control:
+    + Fix nginx-naxsi-ui Depends and Conflicts lines.
 
   [ Neutron Soutmun ]
   * debian/patches/guard-use-of-deprecated-openssl-definition.patch:
