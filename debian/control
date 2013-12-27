@@ -31,7 +31,15 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/nginx.git;a=summar
 
 Package: nginx
 Architecture: all
-Depends: nginx-full | nginx-light | nginx-extras | nginx-naxsi, ${misc:Depends}
+Depends: nginx-full   (>= ${source:Version}) |
+         nginx-light  (>= ${source:Version}) |
+         nginx-extras (>= ${source:Version}) |
+         nginx-naxsi  (>= ${source:Version}) ,
+         nginx-full   (<< ${source:Version}.1~) |
+         nginx-light  (<< ${source:Version}.1~) |
+         nginx-extras (<< ${source:Version}.1~) |
+         nginx-naxsi  (<< ${source:Version}.1~) ,
+         ${misc:Depends}
 Description: small, powerful, scalable web/proxy server
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -244,6 +252,7 @@ Priority: extra
 Depends: daemon,
          dbconfig-common,
          nginx-naxsi (>= ${source:Version}),
+         nginx-naxsi (<< ${source:Version}.1~),
          python-twisted-web,
          ${misc:Depends}
 Description: nginx web/proxy server - naxsi configuration front-end

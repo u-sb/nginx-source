@@ -5,6 +5,9 @@ nginx (1.4.4-5) UNRELEASED; urgency=medium
     + Update nginx-lua to v0.9.4
   * debian/nginx-naxsi-ui.preinst:
     + Fix exit status issue (Closes: #735152)
+  * debian/control:
+    + Fix arch:all to arch:any dependencies
+    + Make nginx depend on specific flavor version
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 15 Jan 2014 12:39:54 +0200
 
