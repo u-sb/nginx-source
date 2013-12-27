@@ -33,7 +33,7 @@ nginx (1.4.4-2) unstable; urgency=low
   * debian/watch, debian/upstream-signing-key.pgp:
     + Use upstream PGP signature to verify by watch file.
 
- -- Kartik Mistry <kartik@debian.org>  Thu, 26 Dec 2013 16:58:20 +0530
+ -- Kartik Mistry <kartik@debian.org>  Fri, 27 Dec 2013 21:16:01 +0530
 
 nginx (1.4.4-1) unstable; urgency=low
 
