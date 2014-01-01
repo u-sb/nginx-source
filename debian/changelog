@@ -1,4 +1,4 @@
-nginx (1.4.4-3) UNRELEASED; urgency=medium
+nginx (1.4.4-3) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * debian/nginx-naxsi-ui.postinst:
