@@ -22,8 +22,6 @@ fi
 
 test -x $DAEMON || exit 0
 
-set -e
-
 . /lib/lsb/init-functions
 
 PID=$(awk -F'[ \t;]+' '/[^#]pid/ {print $2}' /etc/nginx/nginx.conf)
@@ -39,7 +37,6 @@ if [ -n "$ULIMIT" ]; then
 fi
 
 test_nginx_config() {
-		set +e
 		$DAEMON -t $DAEMON_OPTS >/dev/null 2>&1
 		retvar=$?
 
@@ -48,7 +45,6 @@ test_nginx_config() {
 			log_end_msg $retvar
 			exit $retvar
 		fi
-		set -e
 }
 
 start() {
