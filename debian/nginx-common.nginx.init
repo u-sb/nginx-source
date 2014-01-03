@@ -82,6 +82,14 @@ do_reload() {
 	return 0
 }
 
+#
+# Rotate log files
+#
+do_rotate() {
+	start-stop-daemon --stop --signal USR1 --quiet --pidfile $PID --name $NAME
+	return 0
+}
+
 case "$1" in
 	start)
 		[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
@@ -149,8 +157,13 @@ case "$1" in
 	status)
 		status_of_proc -p $PID "$DAEMON" "$NAME" && exit 0 || exit $?
 		;;
+	rotate)
+		log_daemon_msg "Re-opening $DESC log files" "$NAME"
+		do_rotate
+		log_end_msg $?
+		;;
 	*)
-		echo "Usage: $NAME {start|stop|restart|reload|force-reload|status|configtest}" >&2
+		echo "Usage: $NAME {start|stop|restart|reload|force-reload|status|configtest|rotate}" >&2
 		exit 3
 		;;
 esac
