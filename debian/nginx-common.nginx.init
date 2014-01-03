@@ -55,13 +55,6 @@ do_start()
 
 test_nginx_config() {
 	$DAEMON -t $DAEMON_OPTS >/dev/null 2>&1
-	retvar=$?
-
-	if [ $retvar -ne 0 ]
-	then
-		log_end_msg $retvar
-		exit $retvar
-	fi
 }
 
 #
@@ -100,13 +93,29 @@ case "$1" in
 		;;
 	restart|force-reload)
 		log_daemon_msg "Restarting $DESC" "$NAME"
-		test_nginx_config
-		stop
-		sleep 1
-		start
-		log_end_msg $?
-		;;
 
+		# Check configuration before stopping nginx
+		if ! test_nginx_config; then
+			log_end_msg 1 # Configuration error
+			exit 0
+		fi
+
+		do_stop
+		case "$?" in
+			0|1)
+				do_start
+				case "$?" in
+					0) log_end_msg 0 ;;
+					1) log_end_msg 1 ;; # Old process is still running
+					*) log_end_msg 1 ;; # Failed to start
+				esac
+				;;
+			*)
+				# Failed to stop
+				log_end_msg 1
+				;;
+		esac
+		;;
 	reload)
 		log_daemon_msg "Reloading $DESC configuration" "$NAME"
 		test_nginx_config
