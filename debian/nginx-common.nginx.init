@@ -27,34 +27,34 @@ test -x $DAEMON || exit 0
 PID=$(awk -F'[ \t;]+' '/[^#]pid/ {print $2}' /etc/nginx/nginx.conf)
 if [ -z "$PID" ]
 then
-  PID=/run/nginx.pid
+	PID=/run/nginx.pid
 fi
 
 # Check if the ULIMIT is set in /etc/default/nginx
 if [ -n "$ULIMIT" ]; then
-  # Set the ulimits
-  ulimit $ULIMIT
+	# Set the ulimits
+	ulimit $ULIMIT
 fi
 
 test_nginx_config() {
-		$DAEMON -t $DAEMON_OPTS >/dev/null 2>&1
-		retvar=$?
+	$DAEMON -t $DAEMON_OPTS >/dev/null 2>&1
+	retvar=$?
 
-		if [ $retvar -ne 0 ]
-		then
-			log_end_msg $retvar
-			exit $retvar
-		fi
+	if [ $retvar -ne 0 ]
+	then
+		log_end_msg $retvar
+		exit $retvar
+	fi
 }
 
 start() {
-		start-stop-daemon --start --quiet --pidfile $PID \
-			--retry 5 --exec $DAEMON --oknodo -- $DAEMON_OPTS
+	start-stop-daemon --start --quiet --pidfile $PID \
+		--retry 5 --exec $DAEMON --oknodo -- $DAEMON_OPTS
 }
 
 stop() {
-		start-stop-daemon --stop --quiet --pidfile $PID \
-			--retry 5 --oknodo --exec $DAEMON
+	start-stop-daemon --stop --quiet --pidfile $PID \
+		--retry 5 --oknodo --exec $DAEMON
 }
 
 case "$1" in
