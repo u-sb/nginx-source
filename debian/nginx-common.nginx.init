@@ -16,7 +16,7 @@ NAME=nginx
 DESC=nginx
 
 # Include nginx defaults if available
-if [ -f /etc/default/nginx ]; then
+if [ -r /etc/default/nginx ]; then
 	. /etc/default/nginx
 fi
 
@@ -146,15 +146,13 @@ case "$1" in
 		test_nginx_config
 		log_end_msg $?
 		;;
-
 	status)
-		status_of_proc -p $PID "$DAEMON" nginx
+		status_of_proc -p $PID "$DAEMON" "$NAME" && exit 0 || exit $?
 		;;
-
 	*)
 		echo "Usage: $NAME {start|stop|restart|reload|force-reload|status|configtest}" >&2
-		exit 1
+		exit 3
 		;;
 esac
 
-exit 0
+:
