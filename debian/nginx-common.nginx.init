@@ -99,7 +99,7 @@ case "$1" in
 			2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 		esac
 		;;
-	restart|force-reload)
+	restart)
 		log_daemon_msg "Restarting $DESC" "$NAME"
 
 		# Check configuration before stopping nginx
@@ -124,7 +124,7 @@ case "$1" in
 				;;
 		esac
 		;;
-	reload)
+	reload|force-reload)
 		log_daemon_msg "Reloading $DESC configuration" "$NAME"
 
 		# Check configuration before reload nginx
