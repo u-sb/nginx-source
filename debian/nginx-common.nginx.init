@@ -74,6 +74,14 @@ do_stop()
 	return "$RETVAL"
 }
 
+#
+# Function that sends a SIGHUP to the daemon/service
+#
+do_reload() {
+	start-stop-daemon --stop --signal HUP --quiet --pidfile $PID --name $NAME
+	return 0
+}
+
 case "$1" in
 	start)
 		[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
@@ -118,12 +126,21 @@ case "$1" in
 		;;
 	reload)
 		log_daemon_msg "Reloading $DESC configuration" "$NAME"
-		test_nginx_config
-		start-stop-daemon --stop --signal HUP --quiet --pidfile $PID \
-			--oknodo --exec $DAEMON
+
+		# Check configuration before reload nginx
+		#
+		# This is not entirely correct since the on-disk nginx binary
+		# may differ from the in-memory one, but that's not common.
+		# We prefer to check the configuration and return an error
+		# to the administrator.
+		if ! test_nginx_config; then
+			log_end_msg 1 # Configuration error
+			exit 0
+		fi
+
+		do_reload
 		log_end_msg $?
 		;;
-
 	configtest|testconfig)
 		log_daemon_msg "Testing $DESC configuration"
 		test_nginx_config
