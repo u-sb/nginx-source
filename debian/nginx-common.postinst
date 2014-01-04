@@ -13,7 +13,7 @@ case "$1" in
     # Allow local admin to override:
     # e.g. dpkg-statoverride --add root adm 0755 /var/log/nginx
     if ! dpkg-statoverride --list "$logdir" >/dev/null; then
-      chown root:adm $logdir
+      chown www-data:adm $logdir
       chmod 0750 $logdir
     fi
     # If a symlink doesn't exist and can be created, then create it.
