@@ -1,4 +1,4 @@
-nginx (1.4.4-4) UNRELEASED; urgency=medium
+nginx (1.4.4-4) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * debian/nginx-common.postinst:
