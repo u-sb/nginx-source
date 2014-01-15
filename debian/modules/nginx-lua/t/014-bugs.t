@@ -1,7 +1,7 @@
 # vim:set ft= ts=4 sw=4 et fdm=marker:
 
 use lib 'lib';
-use Test::Nginx::Socket;
+use Test::Nginx::Socket::Lua;
 
 #worker_connections(1014);
 #master_on();
@@ -9,7 +9,7 @@ log_level('debug');
 
 repeat_each(3);
 
-plan tests => repeat_each() * (blocks() * 2 + 23);
+plan tests => repeat_each() * (blocks() * 2 + 25);
 
 our $HtmlDir = html_dir;
 #warn $html_dir;
@@ -18,6 +18,7 @@ our $HtmlDir = html_dir;
 #no_long_string();
 
 $ENV{TEST_NGINX_MEMCACHED_PORT} ||= 11211;
+$ENV{TEST_NGINX_RESOLVER} ||= '8.8.8.8';
 
 #no_shuffle();
 no_long_string();
@@ -698,8 +699,8 @@ Content-Type: application/json; charset=utf-8
 === TEST 32: hang on upstream_next (from kindy)
 --- http_config
     upstream xx {
-        server 127.0.0.1:$TEST_NGINX_SERVER_PORT;
-        server 127.0.0.1:$TEST_NGINX_SERVER_PORT;
+        server 127.0.0.1:$TEST_NGINX_SERVER_PORT max_fails=5;
+        server 127.0.0.1:$TEST_NGINX_SERVER_PORT max_fails=5;
     }
 
     server {
@@ -710,11 +711,8 @@ Content-Type: application/json; charset=utf-8
     }
 --- config
     location = /t {
+        proxy_next_upstream off;
         proxy_pass http://xx;
-    }
-
-    location = /bad {
-        return 444;
     }
 --- request
     GET /t
@@ -813,4 +811,35 @@ Hello, 502
 --- error_log
 not-exist.agentzh.org could not be resolved
 --- timeout: 3
+
+
+
+=== TEST 36: line comments in the last line of the inlined Lua code
+--- config
+    location /lua {
+        content_by_lua 'ngx.say("ok") -- blah';
+    }
+--- request
+GET /lua
+--- response_body
+ok
+--- no_error_log
+[error]
+
+
+
+=== TEST 37: resolving names with a trailing dot
+--- http_config eval
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+--- config
+    location /t {
+        resolver $TEST_NGINX_RESOLVER;
+        set $myhost 'agentzh.org.';
+        proxy_pass http://$myhost/misc/.vimrc;
+    }
+--- request
+GET /t
+--- response_body_like: An example for a vimrc file
+--- no_error_log
+[error]
 
