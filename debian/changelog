@@ -3,8 +3,10 @@ nginx (1.4.4-5) UNRELEASED; urgency=medium
   [ Christos Trochalakis ]
   * debian/modules/nginx-lua:
     + Update nginx-lua to v0.9.4
+  * debian/nginx-naxsi-ui.preinst:
+    + Fix exit status issue (Closes: #735152)
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 15 Jan 2014 11:55:06 +0200
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 15 Jan 2014 12:39:54 +0200
 
 nginx (1.4.4-4) unstable; urgency=medium
 
