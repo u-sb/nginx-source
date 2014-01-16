@@ -8,6 +8,8 @@ nginx (1.4.4-5) UNRELEASED; urgency=medium
   * debian/control:
     + Fix arch:all to arch:any dependencies
     + Make nginx depend on specific flavor version
+  * debian/nginx-*.postinst:
+    + Make nginx start by default (Closes: #735551)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 15 Jan 2014 12:39:54 +0200
 
