@@ -10,6 +10,9 @@ nginx (1.4.4-5) UNRELEASED; urgency=medium
     + Make nginx depend on specific flavor version
   * debian/nginx-*.postinst:
     + Make nginx start by default (Closes: #735551)
+  * debian/nginx-*.prerm:
+    + No need to check for invoke-rc.d,
+      correctly set the exit code on error
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 15 Jan 2014 12:39:54 +0200
 
