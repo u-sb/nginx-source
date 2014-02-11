@@ -1,6 +1,7 @@
-nginx (1.4.4-5) UNRELEASED; urgency=medium
+nginx (1.4.5-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
+  * New upstream release.
   * debian/modules/nginx-lua:
     + Update nginx-lua to v0.9.4
   * debian/nginx-naxsi-ui.preinst:
@@ -14,7 +15,7 @@ nginx (1.4.4-5) UNRELEASED; urgency=medium
     + No need to check for invoke-rc.d,
       correctly set the exit code on error
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 15 Jan 2014 12:39:54 +0200
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 11 Feb 2014 18:34:51 +0200
 
 nginx (1.4.4-4) unstable; urgency=medium
 
