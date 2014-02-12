@@ -14,6 +14,10 @@ nginx (1.4.5-1) UNRELEASED; urgency=medium
   * debian/nginx-*.prerm:
     + No need to check for invoke-rc.d,
       correctly set the exit code on error
+  * debian/nginx-common.nginx.init:
+    + Rewrite some parts of the initscript
+    + Introduce rotate command
+    + Introduce upgrade command
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 11 Feb 2014 18:34:51 +0200
 
