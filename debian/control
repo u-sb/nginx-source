@@ -82,7 +82,7 @@ Description: small, powerful, scalable web/proxy server - common files
 Package: nginx-full
 Architecture: any
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Breaks: nginx (<< 1.4.4-5)
+Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-light, nginx-naxsi
 Suggests: nginx-doc (= ${source:Version})
@@ -127,7 +127,7 @@ Package: nginx-light
 Architecture: any
 Priority: extra
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Breaks: nginx (<< 1.4.4-5)
+Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-full, nginx-naxsi
 Suggests: nginx-doc (= ${source:Version})
@@ -168,7 +168,7 @@ Depends: nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
-Breaks: nginx (<< 1.4.4-5)
+Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-full, nginx-light, nginx-naxsi
 Suggests: nginx-doc (= ${source:Version})
@@ -215,8 +215,8 @@ Package: nginx-naxsi
 Architecture: any
 Priority: extra
 Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
-Breaks: nginx (<< 1.4.4-5),
-        nginx-naxsi-ui (<< 1.4.4-5)
+Breaks: nginx (<< 1.4.5-1),
+        nginx-naxsi-ui (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-full, nginx-light
 Description: nginx web/proxy server (version with naxsi)
