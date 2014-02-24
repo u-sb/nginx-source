@@ -142,7 +142,7 @@ Description: nginx web/proxy server (basic version)
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Charset,
  Empty GIF, FastCGI, Gzip, Headers, Index, Log, Map, Proxy, Rewrite, Upstream.
  .
- OPTIONAL HTTP MODULES: Gzip Precompression, IPv6, SSL, Stub Status.
+ OPTIONAL HTTP MODULES: Gzip Precompression, IPv6, Real Ip, SSL, Stub Status.
  .
  THIRD PARTY MODULES: Echo.
 
