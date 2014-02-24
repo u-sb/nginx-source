@@ -9,6 +9,7 @@ nginx (1.4.5-2) UNRELEASED; urgency=medium
       into errors.
     + Split common configure options.
     + Enable realip module for nginx-light.
+    + Enable debug module for nginx-light and nginx-extras.
   * debian/patches/perl-use-dpkg-buildflags.patch:
     + Rewrite patch to just just override LDDLFLAGS and not
       CCFLAGS since this is handled by --with-cc-opt.
