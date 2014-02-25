@@ -13,6 +13,8 @@ nginx (1.4.5-2) UNRELEASED; urgency=medium
   * debian/patches/perl-use-dpkg-buildflags.patch:
     + Rewrite patch to just just override LDDLFLAGS and not
       CCFLAGS since this is handled by --with-cc-opt.
+  * debian/watch, debian/upstream/signing-key.asc:
+    + Fix upstream signature verification.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 18 Feb 2014 08:52:30 +0200
 
