@@ -1,2 +1,1 @@
 perl-use-dpkg-buildflags.patch
-guard-use-of-deprecated-openssl-definition.patch
