@@ -45,7 +45,8 @@ common_configure_flags := \
 			--with-ipv6 \
 			--with-http_ssl_module \
 			--with-http_stub_status_module \
-			--with-http_realip_module
+			--with-http_realip_module \
+			--with-http_auth_request_module
 
 light_configure_flags := \
 			$(common_configure_flags) \
