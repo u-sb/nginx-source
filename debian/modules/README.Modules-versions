@@ -34,11 +34,6 @@ README for Modules versions
   https://github.com/slact/nginx_http_push_module/archive/v0.711.tar.gz
   Version: 0.711
 
- #Removed as it no longer works with 1.3.x and above.
- #nginx-upload
- # Homepage: https://github.com/vkholodkov/nginx-upload-module
- # Version: 2.2.0 + Patch for: https://github.com/vkholodkov/nginx-upload-module/issues/45
-
  nginx-upload-progress
   Homepage: https://github.com/masterzen/nginx-upload-progress-module
   https://nodeload.github.com/masterzen/nginx-upload-progress-module/tarball/master
