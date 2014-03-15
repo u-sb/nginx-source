@@ -3,6 +3,8 @@ nginx (1.4.6-2) UNRELEASED; urgency=medium
   [ Christos Trochalakis ]
   * debian/modules/nginx-http-push:
     + Update to 0.711 (Closes: #732251)
+  * debian/modules/headers-more-nginx-module:
+    + Update to 0.25, containing several bugfixes.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 13 Mar 2014 12:58:40 +0200
 
