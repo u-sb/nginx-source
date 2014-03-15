@@ -11,6 +11,9 @@ nginx (1.4.6-2) UNRELEASED; urgency=medium
     + Update to 0.0.3, containing some uri encoding fixes.
   * debian/modules/ngx_http_substitutions_filter_module:
     + Update to 0.6.4, containing some enhancements.
+  * debian/modules/nginx-auth-pam:
+    + Update to 1.3.
+      This version, contains our downstream patch (See: #721702)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 13 Mar 2014 12:58:40 +0200
 
