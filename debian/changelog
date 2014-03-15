@@ -9,6 +9,8 @@ nginx (1.4.6-2) UNRELEASED; urgency=medium
     + Update to 0.51, containing several bugfixes.
   * debian/modules/nginx-dav-ext-module:
     + Update to 0.0.3, containing some uri encoding fixes.
+  * debian/modules/ngx_http_substitutions_filter_module:
+    + Update to 0.6.4, containing some enhancements.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 13 Mar 2014 12:58:40 +0200
 
