@@ -3,7 +3,7 @@ nginx (1.4.7-2) unstable; urgency=medium
   [ Christos Trochalakis ]
   * debian/rules:
     + Convert to dh $@
-      As a side effect, fixes rake dependency issues (Closes: #744050)
+      As a side effect, fixes make dependency issues (Closes: #744050)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 17 Apr 2014 14:30:27 +0300
 
