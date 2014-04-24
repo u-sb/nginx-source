@@ -9,8 +9,13 @@ Workflow for Unstable
 
 We use the standard git-buildpackage workflow.
 
-Workflow for Experimental
-=========================
+Workflow for Experimental (not-active)
+======================================
+
+Now that nginx 1.6.0 is released there is no plan to package mainline 1.7
+releases to experimental. The following guide is been kept as a reference.
+
+--------
 
 Nginx mainline releases (1.5.x series) are been packaged for experimental,
 as they lack security support.
