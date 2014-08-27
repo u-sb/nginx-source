@@ -14,7 +14,6 @@
 #include <ngx_http.h>
 #include <ngx_md5.h>
 
-#include <assert.h>
 #include <setjmp.h>
 #include <stdint.h>
 
@@ -26,11 +25,24 @@
 #include <ndk.h>
 #endif
 
+
+#if LUA_VERSION_NUM != 501
+#   error unsupported Lua language version
+#endif
+
+
 #ifndef MD5_DIGEST_LENGTH
 #define MD5_DIGEST_LENGTH 16
 #endif
 
-#define ngx_http_lua_assert(a)  assert(a)
+
+#ifdef NGX_LUA_USE_ASSERT
+#   include <assert.h>
+#   define ngx_http_lua_assert(a)  assert(a)
+#else
+#   define ngx_http_lua_assert(a)
+#endif
+
 
 /* Nginx HTTP Lua Inline tag prefix */
 
@@ -72,17 +84,19 @@ typedef struct {
 #endif
 
 
-#define NGX_HTTP_LUA_CONTEXT_SET            0x01
-#define NGX_HTTP_LUA_CONTEXT_REWRITE        0x02
-#define NGX_HTTP_LUA_CONTEXT_ACCESS         0x04
-#define NGX_HTTP_LUA_CONTEXT_CONTENT        0x08
-#define NGX_HTTP_LUA_CONTEXT_LOG            0x10
-#define NGX_HTTP_LUA_CONTEXT_HEADER_FILTER  0x20
-#define NGX_HTTP_LUA_CONTEXT_BODY_FILTER    0x40
-#define NGX_HTTP_LUA_CONTEXT_TIMER          0x80
+/* must be within 16 bit */
+#define NGX_HTTP_LUA_CONTEXT_SET            0x001
+#define NGX_HTTP_LUA_CONTEXT_REWRITE        0x002
+#define NGX_HTTP_LUA_CONTEXT_ACCESS         0x004
+#define NGX_HTTP_LUA_CONTEXT_CONTENT        0x008
+#define NGX_HTTP_LUA_CONTEXT_LOG            0x010
+#define NGX_HTTP_LUA_CONTEXT_HEADER_FILTER  0x020
+#define NGX_HTTP_LUA_CONTEXT_BODY_FILTER    0x040
+#define NGX_HTTP_LUA_CONTEXT_TIMER          0x080
+#define NGX_HTTP_LUA_CONTEXT_INIT_WORKER    0x100
 
 
-#ifndef NGX_HTTP_LUA_NO_FFI_API
+#ifndef NGX_LUA_NO_FFI_API
 #define NGX_HTTP_LUA_FFI_NO_REQ_CTX         -100
 #define NGX_HTTP_LUA_FFI_BAD_CONTEXT        -101
 #endif
@@ -133,6 +147,10 @@ struct ngx_http_lua_main_conf_s {
 
     ngx_http_lua_conf_handler_pt    init_handler;
     ngx_str_t                       init_src;
+
+    ngx_http_lua_conf_handler_pt    init_worker_handler;
+    ngx_str_t                       init_worker_src;
+
     ngx_uint_t                      shm_zones_inited;
 
     unsigned             requires_header_filter:1;
@@ -146,6 +164,15 @@ struct ngx_http_lua_main_conf_s {
 
 
 typedef struct {
+#if (NGX_HTTP_SSL)
+    ngx_ssl_t              *ssl;  /* shared by SSL cosockets */
+    ngx_uint_t              ssl_protocols;
+    ngx_str_t               ssl_ciphers;
+    ngx_uint_t              ssl_verify_depth;
+    ngx_str_t               ssl_trusted_certificate;
+    ngx_str_t               ssl_crl;
+#endif
+
     ngx_flag_t              force_read_body; /* whether force request body to
                                                 be read */
 
@@ -272,6 +299,11 @@ struct ngx_http_lua_co_ctx_s {
 
     ngx_event_t              sleep;  /* used for ngx.sleep */
 
+#ifdef NGX_LUA_USE_ASSERT
+    int                      co_top; /* stack top after yielding/creation,
+                                        only for sanity checks */
+#endif
+
     int                      co_ref; /*  reference to anchor the thread
                                          coroutines (entry coroutine and user
                                          threads) in the Lua registry,
@@ -329,7 +361,7 @@ typedef struct ngx_http_lua_ctx_s {
     unsigned                 flushing_coros; /* number of coroutines waiting on
                                                 ngx.flush(true) */
 
-    unsigned                 uthreads; /* number of active user threads */
+    int                      uthreads; /* number of active user threads */
 
     ngx_chain_t             *out;  /* buffered output chain for HTTP 1.0 */
     ngx_chain_t             *free_bufs;

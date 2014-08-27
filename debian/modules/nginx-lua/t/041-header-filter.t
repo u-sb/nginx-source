@@ -455,7 +455,7 @@ GET /lua
 GET /lua
 --- ignore_response
 --- error_log
-failed to run header_filter_by_lua*: [string "header_filter_by_lua"]:2: Something bad
+failed to run header_filter_by_lua*: header_filter_by_lua:2: Something bad
 --- no_error_log
 [alert]
 
@@ -765,5 +765,5 @@ ngx.print("request_uri: ", v, "\n")
 GET /lua?a=1&b=2
 --- ignore_response
 --- error_log eval
-qr/failed to load external Lua file: cannot open .*? No such file or directory/
+qr/failed to load external Lua file ".*?test2\.lua": cannot open .*? No such file or directory/
 

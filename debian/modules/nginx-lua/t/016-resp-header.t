@@ -9,7 +9,7 @@ use Test::Nginx::Socket::Lua;
 
 repeat_each(2);
 
-plan tests => repeat_each() * (blocks() * 3 + 10);
+plan tests => repeat_each() * (blocks() * 3 + 24);
 
 #no_diff();
 no_long_string();
@@ -668,6 +668,8 @@ Cache-Control: no-cache, blah, foo
 --- response_body_like chop
 ^Cache-Control: no-cache[;,] blah[;,] foo
 Cache-Control: no-cache[;,] blah[;,] foo$
+--- no_error_log
+[error]
 
 
 
@@ -901,6 +903,7 @@ GET /read
 ok
 --- no_error_log
 [error]
+--- timeout: 10
 
 
 
@@ -1137,4 +1140,209 @@ foo: 32
 foo: 32
 --- no_error_log
 [error]
+
+
+
+=== TEST 57: random access resp headers
+--- config
+    location /resp-header {
+        content_by_lua '
+            ngx.header["Foo"] = "bar"
+            ngx.header["Bar"] = "baz"
+            ngx.say("Foo: ", ngx.resp.get_headers()["Foo"] or "nil")
+            ngx.say("foo: ", ngx.resp.get_headers()["foo"] or "nil")
+            ngx.say("Bar: ", ngx.resp.get_headers()["Bar"] or "nil")
+            ngx.say("bar: ", ngx.resp.get_headers()["bar"] or "nil")
+        ';
+    }
+--- request
+GET /resp-header
+--- response_headers
+Foo: bar
+Bar: baz
+--- response_body
+Foo: bar
+foo: bar
+Bar: baz
+bar: baz
+
+
+
+=== TEST 58: iterating through raw resp headers
+--- config
+    location /resp-header {
+        content_by_lua '
+            ngx.header["Foo"] = "bar"
+            ngx.header["Bar"] = "baz"
+            local h = {}
+            for k, v in pairs(ngx.resp.get_headers(nil, true)) do
+                h[k] = v
+            end
+            ngx.say("Foo: ", h["Foo"] or "nil")
+            ngx.say("foo: ", h["foo"] or "nil")
+            ngx.say("Bar: ", h["Bar"] or "nil")
+            ngx.say("bar: ", h["bar"] or "nil")
+        ';
+    }
+--- request
+GET /resp-header
+--- response_headers
+Foo: bar
+Bar: baz
+--- response_body
+Foo: bar
+foo: nil
+Bar: baz
+bar: nil
+
+
+
+=== TEST 59: removed response headers
+--- config
+    location /resp-header {
+        content_by_lua '
+            ngx.header["Foo"] = "bar"
+            ngx.header["Foo"] = nil
+            ngx.header["Bar"] = "baz"
+            ngx.say("Foo: ", ngx.resp.get_headers()["Foo"] or "nil")
+            ngx.say("foo: ", ngx.resp.get_headers()["foo"] or "nil")
+            ngx.say("Bar: ", ngx.resp.get_headers()["Bar"] or "nil")
+            ngx.say("bar: ", ngx.resp.get_headers()["bar"] or "nil")
+        ';
+    }
+--- request
+GET /resp-header
+--- response_headers
+!Foo
+Bar: baz
+--- response_body
+Foo: nil
+foo: nil
+Bar: baz
+bar: baz
+
+
+
+=== TEST 60: built-in Content-Type header
+--- main_config
+--- config
+    location = /t {
+        content_by_lua '
+            ngx.say("hi")
+        ';
+
+        header_filter_by_lua '
+            local hs = ngx.resp.get_headers()
+            print("my Content-Type: ", hs["Content-Type"])
+        ';
+    }
+--- request
+    GET /t
+--- response_body
+hi
+--- no_error_log
+[error]
+[alert]
+--- error_log
+my Content-Type: text/plain
+
+
+
+=== TEST 61: built-in Content-Length header
+--- main_config
+--- config
+    location = /t {
+        content_by_lua '
+            ngx.say("hi")
+        ';
+
+        header_filter_by_lua '
+            local hs = ngx.resp.get_headers()
+            print("my Content-Length: ", hs["Content-Length"])
+        ';
+    }
+--- request
+    GET /t HTTP/1.0
+--- response_body
+hi
+--- no_error_log
+[error]
+[alert]
+--- error_log
+my Content-Length: 3
+
+
+
+=== TEST 62: built-in Connection header
+--- main_config
+--- config
+    location = /t {
+        content_by_lua '
+            ngx.say("hi")
+        ';
+
+        header_filter_by_lua '
+            local hs = ngx.resp.get_headers()
+            print("my Connection: ", hs["Connection"])
+        ';
+    }
+--- request
+    GET /t HTTP/1.0
+--- response_body
+hi
+--- no_error_log
+[error]
+[alert]
+--- error_log
+my Connection: close
+
+
+
+=== TEST 63: built-in Transfer-Encoding header (chunked)
+--- main_config
+--- config
+    location = /t {
+        content_by_lua '
+            ngx.say("hi")
+        ';
+
+        body_filter_by_lua '
+            local hs = ngx.resp.get_headers()
+            print("my Transfer-Encoding: ", hs["Transfer-Encoding"])
+        ';
+    }
+--- request
+    GET /t
+--- response_body
+hi
+--- no_error_log
+[error]
+[alert]
+--- error_log
+my Transfer-Encoding: chunked
+
+
+
+=== TEST 64: built-in Transfer-Encoding header (none)
+--- main_config
+--- config
+    location = /t {
+        content_by_lua '
+            ngx.say("hi")
+        ';
+
+        body_filter_by_lua '
+            local hs = ngx.resp.get_headers()
+            print("my Transfer-Encoding: ", hs["Transfer-Encoding"])
+        ';
+    }
+--- request
+    GET /t HTTP/1.0
+--- response_body
+hi
+--- no_error_log
+[error]
+[alert]
+--- error_log
+my Transfer-Encoding: nil
 

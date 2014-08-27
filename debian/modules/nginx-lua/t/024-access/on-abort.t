@@ -232,7 +232,6 @@ on abort called
 
             ngx.location.capture("/sleep")
         ';
-        content_by_lua return;
     }
 
     location = /sleep {
@@ -308,7 +307,7 @@ lua req cleanup
 --- error_log
 client prematurely closed connection
 on abort called
-lua user thread aborted: runtime error: [string "access_by_lua"]:4: attempt to abort with pending subrequests
+lua user thread aborted: runtime error: access_by_lua:4: attempt to abort with pending subrequests
 main handler done
 
 
@@ -355,14 +354,15 @@ GET /t
 
 --- stap2 eval: $::StapScript
 --- stap eval: $::GCScript
---- stap_out
-create 2 in 1
+--- stap_out_like chop
+^create 2 in 1
 lua check broken conn
-terminate 2: ok
+(?:lua check broken conn
+)?terminate 2: ok
 lua req cleanup
 delete thread 2
 delete thread 1
-
+$
 --- timeout: 0.2
 --- abort
 --- wait: 0.2
@@ -394,7 +394,6 @@ callback done: +OK
             ngx.sleep(0.7)
             ngx.log(ngx.NOTICE, "main handler done")
         ';
-        content_by_lua return;
     }
 --- request
 GET /t
@@ -404,8 +403,6 @@ GET /t
 --- stap_out
 terminate 1: ok
 delete thread 1
-terminate 2: ok
-delete thread 2
 lua req cleanup
 
 --- timeout: 0.2
@@ -434,7 +431,6 @@ main handler done
 
             ngx.say("done")
         ';
-        content_by_lua return;
     }
 --- request
 GET /t
@@ -445,10 +441,8 @@ GET /t
 create 2 in 1
 terminate 1: ok
 delete thread 1
-delete thread 2
-terminate 3: ok
-delete thread 3
 lua req cleanup
+delete thread 2
 
 --- response_body
 done
@@ -581,7 +575,6 @@ on abort called
                 ngx.say("done")
             end)
         ';
-        content_by_lua return;
     }
 --- request
 GET /t
@@ -596,10 +589,8 @@ terminate 1: ok
 delete thread 1
 terminate 3: ok
 delete thread 3
-delete thread 2
-terminate 4: ok
-delete thread 4
 lua req cleanup
+delete thread 2
 
 --- response_body
 done
@@ -639,7 +630,6 @@ main handler done
                 ngx.say("done")
             end)
         ';
-        content_by_lua return;
     }
 --- request
 GET /t
@@ -650,10 +640,8 @@ GET /t
 create 2 in 1
 terminate 1: ok
 delete thread 1
-delete thread 2
-terminate 3: ok
-delete thread 3
 lua req cleanup
+delete thread 2
 
 --- response_body
 2: cannot set on_abort: duplicate call

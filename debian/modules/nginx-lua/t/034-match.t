@@ -1122,6 +1122,29 @@ failed to match
 --- response_body
 1: m size: 2
 1: res size: 2
-2: m size: 1
-2: res size: 1
+2: m size: 2
+2: res size: 2
+
+
+
+=== TEST 48: init_by_lua
+--- http_config
+    init_by_lua '
+        m = ngx.re.match("hello, 1234", "(\\\\d+)")
+    ';
+--- config
+    location /re {
+        content_by_lua '
+            if m then
+                ngx.say(m[0])
+            else
+                ngx.say("not matched!")
+            end
+        ';
+    }
+--- request
+    GET /re
+--- response_body
+1234
+--- SKIP
 

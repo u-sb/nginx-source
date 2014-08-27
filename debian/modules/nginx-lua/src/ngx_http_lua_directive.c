@@ -22,6 +22,7 @@
 #include "ngx_http_lua_headerfilterby.h"
 #include "ngx_http_lua_bodyfilterby.h"
 #include "ngx_http_lua_initby.h"
+#include "ngx_http_lua_initworkerby.h"
 #include "ngx_http_lua_shdict.h"
 
 
@@ -295,9 +296,9 @@ ngx_http_lua_filter_set_by_lua_inline(ngx_http_request_t *r, ngx_str_t *val,
     L = ngx_http_lua_get_lua_vm(r, NULL);
 
     /*  load Lua inline script (w/ cache)        sp = 1 */
-    rc = ngx_http_lua_cache_loadbuffer(L, filter_data->script.data,
+    rc = ngx_http_lua_cache_loadbuffer(r, L, filter_data->script.data,
                                        filter_data->script.len,
-                                       filter_data->key, "set_by_lua");
+                                       filter_data->key, "=set_by_lua");
     if (rc != NGX_OK) {
         return NGX_ERROR;
     }
@@ -348,7 +349,7 @@ ngx_http_lua_filter_set_by_lua_file(ngx_http_request_t *r, ngx_str_t *val,
     L = ngx_http_lua_get_lua_vm(r, NULL);
 
     /*  load Lua script file (w/ cache)        sp = 1 */
-    rc = ngx_http_lua_cache_loadfile(L, script_path, filter_data->key);
+    rc = ngx_http_lua_cache_loadfile(r, L, script_path, filter_data->key);
     if (rc != NGX_OK) {
         return NGX_ERROR;
     }
@@ -906,6 +907,47 @@ ngx_http_lua_init_by_lua(ngx_conf_t *cf, ngx_command_t *cmd,
 
     } else {
         lmcf->init_src = value[1];
+    }
+
+    return NGX_CONF_OK;
+}
+
+
+char *
+ngx_http_lua_init_worker_by_lua(ngx_conf_t *cf, ngx_command_t *cmd,
+    void *conf)
+{
+    u_char                      *name;
+    ngx_str_t                   *value;
+    ngx_http_lua_main_conf_t    *lmcf = conf;
+
+    dd("enter");
+
+    /*  must specifiy a content handler */
+    if (cmd->post == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    if (lmcf->init_worker_handler) {
+        return "is duplicate";
+    }
+
+    value = cf->args->elts;
+
+    lmcf->init_worker_handler = (ngx_http_lua_conf_handler_pt) cmd->post;
+
+    if (cmd->post == ngx_http_lua_init_worker_by_file) {
+        name = ngx_http_lua_rebase_path(cf->pool, value[1].data,
+                                        value[1].len);
+        if (name == NULL) {
+            return NGX_CONF_ERROR;
+        }
+
+        lmcf->init_worker_src.data = name;
+        lmcf->init_worker_src.len = ngx_strlen(name);
+
+    } else {
+        lmcf->init_worker_src = value[1];
     }
 
     return NGX_CONF_OK;

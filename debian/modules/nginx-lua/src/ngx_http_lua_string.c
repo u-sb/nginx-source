@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) Xiaozhe Wang (chaoslawful)
  * Copyright (C) Yichun Zhang (agentzh)
@@ -578,7 +577,7 @@ ngx_http_lua_ngx_hmac_sha1(lua_State *L)
     const EVP_MD            *evp_md;
 
     if (lua_gettop(L) != 2) {
-        return luaL_error(L, "expecting one argument, but got %d",
+        return luaL_error(L, "expecting 2 arguments, but got %d",
                           lua_gettop(L));
     }
 
@@ -596,7 +595,7 @@ ngx_http_lua_ngx_hmac_sha1(lua_State *L)
 #endif
 
 
-#ifndef NGX_HTTP_LUA_NO_FFI_API
+#ifndef NGX_LUA_NO_FFI_API
 void
 ngx_http_lua_ffi_md5_bin(const u_char *src, size_t len, u_char *dst)
 {
