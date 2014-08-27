@@ -25,7 +25,8 @@ test -x $DAEMON || exit 0
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
-PID=$(awk -F'[ \t;]+' '/[^#]pid/ {print $2}' /etc/nginx/nginx.conf)
+# Try to extract nginx pidfile
+PID=$(cat /etc/nginx/nginx.conf | grep -Ev '^\s*#' | awk 'BEGIN { RS="[;{}]" } { if ($1 == "pid") print $2 }' | head -n1)
 if [ -z "$PID" ]
 then
 	PID=/run/nginx.pid
