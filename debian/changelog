@@ -7,6 +7,12 @@ nginx (1.6.1-2) UNRELEASED; urgency=medium
     + Update nginx-lua to v0.9.11
   * debian/nginx-common.nginx.init:
     + Better pidfile extraction from nginx.conf (Closes: #747329)
+  * debian/conf/mime.types:
+    + Upgrade to the latest upstream mime types.
+      As a consequence, nginx now uses "application/javascript" for
+      javascript files.
+  * debian/conf/nginx.conf:
+    + Add application/javascript to the gzip_types list. (Closes: #737176)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 27 Aug 2014 14:50:40 +0300
 
