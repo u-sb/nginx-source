@@ -1,3 +1,11 @@
+nginx (1.6.1-2) UNRELEASED; urgency=medium
+
+  [ Christos Trochalakis ]
+  * debian/control:
+    + Build nginx-extras against luajit (Closes: #755875)
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 27 Aug 2014 14:50:40 +0300
+
 nginx (1.6.1-1) unstable; urgency=medium
 
   [ Christos Trochalakis ]
