@@ -113,13 +113,13 @@ extras_configure_flags := \
 			--add-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
 naxsi_configure_flags := \
+			--add-module=$(MODULESDIR)/naxsi/naxsi_src \
 			$(common_configure_flags) \
 			--without-mail_pop3_module \
 			--without-mail_smtp_module \
 			--without-mail_imap_module \
 			--without-http_uwsgi_module \
 			--without-http_scgi_module \
-			--add-module=$(MODULESDIR)/naxsi/naxsi_src \
 			--add-module=$(MODULESDIR)/nginx-cache-purge \
 			--add-module=$(MODULESDIR)/nginx-upstream-fair
 
