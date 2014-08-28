@@ -1,3 +1,40 @@
+nginx-common (1.6.1-2) unstable; urgency=medium
+
+  As of nginx-1.6.1-2 we have synced all configuration files with upstream and
+  we plan to keep them in sync from now on.
+
+  Unfortunately that might break existing configuration for some users. Please
+  check the matrix below for more information:
+
+  File            Changes
+  -----------------------
+  koi-win         whitespace
+  koi-utf         whitespace
+  mime-types      whitespace, changed js/rss mime type,
+                  minor other changes & additions
+  scgi_params     whitespace, added HTTPS
+  uwsgi_params    whitespace, added HTTPS, removed UWSGI_SCHEME
+  fastcgi_params  whitespace, removed SCRIPT_FILENAME
+  fastcgi.conf    new upstream configuration file
+
+  Fastcgi configuration issues
+  ============================
+
+  nginx shipped a modified `fastcgi_params`, which declared `SCRIPT_FILENAME`
+  fastcgi_param. This line has now been removed. From now on we are also
+  shipping fastcgi.conf from the upstream repository, which includes a sane
+  `SCRIPT_FILENAME` parameter value.
+
+  So, if you are using fastcgi_params, you can try switching to fastcgi.conf
+  or manually set the relevant params.
+
+  You might also want to read the documentation section before proceeding.
+
+  http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html
+  section: $fastcgi_script_name variable.
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 28 Aug 2014 14:23:42 +0300
+
 nginx-common (1.4.4-2) unstable; urgency=low
 
   Per CVE-2013-0337 (bug #701112), we are changing /var/log/nginx permissions

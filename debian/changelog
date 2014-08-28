@@ -23,6 +23,8 @@ nginx (1.6.1-2) UNRELEASED; urgency=medium
       This change might break fastcgi sites. (Closes: #718639)
   + debian/conf/fastcgi.conf:
     + Ship upstream file.
+  * debian/nginx-common.NEWS:
+    + Document syncing conf files with upstream.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 27 Aug 2014 14:50:40 +0300
 
