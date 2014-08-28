@@ -18,6 +18,11 @@ nginx (1.6.1-2) UNRELEASED; urgency=medium
       Fixes erratic naxsi behaviour. (Closes: #758642)
   * debian/conf/{koi-utf,koi-win,scgi_params,uwsgi_params}:
     + Sync with upstream config files.
+  * debian/conf/fastcgi_params:
+    + Sync with upstream and remove `SCRIPT_FILENAME` parameter.
+      This change might break fastcgi sites. (Closes: #718639)
+  + debian/conf/fastcgi.conf:
+    + Ship upstream file.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 27 Aug 2014 14:50:40 +0300
 
