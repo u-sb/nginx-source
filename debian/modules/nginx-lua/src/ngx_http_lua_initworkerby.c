@@ -76,19 +76,35 @@ ngx_http_lua_init_worker(ngx_cycle_t *cycle)
 
     ngx_memcpy(fake_cycle, cycle, sizeof(ngx_cycle_t));
 
+#if defined(nginx_version) && nginx_version >= 9007
+
     ngx_queue_init(&fake_cycle->reusable_connections_queue);
 
-    ngx_array_init(&fake_cycle->listening, cycle->pool,
-                   cycle->listening.nelts,
-                   sizeof(ngx_listening_t));
+#endif
 
-    ngx_array_init(&fake_cycle->paths, cycle->pool, cycle->paths.nelts,
-                   sizeof(ngx_path_t *));
+    if (ngx_array_init(&fake_cycle->listening, cycle->pool,
+                       cycle->listening.nelts || 1,
+                       sizeof(ngx_listening_t))
+        != NGX_OK)
+    {
+        goto failed;
+    }
+
+#if defined(nginx_version) && nginx_version >= 1003007
+
+    if (ngx_array_init(&fake_cycle->paths, cycle->pool, cycle->paths.nelts || 1,
+                       sizeof(ngx_path_t *))
+        != NGX_OK)
+    {
+        goto failed;
+    }
+
+#endif
 
     part = &cycle->open_files.part;
     ofile = part->elts;
 
-    if (ngx_list_init(&fake_cycle->open_files, cycle->pool, part->nelts,
+    if (ngx_list_init(&fake_cycle->open_files, cycle->pool, part->nelts || 1,
                       sizeof(ngx_open_file_t))
         != NGX_OK)
     {

@@ -4,7 +4,7 @@ nginx (1.6.1-2) UNRELEASED; urgency=medium
   * debian/control:
     + Build nginx-extras against luajit (Closes: #755875)
   * debian/modules/nginx-lua:
-    + Update nginx-lua to v0.9.11
+    + Update nginx-lua to v0.9.12
   * debian/nginx-common.nginx.init:
     + Better pidfile extraction from nginx.conf (Closes: #747329)
   * debian/conf/mime.types:
