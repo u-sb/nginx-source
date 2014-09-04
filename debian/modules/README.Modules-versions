@@ -32,7 +32,7 @@ README for Modules versions
  nginx-push
   Homepage: http://pushmodule.slact.net/#download
   https://github.com/slact/nginx_http_push_module/archive/v0.711.tar.gz
-  Version: 0.711
+  Version: 0.73
 
  nginx-upload-progress
   Homepage: https://github.com/masterzen/nginx-upload-progress-module
