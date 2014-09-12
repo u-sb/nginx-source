@@ -9,7 +9,7 @@ debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS)
 DEBIAN_NGINX_PERL_LDFLAGS:= $(debian_ldflags)
 export DEBIAN_NGINX_PERL_LDFLAGS
 
-FLAVOURS := full light extras naxsi
+FLAVOURS := full light extras
 
 MODULESDIR = $(CURDIR)/debian/modules
 BASEDIR = $(CURDIR)
@@ -112,17 +112,6 @@ extras_configure_flags := \
 			--add-module=$(MODULESDIR)/nginx-upstream-fair \
 			--add-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
-naxsi_configure_flags := \
-			--add-module=$(MODULESDIR)/naxsi/naxsi_src \
-			$(common_configure_flags) \
-			--without-mail_pop3_module \
-			--without-mail_smtp_module \
-			--without-mail_imap_module \
-			--without-http_uwsgi_module \
-			--without-http_scgi_module \
-			--add-module=$(MODULESDIR)/nginx-cache-purge \
-			--add-module=$(MODULESDIR)/nginx-upstream-fair
-
 %:
 	dh $@ --with systemd
 
@@ -134,7 +123,6 @@ override_dh_clean:          $(foreach flavour,$(FLAVOURS),clean.$(flavour))
 
 override_dh_installinit:
 	dh_installinit --no-restart-on-upgrade --no-start --name=nginx
-	dh_installinit --no-restart-on-upgrade --no-start --name=nginx-naxsi-ui
 
 override_dh_systemd_enable:
 	dh_systemd_enable --name=nginx

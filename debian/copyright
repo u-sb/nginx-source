@@ -76,14 +76,6 @@ Copyright: 2012, Arutyunyan Roman <arut@qip.ru>
 License:
  Same as upstream license.
 
-Files: debian/modules/naxsi
-Copyright: 2012, Thibault Koechlin
-License: GPL-2+ with OpenSSL exception
-
-Files: debian/modules/naxsi/contrib/fp-reporter/fp-reporter.php
-Copyright: 2011, Thibault 'bui' Koechlin, Didier Conchaudron
-License: GPL-2+ with OpenSSL exception
-
 License: GPL-2+ with OpenSSL exception
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
