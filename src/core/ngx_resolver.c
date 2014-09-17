@@ -417,7 +417,7 @@ ngx_resolve_name_done(ngx_resolver_ctx_t *ctx)
 
     /* lock name mutex */
 
-    if (ctx->state == NGX_AGAIN || ctx->state == NGX_RESOLVE_TIMEDOUT) {
+    if (ctx->state == NGX_AGAIN) {
 
         hash = ngx_crc32_short(ctx->name.data, ctx->name.len);
 
@@ -664,7 +664,7 @@ ngx_resolve_name_locked(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx)
         }
 
         ctx->event->handler = ngx_resolver_timeout_handler;
-        ctx->event->data = ctx;
+        ctx->event->data = rn;
         ctx->event->log = r->log;
         ctx->ident = -1;
 
@@ -857,7 +857,7 @@ ngx_resolve_addr(ngx_resolver_ctx_t *ctx)
     }
 
     ctx->event->handler = ngx_resolver_timeout_handler;
-    ctx->event->data = ctx;
+    ctx->event->data = rn;
     ctx->event->log = r->log;
     ctx->ident = -1;
 
@@ -949,7 +949,7 @@ ngx_resolve_addr_done(ngx_resolver_ctx_t *ctx)
 
     /* lock addr mutex */
 
-    if (ctx->state == NGX_AGAIN || ctx->state == NGX_RESOLVE_TIMEDOUT) {
+    if (ctx->state == NGX_AGAIN) {
 
         switch (ctx->addr.sockaddr->sa_family) {
 
@@ -1467,7 +1467,6 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
             goto failed;
         }
 
-        rn->naddrs6 = 0;
         qident = (rn->query6[0] << 8) + rn->query6[1];
 
         break;
@@ -1482,7 +1481,6 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
             goto failed;
         }
 
-        rn->naddrs = 0;
         qident = (rn->query[0] << 8) + rn->query[1];
     }
 
@@ -1507,6 +1505,8 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
 
         case NGX_RESOLVE_AAAA:
 
+            rn->naddrs6 = 0;
+
             if (rn->naddrs == (u_short) -1) {
                 goto next;
             }
@@ -1518,6 +1518,8 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
             break;
 
         default: /* NGX_RESOLVE_A */
+
+            rn->naddrs = 0;
 
             if (rn->naddrs6 == (u_short) -1) {
                 goto next;
@@ -1539,6 +1541,8 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
 
         case NGX_RESOLVE_AAAA:
 
+            rn->naddrs6 = 0;
+
             if (rn->naddrs == (u_short) -1) {
                 rn->code = (u_char) code;
                 goto next;
@@ -1547,6 +1551,8 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
             break;
 
         default: /* NGX_RESOLVE_A */
+
+            rn->naddrs = 0;
 
             if (rn->naddrs6 == (u_short) -1) {
                 rn->code = (u_char) code;
@@ -1814,6 +1820,25 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
 #endif
 
             i += len;
+        }
+    }
+
+    switch (qtype) {
+
+#if (NGX_HAVE_INET6)
+    case NGX_RESOLVE_AAAA:
+
+        if (rn->naddrs6 == (u_short) -1) {
+            rn->naddrs6 = 0;
+        }
+
+        break;
+#endif
+
+    default: /* NGX_RESOLVE_A */
+
+        if (rn->naddrs == (u_short) -1) {
+            rn->naddrs = 0;
         }
     }
 
@@ -2766,13 +2791,21 @@ done:
 static void
 ngx_resolver_timeout_handler(ngx_event_t *ev)
 {
-    ngx_resolver_ctx_t  *ctx;
+    ngx_resolver_ctx_t   *ctx, *next;
+    ngx_resolver_node_t  *rn;
 
-    ctx = ev->data;
+    rn = ev->data;
+    ctx = rn->waiting;
+    rn->waiting = NULL;
 
-    ctx->state = NGX_RESOLVE_TIMEDOUT;
+    do {
+        ctx->state = NGX_RESOLVE_TIMEDOUT;
+        next = ctx->next;
 
-    ctx->handler(ctx);
+        ctx->handler(ctx);
+
+        ctx = next;
+    } while (ctx);
 }
 
 
