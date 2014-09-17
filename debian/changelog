@@ -1,3 +1,14 @@
+nginx (1.6.2-1) unstable; urgency=high
+
+  [ Christos Trochalakis ]
+  * New upstream release.
+    CVE-2014-3616: "it was possible to reuse SSL sessions in unrelated
+    contexts if a shared SSL session cache or the same TLS session ticket
+    key was used for multiple "server" blocks".
+    (Closes: #761940)
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Wed, 17 Sep 2014 11:19:01 +0300
+
 nginx (1.6.1-2) unstable; urgency=medium
 
   [ Christos Trochalakis ]
