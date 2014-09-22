@@ -29,6 +29,14 @@ case "$1" in
        [ -d /etc/nginx/sites-enabled ] && [ -d /etc/nginx/sites-available ]; then
       ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
     fi
+
+    # On fresh install, when not already present, create the default index page
+    if [ -z $2 ] &&
+       [ ! -e /var/www/html/index.html ] &&
+       [ ! -e /var/www/html/index.htm  ]; then
+      cp /usr/share/nginx/html/index.html /var/www/html/index.html
+    fi
+
     ;;
 
   abort-upgrade|abort-remove|abort-deconfigure)

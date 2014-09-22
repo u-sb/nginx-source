@@ -1,3 +1,12 @@
+nginx-common (1.6.2-3) UNRELEASED; urgency=medium
+
+  Starting with this release, we changed the default document root from
+  /var/www to /var/www/html, so that sensitive files from other virtual hosts
+  wich are typically put into some directory below /var/www are not exposed by
+  the default virtual host.
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 30 Sep 2014 17:34:58 +0300
+
 nginx-common (1.6.1-2) unstable; urgency=medium
 
   As of nginx-1.6.1-2 we have synced all configuration files with upstream and

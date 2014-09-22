@@ -6,3 +6,4 @@ etc/ufw/applications.d
 usr/share/nginx
 var/log/nginx
 var/lib/nginx
+var/www/html
