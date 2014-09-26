@@ -1,4 +1,4 @@
-nginx (1.6.2-2) UNRELEASED; urgency=medium
+nginx (1.6.2-2) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * Drop nginx-naxsi, nginx-naxsi-dbg, nginx-naxsi-ui packages.
@@ -6,7 +6,7 @@ nginx (1.6.2-2) UNRELEASED; urgency=medium
   * debian/conf/nginx.conf:
     + Remove relic passenger stanga.
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 12 Sep 2014 13:04:27 +0300
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 26 Sep 2014 11:06:47 +0300
 
 nginx (1.6.2-1) unstable; urgency=high
 
