@@ -4,6 +4,8 @@ nginx (1.6.2-3) UNRELEASED; urgency=medium
   * Change the default document root to /var/www/html according to debian
     policy 3.9.6.0. (Closes: #730382)
   * Provide a new, debian specific, default landing page.
+  * debian/nginx-common.nginx.service:
+    + Graceful stopping of nginx was not handled correctly with systemd.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 26 Sep 2014 16:57:17 +0300
 
