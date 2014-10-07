@@ -31,6 +31,8 @@ server {
 	# ssl_prefer_server_ciphers on;
 
 	root /var/www/html;
+
+	# Add index.php to the list if you are using PHP
 	index index.html index.htm index.nginx-debian.html;
 
 	server_name _;
@@ -44,15 +46,12 @@ server {
 	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
 	#
 	#location ~ \.php$ {
-	#	fastcgi_split_path_info ^(.+\.php)(/.+)$;
-	#	# NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+	#	include snippets/fastcgi-php.conf;
 	#
 	#	# With php5-cgi alone:
 	#	fastcgi_pass 127.0.0.1:9000;
 	#	# With php5-fpm:
 	#	fastcgi_pass unix:/var/run/php5-fpm.sock;
-	#	fastcgi_index index.php;
-	#	include fastcgi_params;
 	#}
 
 	# deny access to .htaccess files, if Apache's document root

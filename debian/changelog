@@ -11,6 +11,9 @@ nginx (1.6.2-3) UNRELEASED; urgency=medium
       STOP/5/TERM/5/KILL/5 schedule. Thanks Tyler Riddle for bringing this up
       and providing an initial patch. We are now in sync with the systemd
       service file. (Closes: #762708)
+  * debian/conf:
+    + Introduce a `snippets/fastcgi-php.conf` snippet with a basic
+      php configuration that can be included when needed. (Closes: #762491)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 26 Sep 2014 16:57:17 +0300
 
