@@ -30,11 +30,9 @@ case "$1" in
       ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
     fi
 
-    # On fresh install, when not already present, create the default index page
-    if [ -z $2 ] &&
-       [ ! -e /var/www/html/index.html ] &&
-       [ ! -e /var/www/html/index.htm  ]; then
-      cp /usr/share/nginx/html/index.html /var/www/html/index.html
+    # Create a default index page when not already present.
+    if [ ! -e /var/www/html/index.nginx-debian.html ]; then
+      cp /usr/share/nginx/html/index.html /var/www/html/index.nginx-debian.html
     fi
 
     ;;
