@@ -3,6 +3,8 @@ nginx (1.6.2-4) UNRELEASED; urgency=medium
   [ Christos Trochalakis ]
   * debian/modules/nginx-development-kit:
     + Upgrade v0.2.17-7-g24202b4 -> v0.2.19
+  * debian/modules/nginx-echo:
+    + Upgrade v0.51 -> v0.56
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 16 Oct 2014 15:47:04 +0300
 

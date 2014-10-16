@@ -21,7 +21,7 @@ __DATA__
 --- response_body eval
 "GET /echo HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 \r
 "
 --- no_error_log
@@ -40,11 +40,11 @@ Connection: Close\r
 --- response_body eval
 "GET /echo HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 \r
 GET /echo HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 \r
 "
 --- no_error_log
@@ -139,7 +139,7 @@ haha
 --- response_body eval
 "POST /echoback HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 Content-Length: 14\r
 \r
 body here
@@ -211,7 +211,7 @@ GET /t
 --- response_body eval
 qq{GET /t HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 \r
 }
 --- no_error_log
@@ -236,7 +236,7 @@ CORE::join "\n", map { "Header$_: value-$_" } 1..512
 --- response_body eval
 qq{GET /t HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 }
 .(CORE::join "\r\n", map { "Header$_: value-$_" } 1..512) . "\r\n\r\n"
 
@@ -418,7 +418,7 @@ hello
 --- response_body eval
 qq{POST /t HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 Content-Length: 5\r
 \r
 }
@@ -442,7 +442,7 @@ hello
 --- response_body eval
 qq{POST /main HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 Content-Length: 5\r
 \r
 }
@@ -469,7 +469,7 @@ CORE::join"\n", map { "Header$_: value-$_" } 1..512
 --- response_body eval
 qq{POST /t HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 }
 .(CORE::join "\r\n", map { "Header$_: value-$_" } 1..512) . "\r\nContent-Length: 5\r\n\r\n"
 
@@ -500,7 +500,7 @@ CORE::join"\n", map { "Header$_: value-$_" } 1..512
 --- response_body eval
 qq{POST /main HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 }
 .(CORE::join "\r\n", map { "Header$_: value-$_" } 1..512) . "\r\nContent-Length: 5\r\n\r\n"
 
@@ -526,7 +526,7 @@ $s
 --- response_body eval
 "GET /t HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 User-Agent: curl\r
 Bah: bah\r
 Accept: */*\r
@@ -551,7 +551,7 @@ hello
 --- response_body eval
 qq{POST /main HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 Content-Length: 5\r
 \r
 }
@@ -575,7 +575,7 @@ hello
 --- response_body eval
 qq{POST /main HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 Content-Length: 5\r
 \r
 }
@@ -599,10 +599,147 @@ hello
 --- response_body eval
 qq{POST /main HTTP/1.1\r
 Host: localhost\r
-Connection: Close\r
+Connection: close\r
 Content-Length: 5\r
 \r
 }
+--- no_error_log
+[error]
+
+
+
+=== TEST 27: ngx_proxy/ngx_fastcgi/etc change r->header_end to point to their own buffers
+--- config
+    location = /t {
+        proxy_buffering off;
+        proxy_pass http://127.0.0.1:$server_port/bad;
+        proxy_intercept_errors on;
+        error_page 500 = /500;
+    }
+
+    location = /bad {
+        return 500;
+    }
+
+    location = /500 {
+        echo -n $echo_client_request_headers;
+    }
+--- request
+GET /t
+--- response_body eval
+"GET /t HTTP/1.1\r
+Host: localhost\r
+Connection: close\r
+\r
+"
+--- no_error_log
+[error]
+
+
+
+=== TEST 28: ngx_proxy/ngx_fastcgi/etc change r->header_end to point to their own buffers (exclusive LF in the request data)
+--- config
+    location = /t {
+        proxy_buffering off;
+        proxy_pass http://127.0.0.1:$server_port/bad;
+        proxy_intercept_errors on;
+        error_page 500 = /500;
+    }
+
+    location = /bad {
+        return 500;
+    }
+
+    location = /500 {
+        internal;
+        echo -n $echo_client_request_headers;
+    }
+--- raw_request eval
+"GET /t HTTP/1.1
+Host: localhost
+Connection: close
+Content-Length: 5
+
+hello"
+--- response_body eval
+"GET /t HTTP/1.1
+Host: localhost
+Connection: close
+Content-Length: 5
+
+"
+--- no_error_log
+[error]
+
+
+
+=== TEST 29: ngx_proxy/ngx_fastcgi/etc change r->header_end to point to their own buffers (mixed LF and CRLF in the request data)
+--- config
+    location = /t {
+        proxy_buffering off;
+        proxy_pass http://127.0.0.1:$server_port/bad;
+        proxy_intercept_errors on;
+        error_page 500 = /500;
+    }
+
+    location = /bad {
+        return 500;
+    }
+
+    location = /500 {
+        internal;
+        echo -n $echo_client_request_headers;
+    }
+--- raw_request eval
+"GET /t HTTP/1.1\r
+Host: localhost
+Connection: close\r
+Content-Length: 5\r
+
+hello"
+--- response_body eval
+"GET /t HTTP/1.1\r
+Host: localhost
+Connection: close\r
+Content-Length: 5\r
+
+"
+--- no_error_log
+[error]
+
+
+
+=== TEST 30: ngx_proxy/ngx_fastcgi/etc change r->header_end to point to their own buffers (another way of mixing LF and CRLF in the request data)
+--- config
+    location = /t {
+        proxy_buffering off;
+        proxy_pass http://127.0.0.1:$server_port/bad;
+        proxy_intercept_errors on;
+        error_page 500 = /500;
+    }
+
+    location = /bad {
+        return 500;
+    }
+
+    location = /500 {
+        internal;
+        echo -n $echo_client_request_headers;
+    }
+--- raw_request eval
+"GET /t HTTP/1.1\r
+Host: localhost
+Connection: close\r
+Content-Length: 5
+\r
+hello"
+--- response_body eval
+"GET /t HTTP/1.1\r
+Host: localhost
+Connection: close\r
+Content-Length: 5
+\r
+"
 --- no_error_log
 [error]
 
