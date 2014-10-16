@@ -8,8 +8,7 @@ nginx (1.6.2-3) UNRELEASED; urgency=medium
     + Graceful stopping of nginx was not handled correctly with systemd.
   * debian/nginx-common.nginx.init:
     + Gracefully stop nginx by default, we are switcing to a configurable
-      STOP/5/TERM/5/KILL/5 schedule. Thanks Tyler Riddle for bringing this up
-      and providing an initial patch. We are now in sync with the systemd
+      STOP/5/TERM/5/KILL/5 schedule. We are now in sync with the systemd
       service file. (Closes: #762708)
   * debian/conf:
     + Introduce a `snippets/fastcgi-php.conf` snippet with a basic
