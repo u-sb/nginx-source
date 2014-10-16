@@ -16,6 +16,7 @@ nginx (1.6.2-3) UNRELEASED; urgency=medium
       php configuration that can be included when needed. (Closes: #762491)
     + Introduce a `snippets/snakeoil.conf` snippet that enabled https
       using the certs installed by the ssl-cert package.
+    + Suggest disabling SSLv3 in default site with a ref to POODLE.
   * debian/control:
     + nginx-common now suggests ssl-cert.
 
