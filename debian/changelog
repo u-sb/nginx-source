@@ -11,6 +11,8 @@ nginx (1.6.2-4) UNRELEASED; urgency=medium
     + Upgrade v0.3.3 -> v0.3.4
   * debian/copyright:
     + Rewrite copyright file fixing various issues.
+  * debian/nginx-common.nginx.logrotate:
+    + Switch postrotate to the initscript's rotate command.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 16 Oct 2014 15:47:04 +0300
 
