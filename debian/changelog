@@ -1,4 +1,4 @@
-nginx (1.6.2-4) UNRELEASED; urgency=medium
+nginx (1.6.2-4) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * debian/modules/nginx-development-kit:
@@ -14,7 +14,7 @@ nginx (1.6.2-4) UNRELEASED; urgency=medium
   * debian/nginx-common.nginx.logrotate:
     + Switch postrotate to the initscript's rotate command.
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 16 Oct 2014 15:47:04 +0300
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sun, 19 Oct 2014 08:23:33 +0300
 
 nginx (1.6.2-3) unstable; urgency=medium
 
