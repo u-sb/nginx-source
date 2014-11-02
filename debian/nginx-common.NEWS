@@ -1,3 +1,10 @@
+nginx-common (1.6.2-5) UNRELEASED; urgency=medium
+
+  We have disabled SSLv3 in nginx.conf for security reasons (ref: POODLE),
+  don't forget to re-enable it if your site depends on it.
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sun, 02 Nov 2014 09:10:09 +0200
+
 nginx-common (1.6.2-3) unstable; urgency=medium
 
   Starting with this release, we changed the default document root from

@@ -1,3 +1,12 @@
+nginx (1.6.2-5) UNRELEASED; urgency=medium
+
+  [ Christos Trochalakis ]
+  * debian/conf/nginx.conf:
+    + Drop SSLv3 protocol (POODLE), and prefer server ciphers
+      by default. (Closes: #767456)
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sun, 30 Nov 2014 10:12:10 +0200
+
 nginx (1.6.2-4) unstable; urgency=medium
 
   [ Christos Trochalakis ]
