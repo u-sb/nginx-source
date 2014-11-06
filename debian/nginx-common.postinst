@@ -8,6 +8,8 @@ dpkg-maintscript-helper rm_conffile \
 	          /etc/nginx/naxsi_core.rules    1.6.2-2~ -- "$@"
 dpkg-maintscript-helper rm_conffile \
 	          /etc/nginx/naxsi-ui.conf.1.4.1 1.6.2-2~ -- "$@"
+dpkg-maintscript-helper rm_conffile \
+	          /etc/nginx/naxsi-ui.conf       1.6.2-2~ -- "$@"
 
 case "$1" in
   configure)

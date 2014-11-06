@@ -6,6 +6,8 @@ nginx (1.6.2-5) UNRELEASED; urgency=medium
       by default. (Closes: #767456)
   * debian/copyright:
     + Add copyright for ngx_http_substitutions_filter_module.
+  * debian/nginx-common.{preinst,postinst,postrm}:
+    + Remove /etc/nginx/naxsi-ui.conf conffile. (Closes: #768233)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sun, 30 Nov 2014 10:12:10 +0200
 
