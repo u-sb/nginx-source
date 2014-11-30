@@ -1,4 +1,4 @@
-nginx (1.6.2-5) UNRELEASED; urgency=medium
+nginx (1.6.2-5) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * debian/conf/nginx.conf:
@@ -11,7 +11,7 @@ nginx (1.6.2-5) UNRELEASED; urgency=medium
   * debian/README.Debian:
     + Add a list of important changes since wheezy.
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sun, 30 Nov 2014 10:12:10 +0200
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sun, 30 Nov 2014 10:39:55 +0200
 
 nginx (1.6.2-4) unstable; urgency=medium
 

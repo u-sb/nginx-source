@@ -1,4 +1,4 @@
-nginx-common (1.6.2-5) UNRELEASED; urgency=medium
+nginx-common (1.6.2-5) unstable; urgency=medium
 
   We have disabled SSLv3 in nginx.conf for security reasons (ref: POODLE),
   don't forget to re-enable it if your site depends on it.
