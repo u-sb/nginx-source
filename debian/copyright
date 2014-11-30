@@ -85,6 +85,10 @@ Files: debian/modules/ngx-fancyindex/*
 Copyright: Copyright (c) Adrian Perez <aperez@igalia.com>
 License: BSD-2-clause
 
+Files: debian/modules/ngx_http_substitutions_filter_module/*
+Copyright: Copyright (C) 2014 by Weibin Yao <yaoweibin@gmail.com>
+License: BSD-2-clause
+
 Files: debian/*
 Copyright: 2007-2009, Fabio Tranchitella <kobold@debian.org>
            2008,      Jose Parrella <joseparrella@cantv.net>
