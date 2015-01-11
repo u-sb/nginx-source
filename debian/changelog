@@ -2,6 +2,8 @@ nginx (1.6.2-6) UNRELEASED; urgency=medium
 
   * debian/conf/sites-available/default:
     + Add comment about disabling gzip in HTTPS. (Closes: #773332)
+  * debian/nginx-common.{dirs,install}, debian/vim/*:
+    + Installing vim syntax highlighting from package. (Closes: #771609)
 
  -- Michael Lustfield <michael@lustfield.net>  Sun, 11 Jan 2015 14:49:36 -0600
 
