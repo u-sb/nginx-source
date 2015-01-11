@@ -10,6 +10,8 @@ nginx (1.6.2-6) UNRELEASED; urgency=medium
       Thanks Cameron Norman for building this file.
   * debian/rules:
     + Added -fPIE -pie to build. (Closes: #747025)
+  * debian/modules/nginx-lua/*:
+    + Updated module version. (Closes: #762494)
 
  -- Michael Lustfield <michael@lustfield.net>  Sun, 11 Jan 2015 14:49:36 -0600
 
