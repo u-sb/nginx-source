@@ -8,6 +8,8 @@ nginx (1.6.2-6) UNRELEASED; urgency=medium
   * debian/nginx-common.nginx.upstart:
     + Created file to support upstart jobs. (Closes: #745483)
       Thanks Cameron Norman for building this file.
+  * debian/rules:
+    + Added -fPIE -pie to build. (Closes: #747025)
 
  -- Michael Lustfield <michael@lustfield.net>  Sun, 11 Jan 2015 14:49:36 -0600
 
