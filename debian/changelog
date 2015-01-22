@@ -1,5 +1,6 @@
 nginx (1.6.2-6) UNRELEASED; urgency=medium
 
+  [Michael Lustfield]
   * debian/conf/sites-available/default:
     + Add comment about disabling gzip in HTTPS. (Closes: #773332)
     + Add comment about checking ssl_ciphers. (Closes: #765782)
@@ -13,6 +14,8 @@ nginx (1.6.2-6) UNRELEASED; urgency=medium
     + Added -fPIE -pie to build. (Closes: #747025)
   * debian/modules/nginx-lua/*:
     + Updated module version. (Closes: #762494)
+  * debian/ngx-conf/*
+    + Added configuration utility. (Closes: #652108)
 
  -- Michael Lustfield <michael@lustfield.net>  Sun, 11 Jan 2015 14:49:36 -0600
 
