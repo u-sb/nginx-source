@@ -60,7 +60,7 @@ Description: small, powerful, scalable web/proxy server - documentation
 
 Package: nginx-common
 Architecture: all
-Depends: lsb-base (>= 3.2-14), ${misc:Depends}
+Depends: lsb-base (>= 3.2-14), ${misc:Depends}, python
 Replaces: nginx (<< 0.8.54-4),
           nginx-extras (<< 0.8.54-4),
           nginx-full (<< 0.8.54-4),
