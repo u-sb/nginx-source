@@ -1,4 +1,4 @@
-nginx (1.6.2-6) UNRELEASED; urgency=medium
+nginx (1.6.2-7) UNRELEASED; urgency=medium
 
   [Michael Lustfield]
   * debian/conf/sites-available/default:
@@ -16,8 +16,10 @@ nginx (1.6.2-6) UNRELEASED; urgency=medium
     + Updated module version. (Closes: #762494)
   * debian/ngx-conf/*
     + Added configuration utility. (Closes: #652108)
+  * debian/nginx-common.manpages:
+    + Replaced man page with upstream maintained version. (Closes: #781345)
 
- -- Michael Lustfield <michael@lustfield.net>  Sun, 11 Jan 2015 14:49:36 -0600
+ -- Michael Lustfield <michael@lustfield.net>  Sat, 28 Mar 2015 09:47:27 -0500
 
 nginx (1.6.2-5) unstable; urgency=medium
 
