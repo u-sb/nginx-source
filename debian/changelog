@@ -1,6 +1,8 @@
 nginx (1.6.2-7) UNRELEASED; urgency=medium
 
   [ Michael Lustfield ]
+  * debian/conf/nginx.conf:
+    + Switch worker_processes to auto. (Closes: #781711)
   * debian/conf/sites-available/default:
     + Add comment about disabling gzip in HTTPS. (Closes: #773332)
     + Add comment about checking ssl_ciphers. (Closes: #765782)
