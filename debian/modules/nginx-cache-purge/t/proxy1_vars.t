@@ -5,7 +5,7 @@ use Test::Nginx::Socket;
 
 repeat_each(1);
 
-plan tests => repeat_each() * (blocks() * 3 + 3 * 1);
+plan tests => repeat_each() * (blocks() * 4 + 3 * 1);
 
 our $http_config = <<'_EOC_';
     proxy_cache_path  /tmp/ngx_cache_purge_cache keys_zone=test_cache:10m;
@@ -13,16 +13,18 @@ our $http_config = <<'_EOC_';
 _EOC_
 
 our $config = <<'_EOC_';
+    set $cache  test_cache;
+
     location /proxy {
         proxy_pass         $scheme://127.0.0.1:$server_port/etc/passwd;
-        proxy_cache        test_cache;
+        proxy_cache        $cache;
         proxy_cache_key    $uri$is_args$args;
         proxy_cache_valid  3m;
         add_header         X-Cache-Status $upstream_cache_status;
     }
 
     location ~ /purge(/.*) {
-        proxy_cache_purge  test_cache $1$is_args$args;
+        proxy_cache_purge  $cache $1$is_args$args;
     }
 
     location = /etc/passwd {
@@ -48,7 +50,9 @@ GET /proxy/passwd
 Content-Type: text/plain
 --- response_body_like: root
 --- timeout: 10
---- skip_nginx2: 3: < 0.8.3 or < 0.7.62
+--- no_error_log eval
+qr/\[(warn|error|crit|alert|emerg)\]/
+--- skip_nginx: 4: < 1.7.9
 
 
 
@@ -63,7 +67,9 @@ Content-Type: text/plain
 X-Cache-Status: HIT
 --- response_body_like: root
 --- timeout: 10
---- skip_nginx2: 4: < 0.8.3 or < 0.7.62
+--- no_error_log eval
+qr/\[(warn|error|crit|alert|emerg)\]/
+--- skip_nginx: 5: < 1.7.9
 
 
 
@@ -77,7 +83,9 @@ PURGE /purge/proxy/passwd
 Content-Type: text/html
 --- response_body_like: Successful purge
 --- timeout: 10
---- skip_nginx2: 3: < 0.8.3 or < 0.7.62
+--- no_error_log eval
+qr/\[(warn|error|crit|alert|emerg)\]/
+--- skip_nginx: 4: < 1.7.9
 
 
 
@@ -91,7 +99,9 @@ PURGE /purge/proxy/passwd
 Content-Type: text/html
 --- response_body_like: 404 Not Found
 --- timeout: 10
---- skip_nginx2: 3: < 0.8.3 or < 0.7.62
+--- no_error_log eval
+qr/\[(warn|error|crit|alert|emerg)\]/
+--- skip_nginx: 4: < 1.7.9
 
 
 
@@ -106,7 +116,9 @@ Content-Type: text/plain
 X-Cache-Status: MISS
 --- response_body_like: root
 --- timeout: 10
---- skip_nginx2: 4: < 0.8.3 or < 0.7.62
+--- no_error_log eval
+qr/\[(warn|error|crit|alert|emerg)\]/
+--- skip_nginx: 5: < 1.7.9
 
 
 
@@ -121,4 +133,6 @@ Content-Type: text/plain
 X-Cache-Status: HIT
 --- response_body_like: root
 --- timeout: 10
---- skip_nginx2: 4: < 0.8.3 or < 0.7.62
+--- no_error_log eval
+qr/\[(warn|error|crit|alert|emerg)\]/
+--- skip_nginx: 5: < 1.7.9

@@ -10,7 +10,7 @@ Production ready.
 
 = Version =
 
-This document describes ngx_lua [https://github.com/openresty/lua-nginx-module/tags v0.9.13] released on 21 November 2014.
+This document describes ngx_lua [https://github.com/openresty/lua-nginx-module/tags v0.9.15] released on 18 February 2015.
 
 = Synopsis =
 <geshi lang="nginx">
@@ -148,10 +148,11 @@ This document describes ngx_lua [https://github.com/openresty/lua-nginx-module/t
         }
  
         # use nginx var in code path
-        # WARN: contents in nginx var must be carefully filtered,
+        # WARNING: contents in nginx var must be carefully filtered,
         # otherwise there'll be great security risk!
-        location ~ ^/app/(.+) {
-                content_by_lua_file /path/to/lua/app/root/$1.lua;
+        location ~ ^/app/([-_a-zA-Z0-9/]+) {
+            set $path $1;
+            content_by_lua_file /path/to/lua/app/root/$path.lua;
         }
  
         location / {
@@ -232,7 +233,7 @@ The Lua state (Lua VM instance) is shared across all the requests handled by a s
 = Nginx Compatibility =
 The latest module is compatible with the following versions of Nginx:
 
-* 1.7.x (last tested: 1.7.7)
+* 1.7.x (last tested: 1.7.10)
 * 1.6.x
 * 1.5.x (last tested: 1.5.12)
 * 1.4.x (last tested: 1.4.4)
@@ -245,7 +246,7 @@ The latest module is compatible with the following versions of Nginx:
 
 = Installation =
 
-The [http://openresty.org ngx_openresty bundle] can be used to install Nginx, ngx_lua, either one of the standard Lua 5.1 interpreter or LuaJIT 2.0/2.1, as well as a package of powerful companion Nginx modules. The basic installation step is a simple <code>./configure --with-luajit && make && make install</code>.
+It is highly recommended to use the [http://openresty.org ngx_openresty bundle] that bundles Nginx, ngx_lua,  LuaJIT 2.0/2.1 (or the optional standard Lua 5.1 interpreter), as well as a package of powerful companion Nginx modules. The basic installation step is a simple command: <code>./configure --with-luajit && make && make install</code>.
 
 Alternatively, ngx_lua can be manually compiled into Nginx:
 
@@ -257,9 +258,9 @@ Alternatively, ngx_lua can be manually compiled into Nginx:
 Build the source with this module:
 
 <geshi lang="bash">
-    wget 'http://nginx.org/download/nginx-1.7.7.tar.gz'
-    tar -xzvf nginx-1.7.7.tar.gz
-    cd nginx-1.7.7/
+    wget 'http://nginx.org/download/nginx-1.7.10.tar.gz'
+    tar -xzvf nginx-1.7.10.tar.gz
+    cd nginx-1.7.10/
 
     # tell nginx's build system where to find LuaJIT 2.0:
     export LUAJIT_LIB=/path/to/luajit/lib
@@ -275,6 +276,7 @@ Build the source with this module:
  
     # Here we assume Nginx is to be installed under /opt/nginx/.
     ./configure --prefix=/opt/nginx \
+            --with-ld-opt='-Wl,-rpath,/path/to/luajit-or-lua/lib" \
             --add-module=/path/to/ngx_devel_kit \
             --add-module=/path/to/lua-nginx-module
  
@@ -599,7 +601,7 @@ The [[#ngx.location.capture|ngx.location.capture]] and [[#ngx.location.capture_m
 
 will not work as expected.
 
-== Cocockets Not Available Everywhere ==
+== Cosockets Not Available Everywhere ==
 
 Due the internal limitations in the nginx core, the cosocket API are disabled in the following contexts: [[#set_by_lua|set_by_lua*]], [[#log_by_lua|log_by_lua*]], [[#header_filter_by_lua|header_filter_by_lua*]], and [[#body_filter_by_lua|body_filter_by_lua]].
 
@@ -700,15 +702,56 @@ Certain Lua APIs provided by ngx_lua do not work in Nginx's SPDY mode yet: [[#ng
 
 = TODO =
 
-== Short Term ==
+* add <code>*_by_lua_block</code> directives for existing <code>*_by_lua</code> directives so that we put literal Lua code directly in curly braces instead of an nginx literal string. For example,
+<geshi lang="nginx">
+    content_by_lua_block {
+        ngx.say("hello, world\r\n")
+    }
+</geshi>
+: which is equivalent to
+<geshi lang="nginx">
+    content_by_lua '
+        ngx.say("hello, world\\r\\n")
+    ';
+</geshi>
+: but the former is much cleaner and nicer.
+* cosocket: implement LuaSocket's unconnected UDP API.
+* add support for implementing general TCP servers instead of HTTP servers in Lua. For example,
+<geshi lang="lua">
+    tcp {
+        server {
+            listen 11212;
+            handler_by_lua '
+                -- custom Lua code implementing the special TCP server...
+            ';
+        }
+    }
+</geshi>
+* add support for implementing general UDP servers instead of HTTP servers in Lua. For example,
+<geshi lang="lua">
+    udp {
+        server {
+            listen 1953;
+            handler_by_lua '
+                -- custom Lua code implementing the special UDP server...
+            ';
+        }
+    }
+</geshi>
+* ssl: implement directives <code>ssl_certificate_by_lua</code> and <code>ssl_certificate_by_lua_file</code> to allow using Lua to dynamically serve SSL certificates and keys for downstream SSL handshake. (already done in CloudFlare's private branch and powering CloudFlare's SSL gateway of its global network. expected to be opensourced in March 2015.)
+* shm: implement a "shared queue API" to complement the existing [[#lua_shared_dict|shared dict]] API.
+* cosocket: add support in the context of [[#init_by_lua|init_by_lua*]].
+* cosocket: implement the <code>bind()</code> method for stream-typed cosockets.
+* cosocket: pool-based backend concurrency level control: implement automatic <code>connect</code> queueing when the backend concurrency exceeds its connection pool limit.
+* cosocket: review and merge aviramc's [https://github.com/openresty/lua-nginx-module/pull/290 patch] for adding the <code>bsdrecv</code> method.
+* add new API function <code>ngx.resp.add_header</code> to emulate the standard <code>add_header</code> config directive.
+* [[#ngx.re.match|ngx.re]] API: use <code>false</code> instead of <code>nil</code> in the resulting match table to indicate non-existent submatch captures, such that we can avoid "holes" in the array table.
 * review and apply Jader H. Silva's patch for <code>ngx.re.split()</code>.
 * review and apply vadim-pavlov's patch for [[#ngx.location.capture|ngx.location.capture]]'s <code>extra_headers</code> option
 * use <code>ngx_hash_t</code> to optimize the built-in header look-up process for [[#ngx.req.set_header|ngx.req.set_header]], [[#ngx.header.HEADER|ngx.header.HEADER]], and etc.
 * add configure options for different strategies of handling the cosocket connection exceeding in the pools.
 * add directives to run Lua codes when nginx stops.
 * add <code>ignore_resp_headers</code>, <code>ignore_resp_body</code>, and <code>ignore_resp</code> options to [[#ngx.location.capture|ngx.location.capture]] and [[#ngx.location.capture_multi|ngx.location.capture_multi]] methods, to allow micro performance tuning on the user side.
-
-== Longer Term ==
 * add automatic Lua code time slicing support by yielding and resuming the Lua VM actively via Lua's debug hooks.
 * add <code>stat</code> mode similar to [https://httpd.apache.org/docs/trunk/mod/mod_lua.html mod_lua].
 
@@ -777,9 +820,9 @@ There are also various testing modes based on mockeagain, valgrind, and etc. Ref
 
 This module is licensed under the BSD license.
 
-Copyright (C) 2009-2014, by Xiaozhe Wang (chaoslawful) <chaoslawful@gmail.com>.
+Copyright (C) 2009-2015, by Xiaozhe Wang (chaoslawful) <chaoslawful@gmail.com>.
 
-Copyright (C) 2009-2014, by Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, CloudFlare Inc.
+Copyright (C) 2009-2015, by Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, CloudFlare Inc.
 
 All rights reserved.
 
@@ -1164,6 +1207,19 @@ and the Nginx config must be reloaded each time the Lua source file is modified.
 The Lua code cache can be temporarily disabled during development by 
 switching [[#lua_code_cache|lua_code_cache]] <code>off</code> in <code>nginx.conf</code> to avoid reloading Nginx.
 
+Nginx variables are supported in the file path for dynamic dispatch, for example:
+
+<geshi lang="nginx">
+    # WARNING: contents in nginx var must be carefully filtered,
+    # otherwise there'll be great security risk!
+    location ~ ^/app/([-_a-zA-Z0-9/]+) {
+        set $path $1;
+        content_by_lua_file /path/to/lua/app/root/$path.lua;
+    }
+</geshi>
+
+But be very careful about malicious user inputs and always carefully validate or filter out the user-supplied path components.
+
 == rewrite_by_lua ==
 
 '''syntax:''' ''rewrite_by_lua <lua-script-str>''
@@ -1297,6 +1353,8 @@ When the Lua code cache is turned on (by default), the user code is loaded once 
 
 The <code>rewrite_by_lua_file</code> code will always run at the end of the <code>rewrite</code> request-processing phase unless [[#rewrite_by_lua_no_postpone|rewrite_by_lua_no_postpone]] is turned on.
 
+Nginx variables are supported in the file path for dynamic dispatch just as in [[#content_by_lua_file|content_by_lua_file]].
+
 == access_by_lua ==
 
 '''syntax:''' ''access_by_lua <lua-script-str>''
@@ -1381,6 +1439,8 @@ When a relative path like <code>foo/bar.lua</code> is given, they will be turned
 When the Lua code cache is turned on (by default), the user code is loaded once at the first request and cached 
 and the Nginx config must be reloaded each time the Lua source file is modified.
 The Lua code cache can be temporarily disabled during development by switching [[#lua_code_cache|lua_code_cache]] <code>off</code> in <code>nginx.conf</code> to avoid repeatedly reloading Nginx.
+
+Nginx variables are supported in the file path for dynamic dispatch just as in [[#content_by_lua_file|content_by_lua_file]].
 
 == header_filter_by_lua ==
 
@@ -2027,7 +2087,7 @@ For example:
 That is, nginx variables cannot be created on-the-fly.
 
 Some special nginx variables like <code>$args</code> and <code>$limit_rate</code> can be assigned a value,
-some are not, like <code>$arg_PARAMETER</code>.
+many others are not, like <code>$query_string</code>, <code>$arg_PARAMETER</code>, and <code>$http_NAME</code>.
 
 Nginx regex group capturing variables <code>$1</code>, <code>$2</code>, <code>$3</code>, and etc, can be read by this
 interface as well, by writing <code>ngx.var[1]</code>, <code>ngx.var[2]</code>, <code>ngx.var[3]</code>, and etc.
@@ -2320,7 +2380,7 @@ argument, which supports the options:
 * <code>copy_all_vars</code>
 : specify whether to copy over all the Nginx variable values of the current request to the subrequest in question. modifications of the nginx variables in the subrequest will not affect the current (parent) request. This option was first introduced in the <code>v0.3.1rc31</code> release.
 * <code>share_all_vars</code>
-: specify whether to share all the Nginx variables of the subrequest with the current (parent) request. modifications of the Nginx variables in the subrequest will affect the current (parent) request.
+: specify whether to share all the Nginx variables of the subrequest with the current (parent) request. modifications of the Nginx variables in the subrequest will affect the current (parent) request. Enabling this option may lead to hard-to-debug issues due to bad side-effects and is considered bad and harmful. Only enable this option when you completely know what you are doing.
 * <code>always_forward_body</code>
 : when set to true, the current (parent) request's request body will always be forwarded to the subrequest being created if the <code>body</code> option is not specified. The request body read by either [[#ngx.req.read_body|ngx.req.read_body()]] or [[#lua_need_request_body|lua_need_request_body on]] will be directly forwarded to the subrequest without copying the whole request body data when creating the subrequest (no matter the request body data is buffered in memory buffers or temporary files). By default, this option is <code>false</code> and when the <code>body</code> option is not specified, the request body of the current (parent) request is only forwarded when the subrequest takes the <code>PUT</code> or <code>POST</code> request method.
 
@@ -3180,7 +3240,7 @@ Set the current request's request header named <code>header_name</code> to value
 
 By default, all the subrequests subsequently initiated by [[#ngx.location.capture|ngx.location.capture]] and [[#ngx.location.capture_multi|ngx.location.capture_multi]] will inherit the new header.
 
-Here is an example of setting the <code>Content-Length</code> header:
+Here is an example of setting the <code>Content-Type</code> header:
 
 <geshi lang="lua">
     ngx.req.set_header("Content-Type", "text/css")

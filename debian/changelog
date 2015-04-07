@@ -1,4 +1,4 @@
-nginx (1.6.2-8) UNRELEASED; urgency=medium
+nginx (1.6.2-9) UNRELEASED; urgency=medium
 
   [ Michael Lustfield ]
   * debian/conf/nginx.conf:
@@ -6,6 +6,12 @@ nginx (1.6.2-8) UNRELEASED; urgency=medium
   * debian/conf/sites-available/default:
     + Add comment about disabling gzip in HTTPS. (Closes: #773332)
     + Add comment about checking ssl_ciphers. (Closes: #765782)
+  * debian/modules/*:
+    + Updated nginx-auth-pam 1.3 -> 1.4. (Closes: #777120)
+    + Updated nginx-echo v0.56 -> v0.57.
+    + Updated nginx-lua v0.9.13 -> v0.9.15.
+    + Updated nginx-cache-purge 2.1 -> 2.3.
+    + Updated ngx-fancyindex v0.3.4 -> v0.3.5.
   * debian/nginx-common.{dirs,install}, debian/vim/*:
     + Installing vim syntax highlighting from package. (Closes: #771609)
       Thanks Emmanuel Bouthenot for building this patch.
@@ -26,7 +32,7 @@ nginx (1.6.2-8) UNRELEASED; urgency=medium
   * debian/nginx-common.manpages:
     + Replaced man page with upstream maintained version. (Closes: #781345)
 
- -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 08:23:00 -0500
+ -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 09:39:52 -0500
 
 nginx (1.6.2-5) unstable; urgency=medium
 
