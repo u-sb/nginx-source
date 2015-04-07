@@ -95,8 +95,8 @@ Description: nginx web/proxy server (standard version)
  nginx-extra).
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
- Charset, Empty GIF, FastCGI, Geo, Gzip, Headers, Index, Limit Requests,
- Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI,
+ Charset, Empty GIF, FastCGI, Geo, Gunzip, Gzip, Headers, Index, Limit
+ Requests, Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI,
  Split Clients, SSI, Upstream, User ID, UWSGI.
  .
  OPTIONAL HTTP MODULES: Addition, Auth Request, Debug, GeoIP, Gzip
@@ -141,8 +141,8 @@ Description: nginx web/proxy server (basic version)
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Charset,
  Empty GIF, FastCGI, Gzip, Headers, Index, Log, Map, Proxy, Rewrite, Upstream.
  .
- OPTIONAL HTTP MODULES: Auth Request, Debug, Gzip Precompression, IPv6, Real
- Ip, SSL, Stub Status.
+ OPTIONAL HTTP MODULES: Auth Request, Debug, Gzip Precompression, IPv6,
+ Real IP, SSL, Stub Status.
  .
  THIRD PARTY MODULES: Echo.
 
@@ -182,9 +182,9 @@ Description: nginx web/proxy server (extended version)
  addition of Perl in configuration files.
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
- Charset, Empty GIF, FastCGI, Geo, Gzip, Headers, Index, Limit Requests,
- Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI,
- Split Clients, SSI, Upstream, User ID, UWSGI.
+ Charset, Empty GIF, FastCGI, Geo, Gzip, Gunzip, Headers, Index,
+ Limit Requests, Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite,
+ SCGI, Split Clients, SSI, Upstream, User ID, UWSGI.
  .
  OPTIONAL HTTP MODULES: Addition, Auth Request, Debug, Embedded Perl, FLV,
  GeoIP, Gzip Precompression, Image Filter, IPv6, MP4, Random Index, Real IP,

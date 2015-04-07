@@ -1,4 +1,4 @@
-nginx (1.6.2-7) UNRELEASED; urgency=medium
+nginx (1.6.2-8) UNRELEASED; urgency=medium
 
   [ Michael Lustfield ]
   * debian/conf/nginx.conf:
@@ -13,10 +13,12 @@ nginx (1.6.2-7) UNRELEASED; urgency=medium
     + Created file to support upstart jobs. (Closes: #745483)
       Thanks Cameron Norman for building this file.
   * debian/rules:
-    + Add hardening flags with dpkg-buildflags (Closes: #747025, #781703)
-      Thanks Thomas Ward
+    + Add hardening flags with dpkg-buildflags. (Closes: #747025, #781703)
+      Thanks Thomas Ward.
     + Supply custom DEB_BUILD_MAINT_OPTIONS for debian_ldflags generation.
-      Thanks Thomas Ward
+      Thanks Thomas Ward.
+    + Added back missing module gunzip. (Closes: #782065)
+      Thanks Peter Wu for the initial patch.
   * debian/modules/nginx-lua/*:
     + Updated module version. (Closes: #762494)
   * debian/ngx-conf/*
@@ -24,7 +26,7 @@ nginx (1.6.2-7) UNRELEASED; urgency=medium
   * debian/nginx-common.manpages:
     + Replaced man page with upstream maintained version. (Closes: #781345)
 
- -- Michael Lustfield <michael@lustfield.net>  Sat, 28 Mar 2015 09:47:27 -0500
+ -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 08:23:00 -0500
 
 nginx (1.6.2-5) unstable; urgency=medium
 
