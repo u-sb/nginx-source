@@ -94,19 +94,18 @@ Description: nginx web/proxy server (standard version)
  standard modules included (but omitting some of those included in
  nginx-extra).
  .
- STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
- Charset, Empty GIF, FastCGI, Geo, Gunzip, Gzip, Headers, Index, Limit
- Requests, Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite, SCGI,
- Split Clients, SSI, Upstream, User ID, UWSGI.
+ STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser, Empty
+ GIF, FastCGI, Geo, Limit Connections, Limit Requests, Map, Memcached, Proxy,
+ Referer, Rewrite, SCGI, Split Clients, UWSGI.
  .
- OPTIONAL HTTP MODULES: Addition, Auth Request, Debug, GeoIP, Gzip
- Precompression, HTTP Sub, Image Filter, IPv6, Real IP, Spdy, SSL, Stub Status,
- Substitution, WebDAV, XSLT.
+ OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, GeoIP, Gunzip,
+ Gzip, Gzip Precompression, Headers, Image Filter, Index, Log, Real IP, Spdy,
+ SSI, SSL, Stub Status, Substitution, Upstream, User ID, XSLT.
  .
- MAIL MODULES: Mail Core, IMAP, POP3, SMTP, SSL.
+ MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
- THIRD PARTY MODULES: Auth PAM, DAV Ext, Echo, HTTP Substitution Filter,
- Upstream Fair Queue.
+ THIRD PARTY MODULES: Auth PAM, DAV Ext, Echo, HTTP Substitutions, Upstream
+ Fair Queue.
 
 Package: nginx-full-dbg
 Architecture: any
@@ -138,11 +137,11 @@ Description: nginx web/proxy server (basic version)
  This package provides a very light version of nginx with only the
  minimal set of features and modules.
  .
- STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Charset,
- Empty GIF, FastCGI, Gzip, Headers, Index, Log, Map, Proxy, Rewrite, Upstream.
+ STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Empty GIF,
+ FastCGI, Map, Proxy, Rewrite.
  .
- OPTIONAL HTTP MODULES: Auth Request, Debug, Gzip Precompression, IPv6,
- Real IP, SSL, Stub Status.
+ OPTIONAL HTTP MODULES: Auth Request, Charset, Gzip, Gzip Precompression,
+ Headers, Index, Log, Real IP, SSL, Stub Status, Upstream.
  .
  THIRD PARTY MODULES: Echo.
 
@@ -181,20 +180,20 @@ Description: nginx web/proxy server (extended version)
  extra features and modules such as the Perl module, which allows the
  addition of Perl in configuration files.
  .
- STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser,
- Charset, Empty GIF, FastCGI, Geo, Gzip, Gunzip, Headers, Index,
- Limit Requests, Limit Zone, Log, Map, Memcached, Proxy, Referer, Rewrite,
- SCGI, Split Clients, SSI, Upstream, User ID, UWSGI.
+ STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser, Empty
+ GIF, FastCGI, Geo, Limit Connections, Limit Requests, Map, Memcached, Proxy,
+ Referer, Rewrite, SCGI, Split Clients, UWSGI.
  .
- OPTIONAL HTTP MODULES: Addition, Auth Request, Debug, Embedded Perl, FLV,
- GeoIP, Gzip Precompression, Image Filter, IPv6, MP4, Random Index, Real IP,
- Secure Link, Spdy, SSL, Stub Status, Substitution, WebDAV, XSLT.
+ OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, FLV, GeoIP,
+ Gunzip, Gzip, Gzip Precompression, Headers, Image Filter, Index, Log, MP4,
+ Embedded Perl, Random Index, Real IP, Secure Link, Spdy, SSI, SSL, Stub
+ Status, Substitution, Upstream, User ID, XSLT.
  .
- MAIL MODULES: Mail Core, IMAP, POP3, SMTP, SSL.
+ MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
- THIRD PARTY MODULES: Auth PAM, DAV Ext, Echo, Embedded Lua, Fancy Index,
- HttpHeadersMore, HTTP Substitution Filter, HTTP Push, Nginx Development Kit,
- Upload Progress, Upstream Fair Queue.
+ THIRD PARTY MODULES: Auth PAM, Cache Purge, DAV Ext, Echo, Fancy Index,
+ Headers More, Embedded Lua, HTTP Push, HTTP Substitutions, Upload Progress,
+ Upstream Fair Queue.
 
 Package: nginx-extras-dbg
 Architecture: any
