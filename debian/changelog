@@ -1,4 +1,4 @@
-nginx (1.6.2-9) UNRELEASED; urgency=medium
+nginx (1.6.3-2) UNRELEASED; urgency=medium
 
   [ Michael Lustfield ]
   * debian/conf/nginx.conf:
@@ -12,6 +12,8 @@ nginx (1.6.2-9) UNRELEASED; urgency=medium
     + Updated nginx-lua v0.9.13 -> v0.9.15.
     + Updated nginx-cache-purge 2.1 -> 2.3.
     + Updated ngx-fancyindex v0.3.4 -> v0.3.5.
+  * debian/nginx-common.NEWS:
+    + Document potential issues with newer versions on i386.
   * debian/nginx-common.{dirs,install}, debian/vim/*:
     + Installing vim syntax highlighting from package. (Closes: #771609)
       Thanks Emmanuel Bouthenot for building this patch.
@@ -32,7 +34,7 @@ nginx (1.6.2-9) UNRELEASED; urgency=medium
   * debian/nginx-common.manpages:
     + Replaced man page with upstream maintained version. (Closes: #781345)
 
- -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 09:39:52 -0500
+ -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 18:57:45 -0500
 
 nginx (1.6.2-5) unstable; urgency=medium
 
