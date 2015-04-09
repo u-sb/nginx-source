@@ -27,7 +27,10 @@
 ##
 
 import argparse
-import ConfigParser
+try:
+    import configparser as ConfigParser
+except:
+    import ConfigParser
 import glob
 import os
 import subprocess
@@ -87,7 +90,7 @@ def main():
     args = parse_arguments()
     if args.FILES == [] and not args.list:
         print('No files specified. These are required.')
-	return False
+        return False
     if args.enable:
         enable_configs(args.FILES, args.verbose, args.force)
     elif args.disable:
