@@ -33,6 +33,9 @@ nginx (1.6.3-2) UNRELEASED; urgency=medium
     + Added configuration utility. (Closes: #652108)
   * debian/nginx-common.manpages:
     + Replaced man page with upstream maintained version. (Closes: #781345)
+  * debian/nginx-common.install:
+    + Changed debian/index.html -> html/index.html. This installs the package
+      maintained version of this file as opposed to our out of date version.
 
  -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 18:57:45 -0500
 
