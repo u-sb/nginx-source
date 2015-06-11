@@ -30,7 +30,7 @@ nginx (1.9.1-1) UNRELEASED; urgency=medium
   * debian/modules/nginx-lua/*:
     + Updated module version. (Closes: #762494)
   * debian/ngx-conf/*
-    + Added configuration utility. (Closes: #652108)
+    + Added configuration utility, not shipped yet. (Closes: #652108)
   * debian/nginx-common.manpages:
     + Replaced man page with upstream maintained version. (Closes: #781345)
   * debian/nginx-common.install:
