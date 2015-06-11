@@ -1,4 +1,4 @@
-nginx (1.6.2-6) UNRELEASED; urgency=medium
+nginx (1.9.1-1) UNRELEASED; urgency=medium
 
   [ Michael Lustfield ]
   * debian/conf/nginx.conf:
@@ -36,6 +36,9 @@ nginx (1.6.2-6) UNRELEASED; urgency=medium
   * debian/nginx-common.install:
     + Changed debian/index.html -> html/index.html. This installs the package
       maintained version of this file as opposed to our out of date version.
+
+  [ Christos Trochalakis ]
+  * New upstream release. Switching to mainline version. (Closes: #777677)
 
  -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 18:57:45 -0500
 
