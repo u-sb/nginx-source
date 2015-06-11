@@ -39,6 +39,8 @@ nginx (1.9.1-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream release. Switching to mainline version. (Closes: #777677)
+  * debian/nginx-common.manpages:
+    + Build & ship manpages with binary packages.
 
  -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 18:57:45 -0500
 
