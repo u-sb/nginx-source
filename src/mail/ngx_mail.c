@@ -36,13 +36,6 @@ static ngx_command_t  ngx_mail_commands[] = {
       0,
       NULL },
 
-    { ngx_string("imap"),
-      NGX_MAIN_CONF|NGX_CONF_BLOCK|NGX_CONF_NOARGS,
-      ngx_mail_block,
-      0,
-      0,
-      NULL },
-
       ngx_null_command
 };
 
@@ -83,12 +76,6 @@ ngx_mail_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_mail_core_srv_conf_t   **cscfp;
     ngx_mail_core_main_conf_t   *cmcf;
 
-    if (cmd->name.data[0] == 'i') {
-        ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
-                           "the \"imap\" directive is deprecated, "
-                           "use the \"mail\" directive instead");
-    }
-
     /* the main mail context */
 
     ctx = ngx_pcalloc(cf->pool, sizeof(ngx_mail_conf_ctx_t));
@@ -98,7 +85,7 @@ ngx_mail_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     *(ngx_mail_conf_ctx_t **) conf = ctx;
 
-    /* count the number of the http modules and set up their indices */
+    /* count the number of the mail modules and set up their indices */
 
     ngx_mail_max_module = 0;
     for (m = 0; ngx_modules[m]; m++) {
@@ -131,8 +118,7 @@ ngx_mail_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 
     /*
-     * create the main_conf's, the null srv_conf's, and the null loc_conf's
-     * of the all mail modules
+     * create the main_conf's and the null srv_conf's of the all mail modules
      */
 
     for (m = 0; ngx_modules[m]; m++) {
@@ -335,11 +321,12 @@ found:
 static char *
 ngx_mail_optimize_servers(ngx_conf_t *cf, ngx_array_t *ports)
 {
-    ngx_uint_t             i, p, last, bind_wildcard;
-    ngx_listening_t       *ls;
-    ngx_mail_port_t       *mport;
-    ngx_mail_conf_port_t  *port;
-    ngx_mail_conf_addr_t  *addr;
+    ngx_uint_t                 i, p, last, bind_wildcard;
+    ngx_listening_t           *ls;
+    ngx_mail_port_t           *mport;
+    ngx_mail_conf_port_t      *port;
+    ngx_mail_conf_addr_t      *addr;
+    ngx_mail_core_srv_conf_t  *cscf;
 
     port = ports->elts;
     for (p = 0; p < ports->nelts; p++) {
@@ -381,8 +368,9 @@ ngx_mail_optimize_servers(ngx_conf_t *cf, ngx_array_t *ports)
             ls->handler = ngx_mail_init_connection;
             ls->pool_size = 256;
 
-            /* TODO: error_log directive */
-            ls->logp = &cf->cycle->new_log;
+            cscf = addr->ctx->srv_conf[ngx_mail_core_module.ctx_index];
+
+            ls->logp = cscf->error_log;
             ls->log.data = &ls->addr_text;
             ls->log.handler = ngx_accept_log_error;
 
@@ -404,13 +392,7 @@ ngx_mail_optimize_servers(ngx_conf_t *cf, ngx_array_t *ports)
 
             ls->servers = mport;
 
-            if (i == last - 1) {
-                mport->naddrs = last;
-
-            } else {
-                mport->naddrs = 1;
-                i = 0;
-            }
+            mport->naddrs = i + 1;
 
             switch (ls->sockaddr->sa_family) {
 #if (NGX_HAVE_INET6)

@@ -104,17 +104,6 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
 
     c->number = ngx_atomic_fetch_add(ngx_connection_counter, 1);
 
-#if (NGX_THREADS)
-
-    /* TODO: lock event when call completion handler */
-
-    rev->lock = pc->lock;
-    wev->lock = pc->lock;
-    rev->own_lock = &c->lock;
-    wev->own_lock = &c->lock;
-
-#endif
-
     if (ngx_add_conn) {
         if (ngx_add_conn(c) == NGX_ERROR) {
             goto failed;
@@ -182,12 +171,10 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
         return NGX_OK;
     }
 
-    if (ngx_event_flags & NGX_USE_AIO_EVENT) {
+    if (ngx_event_flags & NGX_USE_IOCP_EVENT) {
 
         ngx_log_debug1(NGX_LOG_DEBUG_EVENT, pc->log, ngx_socket_errno,
                        "connect(): %d", rc);
-
-        /* aio, iocp */
 
         if (ngx_blocking(s) == -1) {
             ngx_log_error(NGX_LOG_ALERT, pc->log, ngx_socket_errno,
