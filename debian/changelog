@@ -43,6 +43,8 @@ nginx (1.9.1-1) UNRELEASED; urgency=medium
     + Build & ship manpages with binary packages.
   * debian/rules:
     + Adjust configure flags for limit_zone module (renamed to limit_conn).
+  * debian/modules/nginx-lua:
+    + Backport upstream's f4e1311 fixing build failure with mainline nginx.
 
  -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 18:57:45 -0500
 
