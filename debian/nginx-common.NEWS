@@ -1,4 +1,4 @@
-nginx-common (1.6.3-1) unstable; urgency=medium
+nginx-common (1.9.1-1) unstable; urgency=medium
 
   Starting with this release, we have enabled PIE build features which allows
   Address Space Layout Randomization. This is a hardening feature that
