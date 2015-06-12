@@ -1,4 +1,4 @@
-nginx (1.9.1-1) UNRELEASED; urgency=medium
+nginx (1.9.1-1) unstable; urgency=medium
 
   [ Michael Lustfield ]
   * debian/conf/nginx.conf:
@@ -48,7 +48,7 @@ nginx (1.9.1-1) UNRELEASED; urgency=medium
   * debian/control:
     + Depend on libgd-dev now that jessie is released.
 
- -- Michael Lustfield <michael@lustfield.net>  Tue, 07 Apr 2015 18:57:45 -0500
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 12 Jun 2015 15:42:49 +0300
 
 nginx (1.6.2-5) unstable; urgency=medium
 
