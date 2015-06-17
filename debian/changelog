@@ -1,8 +1,12 @@
-nginx (1.9.1-2) UNRELEASED; urgency=medium
+nginx (1.9.2-1) UNRELEASED; urgency=medium
 
+  [ Michael Lustfield ]
   * debian/nginx-common.nginx.init:
     + Init script now returns the proper exit status. (Closes: #788573)
     + Cleaned up the init script to have consistent naming/structure.
+
+  [ Christos Trochalakis ]
+  * New upstream Release.
 
  -- Michael Lustfield <michael@lustfield.net>  Mon, 15 Jun 2015 22:14:19 -0500
 
