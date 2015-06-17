@@ -7,6 +7,8 @@ nginx (1.9.2-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream Release.
+  * debian/rules:
+    + Add stream module to nginx-full & nginx-extras.
 
  -- Michael Lustfield <michael@lustfield.net>  Mon, 15 Jun 2015 22:14:19 -0500
 
