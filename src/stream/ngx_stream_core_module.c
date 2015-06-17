@@ -50,6 +50,8 @@ static ngx_command_t  ngx_stream_core_commands[] = {
 
 
 static ngx_stream_module_t  ngx_stream_core_module_ctx = {
+    NULL,                                  /* postconfiguration */
+
     ngx_stream_core_create_main_conf,      /* create main configuration */
     NULL,                                  /* init main configuration */
 
@@ -272,7 +274,7 @@ ngx_stream_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     for (i = 0; i < cmcf->listen.nelts; i++) {
 
-        sa = (struct sockaddr *) ls[i].sockaddr;
+        sa = &ls[i].u.sockaddr;
 
         if (sa->sa_family != u.family) {
             continue;
@@ -284,7 +286,7 @@ ngx_stream_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         case AF_INET6:
             off = offsetof(struct sockaddr_in6, sin6_addr);
             len = 16;
-            sin6 = (struct sockaddr_in6 *) sa;
+            sin6 = &ls[i].u.sockaddr_in6;
             port = sin6->sin6_port;
             break;
 #endif
@@ -300,12 +302,14 @@ ngx_stream_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         default: /* AF_INET */
             off = offsetof(struct sockaddr_in, sin_addr);
             len = 4;
-            sin = (struct sockaddr_in *) sa;
+            sin = &ls[i].u.sockaddr_in;
             port = sin->sin_port;
             break;
         }
 
-        if (ngx_memcmp(ls[i].sockaddr + off, u.sockaddr + off, len) != 0) {
+        if (ngx_memcmp(ls[i].u.sockaddr_data + off, u.sockaddr + off, len)
+            != 0)
+        {
             continue;
         }
 
@@ -325,9 +329,10 @@ ngx_stream_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     ngx_memzero(ls, sizeof(ngx_stream_listen_t));
 
-    ngx_memcpy(ls->sockaddr, u.sockaddr, u.socklen);
+    ngx_memcpy(&ls->u.sockaddr, u.sockaddr, u.socklen);
 
     ls->socklen = u.socklen;
+    ls->backlog = NGX_LISTEN_BACKLOG;
     ls->wildcard = u.wildcard;
     ls->ctx = cf->ctx;
 
@@ -342,12 +347,25 @@ ngx_stream_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
             continue;
         }
 
+        if (ngx_strncmp(value[i].data, "backlog=", 8) == 0) {
+            ls->backlog = ngx_atoi(value[i].data + 8, value[i].len - 8);
+            ls->bind = 1;
+
+            if (ls->backlog == NGX_ERROR || ls->backlog == 0) {
+                ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                                   "invalid backlog \"%V\"", &value[i]);
+                return NGX_CONF_ERROR;
+            }
+
+            continue;
+        }
+
         if (ngx_strncmp(value[i].data, "ipv6only=o", 10) == 0) {
 #if (NGX_HAVE_INET6 && defined IPV6_V6ONLY)
             struct sockaddr  *sa;
             u_char            buf[NGX_SOCKADDR_STRLEN];
 
-            sa = (struct sockaddr *) ls->sockaddr;
+            sa = &ls->u.sockaddr;
 
             if (sa->sa_family == AF_INET6) {
 

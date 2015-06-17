@@ -31,7 +31,18 @@ typedef struct {
 
 
 typedef struct {
-    u_char                  sockaddr[NGX_SOCKADDRLEN];
+    union {
+        struct sockaddr     sockaddr;
+        struct sockaddr_in  sockaddr_in;
+#if (NGX_HAVE_INET6)
+        struct sockaddr_in6 sockaddr_in6;
+#endif
+#if (NGX_HAVE_UNIX_DOMAIN)
+        struct sockaddr_un  sockaddr_un;
+#endif
+        u_char              sockaddr_data[NGX_SOCKADDRLEN];
+    } u;
+
     socklen_t               socklen;
 
     /* server ctx */
@@ -54,6 +65,7 @@ typedef struct {
     int                     tcp_keepintvl;
     int                     tcp_keepcnt;
 #endif
+    int                     backlog;
 } ngx_stream_listen_t;
 
 
@@ -96,31 +108,17 @@ typedef struct {
 
 
 typedef struct {
-    struct sockaddr        *sockaddr;
-    socklen_t               socklen;
-
-    ngx_stream_conf_ctx_t  *ctx;
-
-    unsigned                bind:1;
-    unsigned                wildcard:1;
-#if (NGX_STREAM_SSL)
-    unsigned                ssl:1;
-#endif
-#if (NGX_HAVE_INET6 && defined IPV6_V6ONLY)
-    unsigned                ipv6only:1;
-#endif
-    unsigned                so_keepalive:2;
-#if (NGX_HAVE_KEEPALIVE_TUNABLE)
-    int                     tcp_keepidle;
-    int                     tcp_keepintvl;
-    int                     tcp_keepcnt;
-#endif
+    ngx_stream_listen_t     opt;
 } ngx_stream_conf_addr_t;
+
+
+typedef ngx_int_t (*ngx_stream_access_pt)(ngx_stream_session_t *s);
 
 
 typedef struct {
     ngx_array_t             servers;     /* ngx_stream_core_srv_conf_t */
     ngx_array_t             listen;      /* ngx_stream_listen_t */
+    ngx_stream_access_pt    access_handler;
 } ngx_stream_core_main_conf_t;
 
 
@@ -154,6 +152,8 @@ struct ngx_stream_session_s {
 
 
 typedef struct {
+    ngx_int_t             (*postconfiguration)(ngx_conf_t *cf);
+
     void                 *(*create_main_conf)(ngx_conf_t *cf);
     char                 *(*init_main_conf)(ngx_conf_t *cf, void *conf);
 
