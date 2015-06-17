@@ -85,6 +85,7 @@ rotate_logs() {
 
 upgrade_nginx() {
 	# Online upgrade nginx executable
+	# http://nginx.org/en/docs/control.html
 	#
 	# Return
 	#   0 if nginx has been successfully upgraded
@@ -157,6 +158,11 @@ case "$1" in
 		log_daemon_msg "Reloading $DESC configuration" "$NAME"
 
 		# Check configuration before stopping nginx
+		#
+		# This is not entirely correct since the on-disk nginx binary
+		# may differ from the in-memory one, but that's not common.
+		# We prefer to check the configuration and return an error
+		# to the administrator.
 		if ! test_config; then
 			log_end_msg 1 # Configuration error
 			exit $?
