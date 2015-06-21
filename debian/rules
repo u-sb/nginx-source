@@ -80,6 +80,7 @@ full_configure_flags := \
 			--with-stream_ssl_module \
 			--with-mail \
 			--with-mail_ssl_module \
+			--with-threads \
 			--add-module=$(MODULESDIR)/nginx-auth-pam \
 			--add-module=$(MODULESDIR)/nginx-dav-ext-module \
 			--add-module=$(MODULESDIR)/nginx-echo \
@@ -106,6 +107,7 @@ extras_configure_flags := \
 			--with-mail_ssl_module \
 			--with-stream \
 			--with-stream_ssl_module \
+			--with-threads \
 			--add-module=$(MODULESDIR)/headers-more-nginx-module \
 			--add-module=$(MODULESDIR)/nginx-auth-pam \
 			--add-module=$(MODULESDIR)/nginx-cache-purge \

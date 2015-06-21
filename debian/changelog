@@ -9,6 +9,10 @@ nginx (1.9.2-1) UNRELEASED; urgency=medium
   * New upstream Release.
   * debian/rules:
     + Add stream module to nginx-full & nginx-extras.
+    + Add thread pool support to nginx-full & nginx-extras.
+  * debian/modules/nginx-lua:
+    + Backport upstream's 9531e5e7 fixing build failure when thread pool
+      support is enabled.
 
  -- Michael Lustfield <michael@lustfield.net>  Mon, 15 Jun 2015 22:14:19 -0500
 

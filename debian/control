@@ -100,7 +100,8 @@ Description: nginx web/proxy server (standard version)
  .
  OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, GeoIP, Gunzip,
  Gzip, Gzip Precompression, Headers, Image Filter, Index, Log, Real IP, Spdy,
- SSI, SSL, Stream, Stub Status, Substitution, Upstream, User ID, XSLT.
+ SSI, SSL, Stream, Stub Status, Substitution, Thread Pool, Upstream, User ID,
+ XSLT.
  .
  MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
@@ -187,7 +188,7 @@ Description: nginx web/proxy server (extended version)
  OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, FLV, GeoIP,
  Gunzip, Gzip, Gzip Precompression, Headers, Image Filter, Index, Log, MP4,
  Embedded Perl, Random Index, Real IP, Secure Link, Spdy, SSI, SSL, Stream,
- Stub Status, Substitution, Upstream, User ID, XSLT.
+ Stub Status, Substitution, Thread Pool, Upstream, User ID, XSLT.
  .
  MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
