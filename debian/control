@@ -28,7 +28,6 @@ Standards-Version: 3.9.6.0
 Homepage: http://nginx.net
 Vcs-Git: git://anonscm.debian.org/collab-maint/nginx.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/nginx.git;a=summary
-XS-Testsuite: autopkgtest
 
 Package: nginx
 Architecture: all
