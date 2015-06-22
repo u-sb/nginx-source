@@ -1,4 +1,4 @@
-nginx (1.9.2-1) UNRELEASED; urgency=medium
+nginx (1.9.2-1) unstable; urgency=medium
 
   [ Michael Lustfield ]
   * debian/nginx-common.nginx.init:
@@ -14,7 +14,7 @@ nginx (1.9.2-1) UNRELEASED; urgency=medium
     + Backport upstream's 9531e5e7 fixing build failure when thread pool
       support is enabled.
 
- -- Michael Lustfield <michael@lustfield.net>  Mon, 15 Jun 2015 22:14:19 -0500
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Mon, 22 Jun 2015 10:16:19 +0300
 
 nginx (1.9.1-1) unstable; urgency=medium
 
