@@ -4,6 +4,8 @@ nginx (1.9.2-2) UNRELEASED; urgency=medium
   * debian/control:
     + Remove XS-Testsuite header, it is now automatically added when
       `debian/tests/control` is present.
+  * debian/modules/nginx-lua:
+    + Update nginx-lua to v0.9.16 and drop our backported patches.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Mon, 22 Jun 2015 13:01:07 +0300
 
