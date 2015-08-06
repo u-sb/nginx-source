@@ -7,23 +7,20 @@ Copyright: 2002-2014 Igor Sysoev
            2011-2014 Nginx, Inc.
                      Maxim Dounin
                      Valentin V. Bartenev
+                     Roman Arutyunyan
+                     Ruslan Ermilov
 License: BSD-2-clause
 
 Files: src/core/ngx_murmurhash.c
 Copyright: Copyright (C) Austin Appleby
 License: BSD-2-clause
 
-Files: src/core/ngx_proxy_protocol.h
-       src/core/ngx_proxy_protocol.c
-Copyright: Copyright (C) Roman Arutyunyan
-           Copyright (C) Nginx, Inc.
-License: BSD-2-clause
-
 Files: src/http/modules/ngx_http_scgi_module.c
        src/http/modules/ngx_http_uwsgi_module.c
 Copyright: Copyright (C) Igor Sysoev
            Copyright (C) Nginx, Inc.
-           Copyright (C) Manlio Perillo (manlio.perillo@gmail.com)
+           2009-2010 Unbit S.a.s.
+           2008      Manlio Perillo (manlio.perillo@gmail.com)
 License: BSD-2-clause
 
 Files: contrib/geo2nginx.pl
