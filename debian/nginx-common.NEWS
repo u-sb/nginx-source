@@ -1,3 +1,10 @@
+nginx-common (1.9.5-1) UNRELEASED; urgency=medium
+
+  As of nginx 1.9.5 spdy has been replaced by the http2 module. Make sure to
+  replace "spdy" with "http2" in your config files.
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 25 Sep 2015 14:06:28 +0300
+
 nginx-common (1.9.1-1) unstable; urgency=medium
 
   Starting with this release, we have enabled PIE build features which allows
