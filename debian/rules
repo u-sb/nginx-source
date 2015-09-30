@@ -73,7 +73,7 @@ full_configure_flags := \
 			--with-http_gunzip_module \
 			--with-http_gzip_static_module \
 			--with-http_image_filter_module \
-			--with-http_spdy_module \
+			--with-http_v2_module \
 			--with-http_sub_module \
 			--with-http_xslt_module \
 			--with-stream \
@@ -100,7 +100,7 @@ extras_configure_flags := \
 			--with-http_perl_module \
 			--with-http_random_index_module \
 			--with-http_secure_link_module \
-			--with-http_spdy_module \
+			--with-http_v2_module \
 			--with-http_sub_module \
 			--with-http_xslt_module \
 			--with-mail \
