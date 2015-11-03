@@ -1,9 +1,10 @@
-nginx (1.9.6-1) UNRELEASED; urgency=medium
+nginx (1.9.6-1) unstable; urgency=medium
 
   [ Christos Trochalakis]
   * New upstream release.
+  * Enable http2 module in nginx-full & nginx-extras
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 25 Sep 2015 14:03:10 +0300
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 03 Nov 2015 08:59:21 +0200
 
 nginx (1.9.4-1) unstable; urgency=medium
 

@@ -1,4 +1,4 @@
-nginx-common (1.9.5-1) UNRELEASED; urgency=medium
+nginx-common (1.9.6-1) unstable; urgency=medium
 
   As of nginx 1.9.5 spdy has been replaced by the http2 module. Make sure to
   replace "spdy" with "http2" in your config files.
