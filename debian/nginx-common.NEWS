@@ -1,4 +1,4 @@
-nginx-common (1.9.9-1) UNRELEASED; urgency=medium
+nginx-common (1.9.9-1) unstable; urgency=medium
 
   Starting with this release we are changing the default logrotate rule to keep
   daily logs for 14 days, this aligns our policy with apache2 (Bug #805322).

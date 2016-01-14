@@ -1,4 +1,4 @@
-nginx (1.9.9-1) UNRELEASED; urgency=medium
+nginx (1.9.9-1) unstable; urgency=medium
 
   [ Michael Lustfield ]
   * debian/nginx-common.nginx.logrotate:
@@ -9,7 +9,7 @@ nginx (1.9.9-1) UNRELEASED; urgency=medium
   * debian/modules/nginx-lua:
     + Update nginx-lua to v0.10.0.
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 14 Jan 2016 10:11:34 +0200
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 14 Jan 2016 10:40:35 +0200
 
 nginx (1.9.6-2) unstable; urgency=medium
 
