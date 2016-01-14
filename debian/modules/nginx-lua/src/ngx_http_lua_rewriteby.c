@@ -67,7 +67,7 @@ ngx_http_lua_rewrite_handler(ngx_http_request_t *r)
             tmp      = *cur_ph;
 
             memmove(cur_ph, cur_ph + 1,
-                (last_ph - cur_ph) * sizeof (ngx_http_phase_handler_t));
+                    (last_ph - cur_ph) * sizeof (ngx_http_phase_handler_t));
 
             *last_ph = tmp;
 
@@ -176,7 +176,8 @@ ngx_http_lua_rewrite_handler_inline(ngx_http_request_t *r)
     L = ngx_http_lua_get_lua_vm(r, NULL);
 
     /*  load Lua inline script (w/ cache) sp = 1 */
-    rc = ngx_http_lua_cache_loadbuffer(r, L, llcf->rewrite_src.value.data,
+    rc = ngx_http_lua_cache_loadbuffer(r->connection->log, L,
+                                       llcf->rewrite_src.value.data,
                                        llcf->rewrite_src.value.len,
                                        llcf->rewrite_src_key,
                                        (const char *)
@@ -214,7 +215,8 @@ ngx_http_lua_rewrite_handler_file(ngx_http_request_t *r)
     L = ngx_http_lua_get_lua_vm(r, NULL);
 
     /*  load Lua script file (w/ cache)        sp = 1 */
-    rc = ngx_http_lua_cache_loadfile(r, L, script_path, llcf->rewrite_src_key);
+    rc = ngx_http_lua_cache_loadfile(r->connection->log, L, script_path,
+                                     llcf->rewrite_src_key);
     if (rc != NGX_OK) {
         if (rc < NGX_HTTP_SPECIAL_RESPONSE) {
             return NGX_HTTP_INTERNAL_SERVER_ERROR;
