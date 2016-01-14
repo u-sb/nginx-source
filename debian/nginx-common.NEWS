@@ -1,3 +1,10 @@
+nginx-common (1.9.9-1) UNRELEASED; urgency=medium
+
+  Starting with this release we are changing the default logrotate rule to keep
+  daily logs for 14 days, this aligns our policy with apache2 (Bug #805322).
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 14 Jan 2016 10:17:33 +0200
+
 nginx-common (1.9.6-1) unstable; urgency=medium
 
   As of nginx 1.9.5 spdy has been replaced by the http2 module. Make sure to
