@@ -1,9 +1,13 @@
-nginx (1.9.6-3) UNRELEASED; urgency=medium
+nginx (1.9.9-1) UNRELEASED; urgency=medium
 
+  [ Michael Lustfield ]
   * debian/nginx-common.nginx.logrotate:
     + Switching logrotate to 14 days. (Closes: #805322)
 
- -- Michael Lustfield <michael@lustfield.net>  Thu, 10 Dec 2015 04:07:29 -0600
+  [ Christos Trochalakis ]
+  * New upstream release (1.9.9).
+
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 14 Jan 2016 10:11:34 +0200
 
 nginx (1.9.6-2) unstable; urgency=medium
 
