@@ -2,6 +2,8 @@ nginx (1.9.10-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream release (1.9.10) (Closes: #812806)
+  * debian/control:
+    + Drop python dependency from nginx-common. (Closes: #808699)
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 26 Jan 2016 19:43:29 +0200
 
