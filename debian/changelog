@@ -2,6 +2,9 @@ nginx (1.9.11-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream release (1.9.11) (Closes: #812806)
+  * debian/modules/nginx-lua:
+    + Update nginx-lua to v0.10.1rc0-5-g01727a3.
+      Fixes buiding failures with nginx 1.9.11.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 11 Feb 2016 15:06:38 +0200
 
