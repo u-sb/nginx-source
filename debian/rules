@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 export DH_VERBOSE=1
 
-export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all,-pie
 debian_cflags:=$(shell dpkg-buildflags --get CFLAGS) $(shell dpkg-buildflags --get CPPFLAGS)
 debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS)
 
