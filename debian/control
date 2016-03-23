@@ -79,7 +79,14 @@ Description: small, powerful, scalable web/proxy server - common files
 
 Package: nginx-full
 Architecture: any
-Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: nginx-common (= ${source:Version}),
+         libnginx-mod-http-geoip (= ${binary:Version}),
+         libnginx-mod-http-image-filter (= ${binary:Version}),
+         libnginx-mod-http-xslt-filter (= ${binary:Version}),
+         libnginx-mod-mail (= ${binary:Version}),
+         libnginx-mod-stream (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-light
@@ -164,6 +171,11 @@ Package: nginx-extras
 Architecture: any
 Priority: extra
 Depends: nginx-common (= ${source:Version}),
+         libnginx-mod-http-geoip (= ${binary:Version}),
+         libnginx-mod-http-image-filter (= ${binary:Version}),
+         libnginx-mod-http-xslt-filter (= ${binary:Version}),
+         libnginx-mod-mail (= ${binary:Version}),
+         libnginx-mod-stream (= ${binary:Version}),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
@@ -209,3 +221,52 @@ Description: nginx web/proxy server (extended version) - debugging symbols
  This package provides debugging symbols for nginx-extras, to assist in
  debugging issues that you may find. It should not be required for normal
  operation.
+
+Package: libnginx-mod-http-geoip
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GeoIP HTTP module for Nginx
+ The ngx_http_geoip module creates variables with values depending on the
+ client IP address, using the precompiled MaxMind databases.
+ .
+ Those variables include country, region, city, latitude, longitude, postal
+ code, etc.
+
+Package: libnginx-mod-http-image-filter
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: HTTP image filter module for Nginx
+ The ngx_http_image_filter module is a filter that transforms images in JPEG,
+ GIF, and PNG formats.
+ .
+ The module supports filters such as rotate, resize, crop, quality, sharpening,
+ interlacing and more.
+
+Package: libnginx-mod-http-xslt-filter
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: XSLT Transformation module for Nginx
+ The ngx_http_xslt_filter module is a filter that transforms XML responses
+ using one or more XSLT stylesheets.
+ .
+ The transformation can be adjusted by setting the relevant configuration
+ parameters.
+
+Package: libnginx-mod-mail
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Mail module for Nginx
+ The nginx_mail module adds mail proxy support to nginx.
+ .
+ The module supports proxying all the standard mail protocols such as IMAP,
+ POP3 & SMTP.
+
+Package: libnginx-mod-stream
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Stream module for Nginx
+ The nginx_stream module adds stream proxy support to nginx.
+ .
+ Stream module supports loadbalancing & proxying to TCP servers. The module
+ also supports ACLs/connection limiting and configuring multiple operational
+ parameters.
