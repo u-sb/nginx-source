@@ -1,0 +1,11 @@
+for conf in #NAMES# ; do
+	# Symlink on fresh installations
+	if [ -z "$2" ]; then
+		ln -sf /usr/share/nginx/modules-available/$conf \
+			/etc/nginx/modules-enabled/$conf
+	fi
+done
+
+if [ -s /run/nginx.pid ]; then
+	nginx -s reload
+fi

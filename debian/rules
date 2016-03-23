@@ -36,6 +36,7 @@ common_configure_flags := \
 			--error-log-path=/var/log/nginx/error.log \
 			--lock-path=/var/lock/nginx.lock \
 			--pid-path=/run/nginx.pid \
+			--modules-path=/usr/lib/nginx/modules \
 			--http-client-body-temp-path=/var/lib/nginx/body \
 			--http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
 			--http-proxy-temp-path=/var/lib/nginx/proxy \
@@ -126,9 +127,13 @@ extras_configure_flags := \
 
 override_dh_auto_configure: $(foreach flavour,$(FLAVOURS),config.arch.$(flavour))
 override_dh_auto_build:     $(foreach flavour,$(FLAVOURS),build.arch.$(flavour))
-override_dh_strip:          $(foreach flavour,$(FLAVOURS),strip.arch.$(flavour))
+override_dh_strip:          $(foreach flavour,$(FLAVOURS),strip.arch.$(flavour)) $(foreach mod,$(DYN_MODS),strip.mods.$(mod))
 override_dh_clean:          $(foreach flavour,$(FLAVOURS),clean.$(flavour))
 	dh_clean
+
+override_dh_install:
+	dh_install
+	DH_AUTOSCRIPTDIR=$(CURDIR)/debian/autoscripts debian/dh_nginx
 
 override_dh_installinit:
 	dh_installinit --no-restart-on-upgrade --no-start --name=nginx
@@ -144,6 +149,9 @@ build.arch.%:
 
 strip.arch.%:
 	dh_strip --package=nginx-$(*) --dbg-package=nginx-$(*)-dbg
+
+strip.mods.%:
+	dh_strip --package=libnginx-mod-$(*) --automatic-dbgsym
 
 config.arch.%:
 	dh_testdir

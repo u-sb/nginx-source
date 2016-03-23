@@ -1,0 +1,11 @@
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
+	for conf in #NAMES# ; do
+		if [ -e /etc/nginx/etc/nginx/modules-enabled/$conf ]; then
+			rm /etc/nginx/etc/nginx/modules-enabled/$conf
+		fi
+	done
+
+	if [ -s /run/nginx.pid ]; then
+		nginx -s reload
+	fi
+fi
