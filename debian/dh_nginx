@@ -33,7 +33,7 @@ dh_nginx - register configuration snippets to the nginx web server
 
 sub nginx_depends
 {
-	return 'nginx-light (= ${binary:Version}) |nginx-full (= ${binary:Version}) | nginx-extras (= ${binary:Version})'
+	return 'nginx-common (= ${source:Version})'
 }
 
 sub nginx_api_installdir
