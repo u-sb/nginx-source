@@ -24,7 +24,7 @@ Build-Depends: autotools-dev,
                libxslt1-dev,
                po-debconf,
                zlib1g-dev
-Standards-Version: 3.9.6.0
+Standards-Version: 3.9.7.0
 Homepage: http://nginx.net
 Vcs-Git: https://anonscm.debian.org/cgit/collab-maint/nginx.git
 Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/nginx.git
