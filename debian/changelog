@@ -20,7 +20,7 @@ nginx (1.9.13-1) UNRELEASED; urgency=medium
   * debian/nginx-common.nginx.service:
     + Documentation points to nginx man page.
   * debian/modules/nginx-lua:
-    + Update nginx-lua to v0.10.1rc0-5-g01727a3.
+    + Update nginx-lua to v0.12 and convert it to a dyn module.
       Fixes buiding failures with nginx 1.9.11.
   * debian/modules/nginx-auth-pam:
     + Update http-auth-pam module to 1.5 and convert it to a dyn module.

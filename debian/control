@@ -179,6 +179,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-http-auth-pam (= ${binary:Version}),
+         libnginx-mod-http-lua (= ${binary:Version}),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
@@ -282,3 +283,14 @@ Description: PAM authentication module for Nginx
  .
  The module uses PAM as a backend for simple http authentication. It
  also allows setting the pam service name to allow more fine grained control.
+
+Package: libnginx-mod-http-lua
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: LUA module for Nginx
+ Embed LUA runtime into nginx.
+ .
+ This module embeds Lua, via the standard Lua 5.1 interpreter or LuaJIT
+ 2.0/2.1, into Nginx and by leveraging Nginx's subrequests, allows the
+ integration of the powerful Lua threads (Lua coroutines) into the Nginx event
+ model.
