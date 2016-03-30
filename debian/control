@@ -85,6 +85,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-http-auth-pam (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -177,6 +178,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-http-auth-pam (= ${binary:Version}),
          ${misc:Depends},
          ${perl:Depends},
          ${shlibs:Depends}
@@ -271,3 +273,12 @@ Description: Stream module for Nginx
  Stream module supports loadbalancing & proxying to TCP servers. The module
  also supports ACLs/connection limiting and configuring multiple operational
  parameters.
+
+Package: libnginx-mod-http-auth-pam
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: PAM authentication module for Nginx
+ The nginx_http_auth_pam module enables authentication using PAM.
+ .
+ The module uses PAM as a backend for simple http authentication. It
+ also allows setting the pam service name to allow more fine grained control.
