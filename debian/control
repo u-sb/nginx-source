@@ -149,8 +149,8 @@ Description: nginx web/proxy server (basic version)
  FastCGI, Map, Proxy, Rewrite.
  .
  OPTIONAL HTTP MODULES: Auth Request, Charset, Gzip, Gzip Precompression,
- Headers, HTTP/2, Index, Log, Real IP, SSL, Stub Status, Thread Pool, WebDAV,
- Upstream.
+ Headers, HTTP/2, Index, Log, Real IP, SSI, SSL, Stub Status, Thread Pool,
+ WebDAV, Upstream.
  .
  THIRD PARTY MODULES: Echo.
 
