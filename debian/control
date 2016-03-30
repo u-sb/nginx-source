@@ -180,8 +180,8 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-lua (= ${binary:Version}),
+         libnginx-mod-http-perl (= ${binary:Version}),
          ${misc:Depends},
-         ${perl:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
@@ -274,6 +274,17 @@ Description: Stream module for Nginx
  Stream module supports loadbalancing & proxying to TCP servers. The module
  also supports ACLs/connection limiting and configuring multiple operational
  parameters.
+
+Package: libnginx-mod-http-perl
+Architecture: any
+Depends: ${perl:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Description: Perl module for Nginx
+ Embed Perl runtime into nginx.
+ .
+ The ngx_http_perl module is used to implement location and variable handlers
+ in Perl and insert Perl calls into SSI.
+ .
+ Note that this module is marked experimental.
 
 Package: libnginx-mod-http-auth-pam
 Architecture: any
