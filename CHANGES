@@ -1,4 +1,81 @@
 
+Changes with nginx 1.9.13                                        29 Mar 2016
+
+    *) Change: non-idempotent requests (POST, LOCK, PATCH) are no longer
+       passed to the next server by default if a request has been sent to a
+       backend; the "non_idempotent" parameter of the "proxy_next_upstream"
+       directive explicitly allows retrying such requests.
+
+    *) Feature: the ngx_http_perl_module can be built dynamically.
+
+    *) Feature: UDP support in the stream module.
+
+    *) Feature: the "aio_write" directive.
+
+    *) Feature: now cache manager monitors number of elements in caches and
+       tries to avoid cache keys zone overflows.
+
+    *) Bugfix: "task already active" and "second aio post" alerts might
+       appear in logs when using the "sendfile" and "aio" directives with
+       subrequests.
+
+    *) Bugfix: "zero size buf in output" alerts might appear in logs if
+       caching was used and a client closed a connection prematurely.
+
+    *) Bugfix: connections with clients might be closed needlessly if
+       caching was used.
+       Thanks to Justin Li.
+
+    *) Bugfix: nginx might hog CPU if the "sendfile" directive was used on
+       Linux or Solaris and a file being sent was changed during sending.
+
+    *) Bugfix: connections might hang when using the "sendfile" and "aio
+       threads" directives.
+
+    *) Bugfix: in the "proxy_pass", "fastcgi_pass", "scgi_pass", and
+       "uwsgi_pass" directives when using variables.
+       Thanks to Piotr Sikora.
+
+    *) Bugfix: in the ngx_http_sub_filter_module.
+
+    *) Bugfix: if an error occurred in a cached backend connection, the
+       request was passed to the next server regardless of the
+       proxy_next_upstream directive.
+
+    *) Bugfix: "CreateFile() failed" errors when creating temporary files on
+       Windows.
+
+
+Changes with nginx 1.9.12                                        24 Feb 2016
+
+    *) Feature: Huffman encoding of response headers in HTTP/2.
+       Thanks to Vlad Krasnov.
+
+    *) Feature: the "worker_cpu_affinity" directive now supports more than
+       64 CPUs.
+
+    *) Bugfix: compatibility with 3rd party C++ modules; the bug had
+       appeared in 1.9.11.
+       Thanks to Piotr Sikora.
+
+    *) Bugfix: nginx could not be built statically with OpenSSL on Linux;
+       the bug had appeared in 1.9.11.
+
+    *) Bugfix: the "add_header ... always" directive with an empty value did
+       not delete "Last-Modified" and "ETag" header lines from error
+       responses.
+
+    *) Workaround: "called a function you should not call" and "shutdown
+       while in init" messages might appear in logs when using OpenSSL
+       1.0.2f.
+
+    *) Bugfix: invalid headers might be logged incorrectly.
+
+    *) Bugfix: socket leak when using HTTP/2.
+
+    *) Bugfix: in the ngx_http_v2_module.
+
+
 Changes with nginx 1.9.11                                        09 Feb 2016
 
     *) Feature: TCP support in resolver.

@@ -23,11 +23,10 @@ static ngx_uint_t  ngx_modules_n;
 
 
 ngx_int_t
-ngx_preinit_modules()
+ngx_preinit_modules(void)
 {
     ngx_uint_t  i;
 
-    ngx_max_module = 0;
     for (i = 0; ngx_modules[i]; i++) {
         ngx_modules[i]->index = i;
         ngx_modules[i]->name = ngx_module_names[i];
@@ -171,7 +170,7 @@ ngx_add_module(ngx_conf_t *cf, ngx_str_t *file, ngx_module_t *module,
     if (module->version != nginx_version) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                            "module \"%V\" version %ui instead of %ui",
-                           file, module->version, nginx_version);
+                           file, module->version, (ngx_uint_t) nginx_version);
         return NGX_ERROR;
     }
 

@@ -253,7 +253,7 @@ struct ngx_module_s {
     ngx_uint_t            spare1;
 
     ngx_uint_t            version;
-    char                 *signature;
+    const char           *signature;
 
     void                 *ctx;
     ngx_command_t        *commands;
@@ -288,7 +288,7 @@ typedef struct {
 } ngx_core_module_t;
 
 
-ngx_int_t ngx_preinit_modules();
+ngx_int_t ngx_preinit_modules(void);
 ngx_int_t ngx_cycle_modules(ngx_cycle_t *cycle);
 ngx_int_t ngx_init_modules(ngx_cycle_t *cycle);
 ngx_int_t ngx_count_modules(ngx_cycle_t *cycle, ngx_uint_t type);
