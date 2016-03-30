@@ -1,7 +1,7 @@
-nginx (1.9.11-1) UNRELEASED; urgency=medium
+nginx (1.9.13-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
-  * New upstream release (1.9.11) (Closes: #812806)
+  * New upstream release (1.9.13) (Closes: #812806)
   * debian:
     + Setup dynamic module flow, and implement a simple dh_nginx helper for
       internal use.
