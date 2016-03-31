@@ -10,7 +10,7 @@ nginx (1.9.13-1) UNRELEASED; urgency=medium
   * debian/control:
     + Enable http/2, thread pool & WebDAV on nginx-light.
       In order for dynamic modules to be loadable in all nginx flavors we need
-      to ensure the share the same build signature.
+      to ensure the share the same build signature. (Closes: #816095)
     + Use secure VCS uri (lintian).
     + Bump Standards to 3.9.7.
   * debian/rules:
