@@ -48,6 +48,7 @@ Description: small, powerful, scalable web/proxy server
 
 Package: nginx-doc
 Architecture: all
+Multi-Arch: foreign
 Section: doc
 Depends: lsb-base (>= 3.2-14), ${misc:Depends}
 Description: small, powerful, scalable web/proxy server - documentation
@@ -59,6 +60,7 @@ Description: small, powerful, scalable web/proxy server - documentation
 
 Package: nginx-common
 Architecture: all
+Multi-Arch: foreign
 Depends: lsb-base (>= 3.2-14), ${misc:Depends}
 Replaces: nginx (<< 0.8.54-4),
           nginx-extras (<< 0.8.54-4),
