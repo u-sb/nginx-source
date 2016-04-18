@@ -112,9 +112,8 @@ Modules are handled specially and are determined by the B<mod> type. Modules mus
 have a I<.conf> suffix. In that case the file is interpreted as module load
 file and is installed to I</etc/nginx/modules-available>. If the file is ending
 with a I<.so> suffix it is interpreted as actual module shared object and is
-installed to the Nginx module directory. Moreover, if a I<.load> file is
-installed the configuration is activated in the maintainer script at
-installation time.
+installed to the Nginx module directory, an optional numeric priority can be
+set as the last argument to handle module dependencies.
 
 =head1 OPTIONS
 
@@ -205,7 +204,7 @@ foreach my $package ((@{$dh{DOPACKAGES}}))
 				}
 
 				# TODO
-				error("module: \"$basesource\" needs .conf, .so or .load suffix") if $basesource !~ m/\.(conf|so)/;
+				error("module: \"$basesource\" needs .conf, .so or suffix") if $basesource !~ m/\.(conf|so)/;
 			}
 
 			if (! -d $installdir)
