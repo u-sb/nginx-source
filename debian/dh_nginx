@@ -169,7 +169,8 @@ foreach my $package ((@{$dh{DOPACKAGES}}))
 	{
 		my $type = lc(shift @{$line}) if $line->[0];
 		my $source = shift @{$line} if $line->[0];
-		my @arguments = map {"$_ "} @{$line};
+		my @arguments = @{$line};
+		my $destination;
 
 		$type = "modules" if $type eq "mod";
 		my $installdir = $tmp . "/" . nginx_modules_conf_installdir();
@@ -185,8 +186,10 @@ foreach my $package ((@{$dh{DOPACKAGES}}))
 				if ($basesource =~ m/\.conf$/)
 				{
 					my $enablename = $basesource;
-					push @{$PACKAGE_TYPE{'has_a_module'}}, $enablename;
-					verbose_print("Installing module configuration $enablename into $installdir\n");
+					my $prio = $#arguments >= 0 ? $arguments[0] : 50;
+					$destination = "$prio-$basesource";
+					push @{$PACKAGE_TYPE{'has_a_module'}}, "$enablename:$destination";
+					verbose_print("Installing module configuration $enablename into $installdir prio:$prio\n");
 				}
 				elsif ($basesource =~ m/\.so$/)
 			{

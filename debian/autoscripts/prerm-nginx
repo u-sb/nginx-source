@@ -1,7 +1,10 @@
 if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
-	for conf in #NAMES# ; do
-		if [ -e /etc/nginx/etc/nginx/modules-enabled/$conf ]; then
-			rm /etc/nginx/etc/nginx/modules-enabled/$conf
+	for confpair in #NAMES# ; do
+		from=$(echo $confpair | cut -d: -f1)
+		to=$(echo $confpair | cut -d: -f2)
+
+		if [ -e /etc/nginx/modules-enabled/$to ]; then
+			rm /etc/nginx/modules-enabled/$to
 		fi
 	done
 
