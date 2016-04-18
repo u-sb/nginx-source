@@ -348,7 +348,7 @@ ngx_inet6_ntop(u_char *p, u_char *text, size_t len)
             continue;
         }
 
-        dst = ngx_sprintf(dst, "%uxi", p[i] * 256 + p[i + 1]);
+        dst = ngx_sprintf(dst, "%uxd", p[i] * 256 + p[i + 1]);
 
         if (i < 14) {
             *dst++ = ':';
@@ -1242,19 +1242,19 @@ ngx_cmp_sockaddr(struct sockaddr *sa1, socklen_t slen1,
 #if (NGX_HAVE_UNIX_DOMAIN)
     case AF_UNIX:
 
-       /* TODO length */
+        /* TODO length */
 
-       saun1 = (struct sockaddr_un *) sa1;
-       saun2 = (struct sockaddr_un *) sa2;
+        saun1 = (struct sockaddr_un *) sa1;
+        saun2 = (struct sockaddr_un *) sa2;
 
-       if (ngx_memcmp(&saun1->sun_path, &saun2->sun_path,
-                      sizeof(saun1->sun_path))
-           != 0)
-       {
-           return NGX_DECLINED;
-       }
+        if (ngx_memcmp(&saun1->sun_path, &saun2->sun_path,
+                       sizeof(saun1->sun_path))
+            != 0)
+        {
+            return NGX_DECLINED;
+        }
 
-       break;
+        break;
 #endif
 
     default: /* AF_INET */
