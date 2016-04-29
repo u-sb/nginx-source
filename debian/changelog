@@ -1,9 +1,9 @@
-nginx (1.10.0-1) UNRELEASED; urgency=medium
+nginx (1.10.0-1) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream release (1.10.0)
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 29 Apr 2016 10:31:21 +0300
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 29 Apr 2016 10:31:46 +0300
 
 nginx (1.9.14-2) unstable; urgency=medium
 
