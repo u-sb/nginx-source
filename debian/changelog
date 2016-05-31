@@ -2,6 +2,9 @@ nginx (1.10.0-1) unstable; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream release (1.10.0)
+  * debian/control:
+    + Generate dbgsym packages only if dh_strip supports it.
+      Thanks Faidon Liambotis for the hint.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Fri, 29 Apr 2016 10:31:46 +0300
 
