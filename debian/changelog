@@ -1,11 +1,16 @@
-nginx (1.10.0-2) UNRELEASED; urgency=medium
+nginx (1.10.1-1) unstable; urgency=medium
 
   [ Christos Trochalakis ]
+  * New upstream release (1.10.1)
+    Fixes CVE-2016-4450
+    NULL pointer dereference while writing client request body.
+    (Closes: #825960)
+
   * debian/control:
     + Generate dbgsym packages only if dh_strip supports it.
       Thanks Faidon Liambotis for the hint.
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 31 May 2016 21:59:40 +0300
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Tue, 31 May 2016 22:01:25 +0300
 
 nginx (1.10.0-1) unstable; urgency=medium
 
