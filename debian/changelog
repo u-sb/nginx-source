@@ -7,8 +7,11 @@ nginx (1.10.1-2) UNRELEASED; urgency=medium
 
   [ Michael Lustfield ]
   * debian/patches/0003-*.patch:
-    + Use _GNU_SOURCE on GNU/kFreeBSD (Closes: #826061)
+    + Use _GNU_SOURCE on GNU/kFreeBSD. (Closes: #826061)
       Thanks Steven Chamberlain for the patch.
+  * debian/nginx-*.postinst:
+    + Make nginx-*.postinst use invoke-rc.d. (Closes: #823435)
+      Thanks Simon Deziel for the patch.
 
  -- Michael Lustfield <michael@lustfield.net>  Sat, 16 Jul 2016 17:24:40 -0700
 
