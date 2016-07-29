@@ -13,7 +13,8 @@ esac
 
 if [ -x /etc/init.d/nginx ]; then
   if [ -f /run/nginx.pid ] && pidof /usr/sbin/nginx >/dev/null; then
-    invoke-rc.d nginx upgrade || exit $?
+    invoke-rc.d nginx upgrade || invoke-rc.d nginx restart
+    exit $?
   else
     invoke-rc.d nginx start || exit $?
   fi
