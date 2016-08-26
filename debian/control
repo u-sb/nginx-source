@@ -185,6 +185,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-lua (= ${binary:Version}),
          libnginx-mod-http-perl (= ${binary:Version}),
+         libnginx-mod-nchan (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -324,3 +325,16 @@ Description: Nginx Development Kit module
  features that are seen from a user's point of view - it's just designed to help
  reduce the code that Nginx module developers need to write.  Embed LUA runtime
  into nginx.
+
+Package: libnginx-mod-nchan
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Fast, flexible pub/sub server for Nginx
+ Nchan is a scalable, flexible pub/sub server for the modern web, It can be
+ configured as a standalone server, or as a shim between your application and
+ tens, thousands, or millions of live subscribers. It can buffer messages in
+ memory, on-disk, or via Redis. All connections are handled asynchronously and
+ distributed among any number of worker processes. It can also scale to many
+ nginx server instances with Redis.
+ .
+ Full documentation available at https://nchan.slact.net
