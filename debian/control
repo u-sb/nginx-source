@@ -110,8 +110,8 @@ Description: nginx web/proxy server (standard version)
  .
  OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, GeoIP, Gunzip,
  Gzip, Gzip Precompression, Headers, HTTP/2, Image Filter, Index, Log, Real IP,
- SSI, SSL, Stream, Stub Status, Substitution, Thread Pool, Upstream, User ID,
- XSLT.
+ Slice, SSI, SSL, Stream, Stub Status, Substitution, Thread Pool, Upstream,
+ User ID, XSLT.
  .
  MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
@@ -152,8 +152,8 @@ Description: nginx web/proxy server (basic version)
  FastCGI, Map, Proxy, Rewrite.
  .
  OPTIONAL HTTP MODULES: Auth Request, Charset, Gzip, Gzip Precompression,
- Headers, HTTP/2, Index, Log, Real IP, SSI, SSL, Stub Status, Thread Pool,
- WebDAV, Upstream.
+ Headers, HTTP/2, Index, Log, Real IP, Slice, SSI, SSL, Stub Status, Thread
+ Pool, WebDAV, Upstream.
  .
  THIRD PARTY MODULES: Echo.
 
@@ -205,8 +205,8 @@ Description: nginx web/proxy server (extended version)
  .
  OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, FLV, GeoIP,
  Gunzip, Gzip, Gzip Precompression, Headers, HTTP/2, Image Filter, Index, Log,
- MP4, Embedded Perl, Random Index, Real IP, Secure Link, SSI, SSL, Stream,
- Stub Status, Substitution, Thread Pool, Upstream, User ID, XSLT.
+ MP4, Embedded Perl, Random Index, Real IP, Slice, Secure Link, SSI, SSL,
+ Stream, Stub Status, Substitution, Thread Pool, Upstream, User ID, XSLT.
  .
  MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
