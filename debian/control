@@ -90,6 +90,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-http-auth-pam (= ${binary:Version}),
+         libnginx-mod-http-echo (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -136,7 +137,10 @@ Description: nginx web/proxy server (standard version) - debugging symbols
 Package: nginx-light
 Architecture: any
 Priority: extra
-Depends: nginx-common (= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: nginx-common (= ${source:Version}),
+         libnginx-mod-http-echo (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-full
@@ -186,6 +190,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-lua (= ${binary:Version}),
          libnginx-mod-http-perl (= ${binary:Version}),
          libnginx-mod-nchan (= ${binary:Version}),
+         libnginx-mod-http-echo (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -338,3 +343,24 @@ Description: Fast, flexible pub/sub server for Nginx
  nginx server instances with Redis.
  .
  Full documentation available at https://nchan.slact.net
+
+Package: libnginx-mod-http-echo
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Bring echo and more shell style goodies to Nginx
+ Echo module wraps lots of Nginx internal APIs for streaming input and output,
+ parallel/sequential subrequests, timers and sleeping, as well as various meta
+ data accessing.
+ .
+ Basically it provides various utilities that help testing and debugging of
+ other modules by trivially emulating different kinds of faked subrequest
+ locations.
+ .
+ People will also find it useful in real-world applications that need to:
+ .
+ 1. Serve static contents directly from memory.
+ 2. Wrap the upstream response with custom header and footer (kinda like the
+    addition module but with contents read directly from the config file and
+    Nginx variables).
+ 3. Merge contents of various "Nginx locations" (i.e., subrequests) together in
+    a single main request (using echo_location and its friends).
