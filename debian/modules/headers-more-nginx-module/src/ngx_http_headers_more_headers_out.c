@@ -223,6 +223,7 @@ ngx_http_set_header_helper(ngx_http_request_t *r,
         continue;
 
 matched:
+
         if (value->len == 0 || matched) {
             dd("clearing normal header for %.*s", (int) hv->key.len,
                hv->key.data);
@@ -243,7 +244,7 @@ matched:
     }
 
     if (matched){
-      return NGX_OK;
+        return NGX_OK;
     }
 
     if ((hv->wildcard || no_create) && value->len == 0) {
@@ -515,7 +516,7 @@ static ngx_flag_t
 ngx_http_headers_more_check_type(ngx_http_request_t *r, ngx_array_t *types)
 {
     ngx_uint_t          i;
-    ngx_str_t           *t;
+    ngx_str_t          *t;
 
     dd("headers_out->content_type: %.*s (len %d)",
        (int) r->headers_out.content_type.len,
@@ -527,7 +528,7 @@ ngx_http_headers_more_check_type(ngx_http_request_t *r, ngx_array_t *types)
     for (i = 0; i < types->nelts; i++) {
         dd("...comparing with type [%.*s]", (int) t[i].len, t[i].data);
 
-        if (r->headers_out.content_type.len == t[i].len
+        if (r->headers_out.content_type_len == t[i].len
             && ngx_strncmp(r->headers_out.content_type.data,
                            t[i].data, t[i].len) == 0)
         {
@@ -543,7 +544,7 @@ static ngx_flag_t
 ngx_http_headers_more_check_status(ngx_http_request_t *r, ngx_array_t *statuses)
 {
     ngx_uint_t          i;
-    ngx_uint_t          *status;
+    ngx_uint_t         *status;
 
     dd("headers_out.status = %d", (int) r->headers_out.status);
 
@@ -577,7 +578,7 @@ ngx_http_headers_more_parse_directive(ngx_conf_t *cf, ngx_command_t *ngx_cmd,
 
     if (hlcf->cmds == NULL) {
         hlcf->cmds = ngx_array_create(cf->pool, 1,
-                                     sizeof(ngx_http_headers_more_cmd_t));
+                                      sizeof(ngx_http_headers_more_cmd_t));
 
         if (hlcf->cmds == NULL) {
             return NGX_CONF_ERROR;
