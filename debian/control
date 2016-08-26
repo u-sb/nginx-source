@@ -24,7 +24,8 @@ Build-Depends: autotools-dev,
                libssl-dev,
                libxslt1-dev,
                po-debconf,
-               zlib1g-dev
+               zlib1g-dev,
+               libhiredis-dev
 Standards-Version: 3.9.8.0
 Homepage: http://nginx.net
 Vcs-Git: https://anonscm.debian.org/cgit/collab-maint/nginx.git
@@ -211,7 +212,7 @@ Description: nginx web/proxy server (extended version)
  MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
  .
  THIRD PARTY MODULES: Auth PAM, Cache Purge, DAV Ext, Echo, Fancy Index,
- Headers More, Embedded Lua, HTTP Push, HTTP Substitutions, Upload Progress,
+ Headers More, Embedded Lua, HTTP Substitutions, Nchan, Upload Progress,
  Upstream Fair Queue.
 
 Package: nginx-extras-dbg

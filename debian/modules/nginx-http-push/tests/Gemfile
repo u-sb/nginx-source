@@ -1,9 +1,0 @@
-#!/usr/bin/ruby
-source 'https://rubygems.org'
-gem 'typhoeus'
-gem 'json'
-gem 'nokogiri'
-gem 'pry'
-gem 'celluloid'
-gem 'minitest'
-gem 'minitest-reporters'
