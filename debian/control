@@ -193,6 +193,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-nchan (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-upstream-fair (= ${binary:Version}),
+         libnginx-mod-http-headers-more-filter (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -374,3 +375,14 @@ Description: Nginx Upstream Fair Proxy Load Balancer
  The Nginx fair proxy balancer enhances the standard round-robin load balancer
  provided with Nginx so that it tracks busy backend servers and adjusts
  balancing accordingly.
+
+Package: libnginx-mod-http-headers-more-filter
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Set and clear input and output headers for Nginx
+ The Headers More module allows you to add, set, or clear any output or input
+ header that you specify.
+ .
+ This is an enhanced version of the standard headers module because it provides
+ more utilities like resetting or clearing "builtin headers" like Content-Type,
+ Content-Length, and Server.
