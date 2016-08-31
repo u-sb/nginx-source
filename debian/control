@@ -195,6 +195,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-upstream-fair (= ${binary:Version}),
          libnginx-mod-http-headers-more-filter (= ${binary:Version}),
          libnginx-mod-http-cache-purge (= ${binary:Version}),
+         libnginx-mod-http-fancyindex (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -395,3 +396,11 @@ Description: Purge content from Nginx caches
  Cache Purge module adds purging capabilities to Nginx. It allows purging
  content from caches used by all of Nginx proxy modules, like FastCGI, Proxy,
  SCGI and uWSGI.
+
+Package: libnginx-mod-http-fancyindex
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Fancy indexes module for the Nginx
+ The Fancy Index module makes possible the generation of file listings, like
+ the built-in autoindex module does, but adding a touch of style by introducing
+ ways to customize the result.
