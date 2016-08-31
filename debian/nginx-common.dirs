@@ -1,13 +1,13 @@
 etc/nginx
-etc/nginx/sites-available
-etc/nginx/sites-enabled
+etc/nginx/conf.d
 etc/nginx/modules-available
 etc/nginx/modules-enabled
-etc/nginx/conf.d
+etc/nginx/sites-available
+etc/nginx/sites-enabled
 etc/ufw/applications.d
 usr/share/nginx
 usr/share/vim/addons
 usr/share/vim/registry
-var/log/nginx
 var/lib/nginx
+var/log/nginx
 var/www/html

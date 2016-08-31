@@ -15,8 +15,9 @@ Build-Depends: autotools-dev,
                libexpat-dev,
                libgd-dev,
                libgeoip-dev,
-               libluajit-5.1-dev [i386 amd64 kfreebsd-i386 armel armhf powerpc powerpcspe mips mipsel],
+               libhiredis-dev,
                liblua5.1-0-dev [!i386 !amd64 !kfreebsd-i386 !armel !armhf !powerpc !powerpcspe !mips !mipsel],
+               libluajit-5.1-dev [i386 amd64 kfreebsd-i386 armel armhf powerpc powerpcspe mips mipsel],
                libmhash-dev,
                libpam0g-dev,
                libpcre3-dev,
@@ -24,8 +25,7 @@ Build-Depends: autotools-dev,
                libssl-dev,
                libxslt1-dev,
                po-debconf,
-               zlib1g-dev,
-               libhiredis-dev
+               zlib1g-dev
 Standards-Version: 3.9.8.0
 Homepage: http://nginx.net
 Vcs-Git: https://anonscm.debian.org/cgit/collab-maint/nginx.git
@@ -33,12 +33,8 @@ Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/nginx.git
 
 Package: nginx
 Architecture: all
-Depends: nginx-full   (>= ${source:Version}) |
-         nginx-light  (>= ${source:Version}) |
-         nginx-extras (>= ${source:Version}) ,
-         nginx-full   (<< ${source:Version}.1~) |
-         nginx-light  (<< ${source:Version}.1~) |
-         nginx-extras (<< ${source:Version}.1~) ,
+Depends: nginx-full (<< ${source:Version}.1~) | nginx-light (<< ${source:Version}.1~) | nginx-extras (<< ${source:Version}.1~),
+         nginx-full (>= ${source:Version}) | nginx-light (>= ${source:Version}) | nginx-extras (>= ${source:Version}),
          ${misc:Depends}
 Description: small, powerful, scalable web/proxy server
  Nginx ("engine X") is a high-performance web and reverse proxy server
@@ -83,16 +79,16 @@ Description: small, powerful, scalable web/proxy server - common files
 
 Package: nginx-full
 Architecture: any
-Depends: nginx-common (= ${source:Version}),
+Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
+         libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
+         libnginx-mod-http-subs-filter (= ${binary:Version}),
+         libnginx-mod-http-upstream-fair (= ${binary:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
-         libnginx-mod-http-auth-pam (= ${binary:Version}),
-         libnginx-mod-http-echo (= ${binary:Version}),
-         libnginx-mod-http-upstream-fair (= ${binary:Version}),
-         libnginx-mod-http-subs-filter (= ${binary:Version}),
+         nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -139,8 +135,8 @@ Description: nginx web/proxy server (standard version) - debugging symbols
 Package: nginx-light
 Architecture: any
 Priority: extra
-Depends: nginx-common (= ${source:Version}),
-         libnginx-mod-http-echo (= ${binary:Version}),
+Depends: libnginx-mod-http-echo (= ${binary:Version}),
+         nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -182,23 +178,23 @@ Description: nginx web/proxy server (basic version) - debugging symbols
 Package: nginx-extras
 Architecture: any
 Priority: extra
-Depends: nginx-common (= ${source:Version}),
+Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
+         libnginx-mod-http-cache-purge (= ${binary:Version}),
+         libnginx-mod-http-echo (= ${binary:Version}),
+         libnginx-mod-http-fancyindex (= ${binary:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
+         libnginx-mod-http-headers-more-filter (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
-         libnginx-mod-http-xslt-filter (= ${binary:Version}),
-         libnginx-mod-mail (= ${binary:Version}),
-         libnginx-mod-stream (= ${binary:Version}),
-         libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-lua (= ${binary:Version}),
          libnginx-mod-http-perl (= ${binary:Version}),
-         libnginx-mod-nchan (= ${binary:Version}),
-         libnginx-mod-http-echo (= ${binary:Version}),
-         libnginx-mod-http-upstream-fair (= ${binary:Version}),
-         libnginx-mod-http-headers-more-filter (= ${binary:Version}),
-         libnginx-mod-http-cache-purge (= ${binary:Version}),
-         libnginx-mod-http-fancyindex (= ${binary:Version}),
-         libnginx-mod-http-uploadprogress (= ${binary:Version}),
          libnginx-mod-http-subs-filter (= ${binary:Version}),
+         libnginx-mod-http-uploadprogress (= ${binary:Version}),
+         libnginx-mod-http-upstream-fair (= ${binary:Version}),
+         libnginx-mod-http-xslt-filter (= ${binary:Version}),
+         libnginx-mod-mail (= ${binary:Version}),
+         libnginx-mod-nchan (= ${binary:Version}),
+         libnginx-mod-stream (= ${binary:Version}),
+         nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -295,7 +291,7 @@ Description: Stream module for Nginx
 
 Package: libnginx-mod-http-perl
 Architecture: any
-Depends: ${perl:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}
 Replaces: nginx-extras (<< 1.9.14-1)
 Description: Perl module for Nginx
  Embed Perl runtime into nginx.
@@ -316,7 +312,9 @@ Description: PAM authentication module for Nginx
 
 Package: libnginx-mod-http-lua
 Architecture: any
-Depends: libnginx-mod-http-ndk (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: libnginx-mod-http-ndk (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
 Description: LUA module for Nginx
  Embed LUA runtime into nginx.
  .

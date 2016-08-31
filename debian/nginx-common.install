@@ -1,5 +1,5 @@
+contrib/vim/* usr/share/vim/addons
 debian/conf/* etc/nginx
 debian/ufw/nginx etc/ufw/applications.d
-html/index.html usr/share/nginx/html/
 debian/vim/nginx.yaml usr/share/vim/registry
-contrib/vim/* usr/share/vim/addons
+html/index.html usr/share/nginx/html/
