@@ -155,7 +155,7 @@ Description: nginx web/proxy server (basic version)
  minimal set of features and modules.
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Empty GIF,
- FastCGI, Map, Proxy, Rewrite.
+ FastCGI, Map, Proxy, Rewrite, SCGI, uWSGI.
  .
  OPTIONAL HTTP MODULES: Auth Request, Charset, Gzip, Gzip Precompression,
  Headers, HTTP/2, Index, Log, Real IP, Slice, SSI, SSL, Stub Status, Thread
