@@ -11,7 +11,7 @@ DEBIAN_NGINX_PERL_LDFLAGS:= $(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all,-pie 
 export DEBIAN_NGINX_PERL_LDFLAGS
 
 FLAVOURS := full light extras
-DYN_MODS := http-geoip http-image-filter http-xslt-filter mail stream http-auth-pam http-lua http-perl http-ndk nchan http-echo http-upstream-fair http-headers-more-filter http-cache-purge http-fancyindex
+DYN_MODS := http-geoip http-image-filter http-xslt-filter mail stream http-auth-pam http-lua http-perl http-ndk nchan http-echo http-upstream-fair http-headers-more-filter http-cache-purge http-fancyindex http-uploadprogress
 
 MODULESDIR = $(CURDIR)/debian/modules
 BASEDIR = $(CURDIR)
@@ -114,7 +114,7 @@ extras_configure_flags := \
 			--add-dynamic-module=$(MODULESDIR)/ngx-fancyindex \
 			--add-dynamic-module=$(MODULESDIR)/nchan \
 			--add-dynamic-module=$(MODULESDIR)/nginx-lua \
-			--add-module=$(MODULESDIR)/nginx-upload-progress \
+			--add-dynamic-module=$(MODULESDIR)/nginx-upload-progress \
 			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
 			--add-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
