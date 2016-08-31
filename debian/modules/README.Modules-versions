@@ -52,5 +52,4 @@ README for Modules versions
 
  ngx_http_substitutions_filter_module
   Homepage: https://github.com/yaoweibin/ngx_http_substitutions_filter_module
-  Version: v0.6.4
-  Dynamic: No, https://github.com/yaoweibin/ngx_http_substitutions_filter_module/pull/19
+  Version: v0.6.4+pull/19

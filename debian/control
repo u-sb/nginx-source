@@ -92,6 +92,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-upstream-fair (= ${binary:Version}),
+         libnginx-mod-http-subs-filter (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -197,6 +198,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-cache-purge (= ${binary:Version}),
          libnginx-mod-http-fancyindex (= ${binary:Version}),
          libnginx-mod-http-uploadprogress (= ${binary:Version}),
+         libnginx-mod-http-subs-filter (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -416,3 +418,12 @@ Description: Upload progress system for Nginx
  It works by tracking the uploads proxied by Nginx to upstream servers without
  analysing the uploaded content and offers a web API to report upload progress
  in Javscript, Json or any other format.
+
+Package: libnginx-mod-http-subs-filter
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Substitution filter module for Nginx
+ Subsitution Nginx module can do both regular expression and fixed string
+ substitutions on response bodies. The module is quite different from Nginx's
+ native Substitution module. It scans the output chains buffer and
+ matches string line by line, just like Apache's mod_substitute.
