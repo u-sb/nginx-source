@@ -40,8 +40,7 @@ README for Modules versions
 
  nginx-cache-purge
   Homepage: https://github.com/FRiCKLE/ngx_cache_purge/
-  Version: 2.3
-  Dynamic: No, https://github.com/FRiCKLE/ngx_cache_purge/pull/45
+  Version: 2.3+pull/45
 
  nginx-dav-ext-module
   Homepage: https://github.com/arut/nginx-dav-ext-module

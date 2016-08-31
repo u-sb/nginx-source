@@ -194,6 +194,7 @@ Depends: nginx-common (= ${source:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-upstream-fair (= ${binary:Version}),
          libnginx-mod-http-headers-more-filter (= ${binary:Version}),
+         libnginx-mod-http-cache-purge (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -386,3 +387,11 @@ Description: Set and clear input and output headers for Nginx
  This is an enhanced version of the standard headers module because it provides
  more utilities like resetting or clearing "builtin headers" like Content-Type,
  Content-Length, and Server.
+
+Package: libnginx-mod-http-cache-purge
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Purge content from Nginx caches
+ Cache Purge module adds purging capabilities to Nginx. It allows purging
+ content from caches used by all of Nginx proxy modules, like FastCGI, Proxy,
+ SCGI and uWSGI.

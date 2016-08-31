@@ -11,7 +11,7 @@ DEBIAN_NGINX_PERL_LDFLAGS:= $(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all,-pie 
 export DEBIAN_NGINX_PERL_LDFLAGS
 
 FLAVOURS := full light extras
-DYN_MODS := http-geoip http-image-filter http-xslt-filter mail stream http-auth-pam http-lua http-perl http-ndk nchan http-echo http-upstream-fair http-headers-more-filter
+DYN_MODS := http-geoip http-image-filter http-xslt-filter mail stream http-auth-pam http-lua http-perl http-ndk nchan http-echo http-upstream-fair http-headers-more-filter http-cache-purge
 
 MODULESDIR = $(CURDIR)/debian/modules
 BASEDIR = $(CURDIR)
@@ -109,7 +109,7 @@ extras_configure_flags := \
 			--with-stream_ssl_module \
 			--add-dynamic-module=$(MODULESDIR)/headers-more-nginx-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
-			--add-module=$(MODULESDIR)/nginx-cache-purge \
+			--add-dynamic-module=$(MODULESDIR)/nginx-cache-purge \
 			--add-module=$(MODULESDIR)/nginx-dav-ext-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-development-kit \
 			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
