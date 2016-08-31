@@ -26,8 +26,7 @@ README for Modules versions
 
  nginx-upstream-fair
   Homepage: https://github.com/gnosek/nginx-upstream-fair
-  Version: a18b409
-  Dynamic: No, https://github.com/gnosek/nginx-upstream-fair/pull/21
+  Version: a18b409+pull/21
 
  nchan
   Homepage: https://github.com/slact/nchan
