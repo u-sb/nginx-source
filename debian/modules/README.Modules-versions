@@ -28,6 +28,7 @@ README for Modules versions
   Homepage: https://github.com/gnosek/nginx-upstream-fair
   Version: a18b409
   Patch: dynamic-module.patch
+  Patch: openssl-1.1.0.patch
 
  nchan
   Homepage: https://github.com/slact/nchan
