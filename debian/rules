@@ -11,7 +11,24 @@ DEBIAN_NGINX_PERL_LDFLAGS:= $(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all,-pie 
 export DEBIAN_NGINX_PERL_LDFLAGS
 
 FLAVOURS := full light extras
-DYN_MODS := http-geoip http-image-filter http-xslt-filter mail stream http-auth-pam http-lua http-perl http-ndk
+DYN_MODS := \
+	http-auth-pam \
+	http-cache-purge \
+	http-echo \
+	http-fancyindex \
+	http-geoip \
+	http-headers-more-filter \
+	http-image-filter \
+	http-lua \
+	http-ndk \
+	http-perl \
+	http-subs-filter \
+	http-uploadprogress \
+	http-upstream-fair \
+	http-xslt-filter \
+	mail \
+	nchan \
+	stream
 
 MODULESDIR = $(CURDIR)/debian/modules
 BASEDIR = $(CURDIR)
@@ -64,11 +81,9 @@ light_configure_flags := \
 			--without-http_limit_conn_module \
 			--without-http_memcached_module \
 			--without-http_referer_module \
-			--without-http_scgi_module \
 			--without-http_split_clients_module \
 			--without-http_userid_module \
-			--without-http_uwsgi_module \
-			--add-module=$(MODULESDIR)/nginx-echo
+			--add-dynamic-module=$(MODULESDIR)/nginx-echo
 
 full_configure_flags := \
 			$(common_configure_flags) \
@@ -85,9 +100,9 @@ full_configure_flags := \
 			--with-mail_ssl_module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
 			--add-module=$(MODULESDIR)/nginx-dav-ext-module \
-			--add-module=$(MODULESDIR)/nginx-echo \
-			--add-module=$(MODULESDIR)/nginx-upstream-fair \
-			--add-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
+			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
+			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
+			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
 extras_configure_flags := \
 			$(common_configure_flags) \
@@ -107,18 +122,18 @@ extras_configure_flags := \
 			--with-mail_ssl_module \
 			--with-stream=dynamic \
 			--with-stream_ssl_module \
-			--add-module=$(MODULESDIR)/headers-more-nginx-module \
+			--add-dynamic-module=$(MODULESDIR)/headers-more-nginx-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
-			--add-module=$(MODULESDIR)/nginx-cache-purge \
+			--add-dynamic-module=$(MODULESDIR)/nginx-cache-purge \
 			--add-module=$(MODULESDIR)/nginx-dav-ext-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-development-kit \
-			--add-module=$(MODULESDIR)/nginx-echo \
-			--add-module=$(MODULESDIR)/ngx-fancyindex \
-			--add-module=$(MODULESDIR)/nginx-http-push \
+			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
+			--add-dynamic-module=$(MODULESDIR)/ngx-fancyindex \
+			--add-dynamic-module=$(MODULESDIR)/nchan \
 			--add-dynamic-module=$(MODULESDIR)/nginx-lua \
-			--add-module=$(MODULESDIR)/nginx-upload-progress \
-			--add-module=$(MODULESDIR)/nginx-upstream-fair \
-			--add-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
+			--add-dynamic-module=$(MODULESDIR)/nginx-upload-progress \
+			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
+			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
 %:
 	dh $@ --with systemd
