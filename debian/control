@@ -1,12 +1,9 @@
 Source: nginx
 Section: httpd
 Priority: optional
-Maintainer: Kartik Mistry <kartik@debian.org>
-Uploaders: Jose Parrella <bureado@debian.org>,
-           Fabio Tranchitella <kobold@debian.org>,
+Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@lists.alioth.debian.org>
+Uploaders: Kartik Mistry <kartik@debian.org>,
            Michael Lustfield <michael@lustfield.net>,
-           Dmitry E. Oboukhov <unera@debian.org>,
-           Cyril Lavier <cyril.lavier@davromaniak.eu>,
            Christos Trochalakis <yatiohi@ideopolis.gr>
 Build-Depends: autotools-dev,
                debhelper (>= 9),
