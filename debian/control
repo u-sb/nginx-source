@@ -118,20 +118,6 @@ Description: nginx web/proxy server (standard version)
  THIRD PARTY MODULES: Auth PAM, DAV Ext, Echo, HTTP Substitutions, Upstream
  Fair Queue.
 
-Package: nginx-full-dbg
-Architecture: any
-Section: debug
-Priority: extra
-Depends: nginx-full (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-extras-dbg, nginx-light-dbg
-Description: nginx web/proxy server (standard version) - debugging symbols
- Nginx ("engine X") is a high-performance web and reverse proxy server
- created by Igor Sysoev. It can be used both as a standalone web server
- and as a proxy to reduce the load on back-end HTTP or mail servers.
- .
- This package provides debugging symbols for nginx-full, to assist in debugging
- issues that you may find. It should not be required for normal operation.
-
 Package: nginx-light
 Architecture: any
 Priority: extra
@@ -159,21 +145,6 @@ Description: nginx web/proxy server (basic version)
  Pool, WebDAV, Upstream.
  .
  THIRD PARTY MODULES: Echo.
-
-Package: nginx-light-dbg
-Architecture: any
-Section: debug
-Priority: extra
-Depends: nginx-light (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-extras-dbg, nginx-full-dbg
-Description: nginx web/proxy server (basic version) - debugging symbols
- Nginx ("engine X") is a high-performance web and reverse proxy server
- created by Igor Sysoev. It can be used both as a standalone web server
- and as a proxy to reduce the load on back-end HTTP or mail servers.
- .
- This package provides debugging symbols for nginx-light, to assist in
- debugging issues that you may find. It should not be required for normal
- operation.
 
 Package: nginx-extras
 Architecture: any
@@ -224,21 +195,6 @@ Description: nginx web/proxy server (extended version)
  THIRD PARTY MODULES: Auth PAM, Cache Purge, DAV Ext, Echo, Fancy Index,
  Headers More, Embedded Lua, HTTP Substitutions, Nchan, Upload Progress,
  Upstream Fair Queue.
-
-Package: nginx-extras-dbg
-Architecture: any
-Section: debug
-Priority: extra
-Depends: nginx-extras (= ${binary:Version}), ${misc:Depends}
-Conflicts: nginx-full-dbg, nginx-light-dbg
-Description: nginx web/proxy server (extended version) - debugging symbols
- Nginx ("engine X") is a high-performance web and reverse proxy server
- created by Igor Sysoev. It can be used both as a standalone web server
- and as a proxy to reduce the load on back-end HTTP or mail servers.
- .
- This package provides debugging symbols for nginx-extras, to assist in
- debugging issues that you may find. It should not be required for normal
- operation.
 
 Package: libnginx-mod-http-geoip
 Architecture: any
