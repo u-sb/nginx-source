@@ -7,6 +7,7 @@ Uploaders: Kartik Mistry <kartik@debian.org>,
            Christos Trochalakis <yatiohi@ideopolis.gr>
 Build-Depends: autotools-dev,
                debhelper (>= 9),
+               po-debconf,
                dh-systemd (>= 1.5),
                dpkg-dev (>= 1.15.5),
                libexpat-dev,

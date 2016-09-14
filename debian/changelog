@@ -2,6 +2,14 @@ nginx (1.10.2-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
   * New upstream release.
+  * debian/nginx-common.postinst:
+    + CVE-2016-1247: Secure log file handling (owner & permissions)
+      against privilege escalation attacks. /var/log/nginx is now owned
+      by root:adm. Thanks ro Dawid Golunski for the report.
+      Changing /var/log/nginx permissions effectively reopens #701112,
+      since log files can be world-readable. This is a trade-off until
+      a better log opening solution is implemented upstream (trac:376).
+      (Closes: #842295)
   * debian/control:
     + Version depend on lsb-base (>= 3.0-6).
       Fixes lintian init.d-script-needs-depends-on-lsb-base.
