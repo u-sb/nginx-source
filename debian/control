@@ -48,7 +48,7 @@ Package: nginx-doc
 Architecture: all
 Multi-Arch: foreign
 Section: doc
-Depends: lsb-base (>= 3.2-14), ${misc:Depends}
+Depends: ${misc:Depends}
 Description: small, powerful, scalable web/proxy server - documentation
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
@@ -59,7 +59,7 @@ Description: small, powerful, scalable web/proxy server - documentation
 Package: nginx-common
 Architecture: all
 Multi-Arch: foreign
-Depends: lsb-base (>= 3.2-14), ${misc:Depends}
+Depends: lsb-base, ${misc:Depends}
 Suggests: fcgiwrap, nginx-doc, ssl-cert
 Description: small, powerful, scalable web/proxy server - common files
  Nginx ("engine X") is a high-performance web and reverse proxy server
