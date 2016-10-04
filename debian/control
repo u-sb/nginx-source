@@ -38,8 +38,8 @@ Description: small, powerful, scalable web/proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
  and as a proxy to reduce the load on back-end HTTP or mail servers.
  .
- This is a dependency package to install either nginx-full (by default) or
- nginx-light.
+ This is a dependency package to install either nginx-full (by default),
+ nginx-light or nginx-extras.
 
 Package: nginx-doc
 Architecture: all
