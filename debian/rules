@@ -5,11 +5,6 @@ export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 debian_cflags:=$(shell dpkg-buildflags --get CFLAGS) -fPIC $(shell dpkg-buildflags --get CPPFLAGS)
 debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
-# export necessary perl hardenging flags
-#  # see: src/http/modules/perl/Makefile.PL
-DEBIAN_NGINX_PERL_LDFLAGS:=$(debian_ldflags)
-export DEBIAN_NGINX_PERL_LDFLAGS
-
 FLAVOURS := full light extras
 DYN_MODS := \
 	http-auth-pam \
