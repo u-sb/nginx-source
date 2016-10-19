@@ -46,15 +46,15 @@ server {
 		try_files $uri $uri/ =404;
 	}
 
-	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+	# pass PHP scripts to FastCGI server
 	#
 	#location ~ \.php$ {
 	#	include snippets/fastcgi-php.conf;
 	#
-	#	# With php5-cgi alone:
+	#	# With php5-fpm (or other unix sockets):
+	#	fastcgi_pass unix:/var/run/php7-fpm.sock;
+	#	# With php5-cgi (or other tcp sockets):
 	#	fastcgi_pass 127.0.0.1:9000;
-	#	# With php5-fpm:
-	#	fastcgi_pass unix:/var/run/php5-fpm.sock;
 	#}
 
 	# deny access to .htaccess files, if Apache's document root
