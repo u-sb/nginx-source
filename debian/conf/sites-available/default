@@ -68,6 +68,10 @@ server {
 	#location ~ /\.ht {
 	#	deny all;
 	#}
+
+        # load package-maintained configuration files
+        #   https://wiki.debian.org/Nginx/DirectoryStructure#Packaged_Applications
+        include default-server.d/pkg_*.conf;
 }
 
 
