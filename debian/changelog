@@ -1,6 +1,7 @@
-nginx (1.10.1-6) UNRELEASED; urgency=medium
+nginx (1.10.2-1) UNRELEASED; urgency=medium
 
   [ Christos Trochalakis ]
+  * New upstream release.
   * debian/control:
     + Version depend on lsb-base (>= 3.0-6).
       Fixes lintian init.d-script-needs-depends-on-lsb-base.
@@ -12,7 +13,7 @@ nginx (1.10.1-6) UNRELEASED; urgency=medium
   * debian/nginx-common.dirs:
     + Adding support for packaged application configurations.
 
- -- Michael Lustfield <michael@lustfield.net>  Wed, 19 Oct 2016 06:51:46 +0000
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 20 Oct 2016 09:49:25 +0300
 
 nginx (1.10.1-3) unstable; urgency=medium
 
