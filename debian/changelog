@@ -5,6 +5,8 @@ nginx (1.10.2-1) UNRELEASED; urgency=medium
   * debian/control:
     + Version depend on lsb-base (>= 3.0-6).
       Fixes lintian init.d-script-needs-depends-on-lsb-base.
+  * debian/nginx-*.lintian-overrides:
+    + Drop unused spelling-error-in-binary override.
 
   [ Michael Lustfield ]
   * debian/conf/sites-available/default:
