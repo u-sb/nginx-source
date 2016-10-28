@@ -4,7 +4,6 @@ etc/nginx/modules-available
 etc/nginx/modules-enabled
 etc/nginx/sites-available
 etc/nginx/sites-enabled
-etc/nginx/default-server.d
 etc/ufw/applications.d
 usr/share/nginx
 usr/share/vim/addons

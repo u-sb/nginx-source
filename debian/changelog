@@ -11,9 +11,6 @@ nginx (1.10.2-1) UNRELEASED; urgency=medium
   [ Michael Lustfield ]
   * debian/conf/sites-available/default:
     + Updated PHP sample configuration block. (Closes: #841230)
-    + Adding include default-server.d/pkg_*.conf. (Closes: #822792)
-  * debian/nginx-common.dirs:
-    + Adding support for packaged application configurations.
 
  -- Christos Trochalakis <yatiohi@ideopolis.gr>  Thu, 20 Oct 2016 09:49:25 +0300
 
