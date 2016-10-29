@@ -70,6 +70,7 @@ Description: small, powerful, scalable web/proxy server - common files
 Package: nginx-full
 Architecture: any
 Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
+         libnginx-mod-http-dav-ext (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
@@ -141,6 +142,7 @@ Architecture: any
 Priority: extra
 Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-cache-purge (= ${binary:Version}),
+         libnginx-mod-http-dav-ext (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-fancyindex (= ${binary:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
@@ -371,3 +373,12 @@ Description: Substitution filter module for Nginx
  substitutions on response bodies. The module is quite different from Nginx's
  native Substitution module. It scans the output chains buffer and
  matches string line by line, just like Apache's mod_substitute.
+
+Package: libnginx-mod-http-dav-ext
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: WebDAV missing commands support for Nginx
+ WebDAV Ext module complements the Nginx WebDAV module to provide a full
+ WebDAV support.
+ .
+ WebDAV Ext provides the missing PROPFIND & OPTIONS methods.

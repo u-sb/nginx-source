@@ -14,6 +14,7 @@ FLAVOURS := full light extras
 DYN_MODS := \
 	http-auth-pam \
 	http-cache-purge \
+	http-dav-ext \
 	http-echo \
 	http-fancyindex \
 	http-geoip \
@@ -99,7 +100,7 @@ full_configure_flags := \
 			--with-mail=dynamic \
 			--with-mail_ssl_module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
-			--add-module=$(MODULESDIR)/nginx-dav-ext-module \
+			--add-dynamic-module=$(MODULESDIR)/nginx-dav-ext-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
 			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
 			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
@@ -125,7 +126,7 @@ extras_configure_flags := \
 			--add-dynamic-module=$(MODULESDIR)/headers-more-nginx-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
 			--add-dynamic-module=$(MODULESDIR)/nginx-cache-purge \
-			--add-module=$(MODULESDIR)/nginx-dav-ext-module \
+			--add-dynamic-module=$(MODULESDIR)/nginx-dav-ext-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-development-kit \
 			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
 			--add-dynamic-module=$(MODULESDIR)/ngx-fancyindex \
