@@ -1,4 +1,4 @@
-nginx-common (1.10.2-1) UNRELEASED; urgency=medium
+nginx-common (1.10.2-1) unstable; urgency=high
 
   In order to secure nginx against privilege escalation attacks, we are
   changing the way log file owners & permissions are handled so that www-data
