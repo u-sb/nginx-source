@@ -56,9 +56,9 @@ server {
 	#location ~ \.php$ {
 	#	include snippets/fastcgi-php.conf;
 	#
-	#	# With php5-fpm (or other unix sockets):
+	#	# With php-fpm (or other unix sockets):
 	#	fastcgi_pass unix:/var/run/php7.0-fpm.sock;
-	#	# With php5-cgi (or other tcp sockets):
+	#	# With php-cgi (or other tcp sockets):
 	#	fastcgi_pass 127.0.0.1:9000;
 	#}
 
