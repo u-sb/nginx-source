@@ -1,6 +1,7 @@
 nginx (1.10.2-2) UNRELEASED; urgency=medium
 
   * debian/modules:
+    + Rethink module patching logic.
     + Convert dav-ext to a dynamic module package:
       o libnginx-mod-http-dav-ext
 

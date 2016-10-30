@@ -45,6 +45,9 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	MAKEFLAGS += -j$(NUMJOBS)
 endif
 
+MODULESPATCHDIR = $(CURDIR)/debian/patches/modules
+modules_with_patches := $(notdir $(wildcard $(CURDIR)/debian/patches/modules/*))
+
 # configure flags
 common_configure_flags := \
 			--with-cc-opt="$(debian_cflags)" \
@@ -139,7 +142,7 @@ extras_configure_flags := \
 %:
 	dh $@ --with systemd
 
-override_dh_auto_configure: $(foreach flavour,$(FLAVOURS),config.arch.$(flavour))
+override_dh_auto_configure: config_patch_modules $(foreach flavour,$(FLAVOURS),config.arch.$(flavour))
 override_dh_auto_build:     $(foreach flavour,$(FLAVOURS),build.arch.$(flavour))
 override_dh_strip:          $(foreach flavour,$(FLAVOURS),strip.arch.$(flavour)) $(foreach mod,$(DYN_MODS),strip.mods.$(mod))
 override_dh_clean:          $(foreach flavour,$(FLAVOURS),clean.$(flavour))
@@ -167,6 +170,10 @@ strip.arch.%:
 strip.mods.%:
 	dh_strip --package=libnginx-mod-$(*) -O--automatic-dbgsym
 
+config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
+config.patch.%:
+	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
+
 config.arch.%:
 	dh_testdir
 	mkdir -p $(BUILDDIR_$*)
@@ -180,3 +187,5 @@ config.arch.%:
 
 clean.%:
 	rm -rf $(BUILDDIR_$*)
+
+.PHONY: config_patch_modules

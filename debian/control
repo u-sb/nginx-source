@@ -23,6 +23,7 @@ Build-Depends: autotools-dev,
                libssl-dev,
                libxslt1-dev,
                po-debconf,
+               quilt,
                zlib1g-dev
 Standards-Version: 3.9.8.0
 Homepage: http://nginx.net
