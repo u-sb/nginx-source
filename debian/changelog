@@ -1,5 +1,8 @@
 nginx (1.10.2-2) UNRELEASED; urgency=medium
 
+  * Build against OpenSSL 1.1.0. (Closes: #828453)
+    + Patch for nginx-lua by Alessandro Ghedini.
+    + Patch for nginx-upstream-fair by Kurt Roeckx.
   * debian/modules:
     + Rethink module patching logic.
     + Convert dav-ext to a dynamic module package:
