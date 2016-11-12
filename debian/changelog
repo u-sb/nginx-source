@@ -1,4 +1,4 @@
-nginx (1.10.2-2) UNRELEASED; urgency=medium
+nginx (1.10.2-2) unstable; urgency=medium
 
   * Build against OpenSSL 1.1.0. (Closes: #828453)
     + Patch for nginx-lua by Alessandro Ghedini.
@@ -8,7 +8,7 @@ nginx (1.10.2-2) UNRELEASED; urgency=medium
     + Convert dav-ext to a dynamic module package:
       o libnginx-mod-http-dav-ext
 
- -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sat, 29 Oct 2016 17:26:04 +0300
+ -- Christos Trochalakis <yatiohi@ideopolis.gr>  Sat, 12 Nov 2016 09:18:12 +0200
 
 nginx (1.10.2-1) unstable; urgency=high
 
