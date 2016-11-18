@@ -58,11 +58,11 @@ them.
   are commited (changelog entry etc) and the build is made.
 
 * upstream-1.11
-  Force-pushed on every 1.11.x release.
+  Pushed on every 1.11.x release.
 
-  Before a new 1.11.x release the branch is reset to origin/upstream.
-  This is a technicallity so we can avoid resolving conflicts when a new 1.10.x
-  release happens between two experimental releases.
+  Before a new 1.11.x release origin/upstream is dummy merged (-s ours) into
+  ustream-1.11.  This is a technicallity so we can avoid resolving conflicts
+  when a new 1.10.x release happens between two experimental releases.
 
 Older 1.11.x releases are not referenced by any branch, but they can be found
 by the relevant debian/* tag.
