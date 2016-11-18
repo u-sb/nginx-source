@@ -145,7 +145,7 @@ extras_configure_flags := \
 override_dh_auto_configure: config_patch_modules $(foreach flavour,$(FLAVOURS),config.arch.$(flavour))
 override_dh_auto_build:     $(foreach flavour,$(FLAVOURS),build.arch.$(flavour))
 override_dh_strip:          $(foreach flavour,$(FLAVOURS),strip.arch.$(flavour)) $(foreach mod,$(DYN_MODS),strip.mods.$(mod))
-override_dh_clean:          $(foreach flavour,$(FLAVOURS),clean.$(flavour))
+override_dh_clean:          clean_patch_modules $(foreach flavour,$(FLAVOURS),clean.$(flavour))
 	dh_clean
 
 override_dh_install:
@@ -174,6 +174,13 @@ config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
 config.patch.%:
 	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
 
+clean_patch_modules: $(foreach mod,$(modules_with_patches),clean.patch.$(mod))
+clean.patch.%:
+	if [ -s $(MODULESDIR)/$*/.pc/applied-patches ]; then \
+		cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt pop -q -a; \
+		rm -rf $(MODULESDIR)/$*/.pc; \
+	fi
+
 config.arch.%:
 	dh_testdir
 	mkdir -p $(BUILDDIR_$*)
@@ -188,4 +195,4 @@ config.arch.%:
 clean.%:
 	rm -rf $(BUILDDIR_$*)
 
-.PHONY: config_patch_modules
+.PHONY: config_patch_modules clean_patch_modules
