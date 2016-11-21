@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@lists.alioth.debian.org>
 Uploaders: Kartik Mistry <kartik@debian.org>,
            Michael Lustfield <michael@lustfield.net>,
-           Christos Trochalakis <yatiohi@ideopolis.gr>
+           Christos Trochalakis <ctrochalakis@debian.org>
 Build-Depends: autotools-dev,
                debhelper (>= 9),
                po-debconf,

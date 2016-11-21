@@ -1,6 +1,6 @@
 Description: Use linker flags from environment for perl (dpkg-buildflags).
  Necessary for hardening flags.
-Author: Christos Trochalakis <yatiohi@ideopolis.gr>
+Author: Christos Trochalakis <ctrochalakis@debian.org>
 --- a/src/http/modules/perl/Makefile.PL
 +++ b/src/http/modules/perl/Makefile.PL
 @@ -3,6 +3,7 @@

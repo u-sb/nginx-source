@@ -34,7 +34,7 @@ Copyright: 2007-2009, Fabio Tranchitella <kobold@debian.org>
            2010-2014, Michael Lustfield <michael@lustfield.net>
            2011       Dmitry E. Oboukhov <unera@debian.org>
            2011-2013, Cyril Lavier <cyril.lavier@davromaniak.eu>
-           2013-2014, Christos Trochalakis <yatiohi@ideopolis.gr>
+           2013-2016, Christos Trochalakis <ctrochalakis@debian.org>
 License: BSD-2-clause
 
 Files: debian/modules/headers-more-nginx-module/*

@@ -1,4 +1,4 @@
-From: Christos Trochalakis <yatiohi@ideopolis.gr>
+From: Christos Trochalakis <ctrochalakis@debian.org>
 Date: Wed, 30 Mar 2016 09:47:11 +0300
 Subject: Make sure signature stays the same in all nginx builds
 
