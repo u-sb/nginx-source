@@ -2,6 +2,10 @@ Tests: light-simple
 Restrictions: allow-stderr isolation-container
 Depends: nginx-light, curl
 
+Tests: ec-x25519
+Restrictions: allow-stderr isolation-container needs-root
+Depends: nginx-light, ssl-cert, curl
+
 Tests: full-simple
 Restrictions: allow-stderr isolation-container
 Depends: nginx-full, curl
