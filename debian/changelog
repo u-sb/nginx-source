@@ -1,3 +1,10 @@
+nginx (1.10.2-3) UNRELEASED; urgency=medium
+
+  * debian/conf/sites-enabled/default:
+    + Correcting location of default php-fpm socket. (Closes #846145)
+
+ -- Michael Lustfield <michael@lustfield.net>  Sat, 03 Dec 2016 07:57:39 +0000
+
 nginx (1.10.2-2) unstable; urgency=medium
 
   * Build against OpenSSL 1.1.0. (Closes: #828453)
