@@ -82,11 +82,18 @@ static void *nchan_create_loc_conf(ngx_conf_t *cf) {
   lcf->sub.websocket=0;
   lcf->sub.http_chunked=0;
   
+  lcf->shared_data_index=NGX_CONF_UNSET;
+  
   lcf->authorize_request_url = NULL;
   lcf->publisher_upstream_request_url = NULL;
+  lcf->unsubscribe_request_url = NULL;
+  lcf->subscribe_request_url = NULL;
   
-  lcf->buffer_timeout=NGX_CONF_UNSET;
+  lcf->message_timeout=NGX_CONF_UNSET;
   lcf->max_messages=NGX_CONF_UNSET;
+  
+  lcf->complex_message_timeout = NULL;
+  lcf->complex_max_messages = NULL;
   
   lcf->subscriber_first_message=NCHAN_SUBSCRIBER_FIRST_MESSAGE_UNSET;
   
@@ -182,9 +189,11 @@ static char * nchan_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child) {
   ngx_conf_merge_bitmask_value(conf->sub.http_chunked, prev->sub.http_chunked, 0);
   ngx_conf_merge_bitmask_value(conf->sub.websocket, prev->sub.websocket, 0);
   
-  ngx_conf_merge_sec_value(conf->buffer_timeout, prev->buffer_timeout, NCHAN_DEFAULT_BUFFER_TIMEOUT);
+  ngx_conf_merge_sec_value(conf->message_timeout, prev->message_timeout, NCHAN_DEFAULT_MESSAGE_TIMEOUT);
   ngx_conf_merge_value(conf->max_messages, prev->max_messages, NCHAN_DEFAULT_MAX_MESSAGES);
   
+  MERGE_CONF(conf, prev, complex_message_timeout);
+  MERGE_CONF(conf, prev, complex_max_messages);
   
   if (conf->subscriber_first_message == NCHAN_SUBSCRIBER_FIRST_MESSAGE_UNSET) {
     conf->subscriber_first_message = (prev->subscriber_first_message == NCHAN_SUBSCRIBER_FIRST_MESSAGE_UNSET) ? NCHAN_SUBSCRIBER_DEFAULT_FIRST_MESSAGE : prev->subscriber_first_message;
@@ -225,6 +234,8 @@ static char * nchan_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child) {
 
   MERGE_CONF(conf, prev, authorize_request_url);
   MERGE_CONF(conf, prev, publisher_upstream_request_url);
+  MERGE_CONF(conf, prev, unsubscribe_request_url);
+  MERGE_CONF(conf, prev, subscribe_request_url);
   
   if(conf->pub_chid.n == 0) {
     conf->pub_chid = prev->pub_chid;
@@ -572,6 +583,57 @@ static char *nchan_store_messages_directive(ngx_conf_t *cf, ngx_command_t *cmd, 
   return NGX_CONF_OK;
 }
 
+static char *nchan_set_message_buffer_length(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+  nchan_loc_conf_t    *lcf = conf;
+  ngx_str_t *val = cf->args->elts;
+  ngx_str_t *arg = &val[1];
+  
+  if(memchr(arg->data, '$', arg->len)) {
+    //complex
+    lcf->max_messages = NGX_CONF_UNSET;
+    cmd->offset = offsetof(nchan_loc_conf_t, complex_max_messages);
+    ngx_http_set_complex_value_slot(cf, cmd, conf);
+    memstore_reserve_conf_shared_data(lcf);
+  }
+  else {
+    //simple
+    lcf->complex_max_messages = NULL;
+    cmd->offset = offsetof(nchan_loc_conf_t, max_messages);
+    ngx_conf_set_num_slot(cf, cmd, conf);
+  }
+  return NGX_CONF_OK;
+}
+
+static char *ngx_http_set_unsubscribe_request_url(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+#if nginx_version >= 1003015
+  return ngx_http_set_complex_value_slot(cf, cmd, conf);
+#else
+  ngx_conf_log_error(NGX_LOG_ERR, cf, 0, "%V not available on nginx version: %s, must be at least 1.3.15", &cmd->name, NGINX_VERSION);
+  return NGX_CONF_ERROR;
+#endif
+}
+
+static char *nchan_set_message_timeout(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+  nchan_loc_conf_t    *lcf = conf;
+  ngx_str_t *val = cf->args->elts;
+  ngx_str_t *arg = &val[1];
+  
+  if(memchr(arg->data, '$', arg->len)) {
+    //complex
+    lcf->message_timeout = NGX_CONF_UNSET;
+    cmd->offset = offsetof(nchan_loc_conf_t, complex_message_timeout);
+    ngx_http_set_complex_value_slot(cf, cmd, conf);
+    memstore_reserve_conf_shared_data(lcf);
+  }
+  else {
+    //simple
+    lcf->complex_message_timeout = NULL;
+    cmd->offset = offsetof(nchan_loc_conf_t, message_timeout);
+    ngx_conf_set_sec_slot(cf, cmd, conf);
+  }
+  return NGX_CONF_OK;
+}
+
 static char *nchan_ignore_obsolete_setting(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
   ngx_conf_log_error(NGX_LOG_WARN, cf, 0, "ignoring obsolete nchan config directive '%V'.", &cmd->name);
   return NGX_CONF_OK;
@@ -669,13 +731,19 @@ static char *ngx_conf_upstream_redis_server(ngx_conf_t *cf, ngx_command_t *cmd, 
   
   uscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_upstream_module);  
   
-  
+  if(uscf->servers == NULL) {
+        uscf->servers = ngx_array_create(cf->pool, 4, sizeof(ngx_http_upstream_server_t));
+  }
   if ((usrv = ngx_array_push(uscf->servers)) == NULL) {
     return NGX_CONF_ERROR;
   }
   value = cf->args->elts;
   ngx_memzero(usrv, sizeof(*usrv));
+#if nginx_version >= 1007002
   usrv->name = value[1];
+#endif
+  usrv->addrs = ngx_pcalloc(cf->pool, sizeof(ngx_addr_t));
+  usrv->addrs->name = value[1];
   
   uscf->peer.init_upstream = nchan_upstream_dummy_roundrobin_init;
   return NGX_CONF_OK;

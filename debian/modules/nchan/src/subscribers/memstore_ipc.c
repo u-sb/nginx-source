@@ -29,7 +29,7 @@ static ngx_int_t empty_callback(){
   return NGX_OK;
 }
 
-static ngx_int_t sub_enqueue(ngx_int_t timeout, void *ptr, sub_data_t *d) {
+static ngx_int_t sub_enqueue(ngx_int_t status, void *ptr, sub_data_t *d) {
   DBG("%p (%V) memstore subsriber enqueued ok", d->sub, d->chid);
   return NGX_OK;
 }
@@ -127,6 +127,12 @@ static ngx_int_t keepalive_reply_handler(ngx_int_t renew, void *_, void* pd) {
 
 static void timeout_ev_handler(ngx_event_t *ev) {
   sub_data_t *d = (sub_data_t *)ev->data;
+  
+  if(!ev->timedout) {
+    return;
+  }
+  ev->timedout = 0;
+  
 #if FAKESHARD
   memstore_fakeprocess_push(d->owner);
 #endif

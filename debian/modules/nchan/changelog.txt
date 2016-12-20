@@ -1,3 +1,38 @@
+1.0.8 (Nov. 28 2016)
+ fix: possible crash under severely heavy load, introduced in 1.0.7 with stack-overflow fix
+1.0.7 (Nov. 27 2016)
+ fix: memory leak after websocket publisher uncleanly aborts connection
+ fix: misbehaving websocket publisher with nchan_publisher_upstream_request
+ fix: potential stack overflow with very large message buffers
+ fix: invalid memory access with empty nchan_publisher_upstream_request for websocket publisher
+ fix: incorrect handling of chunked response from nchan_publisher_upstream_request
+ fix: publishing through websocket too fast may result in buffered messages that never arrive
+ fix: DELETE to multiplexed channel should delete all listed channels
+ fix: abort if publishing to multiple channels while using redis
+1.0.6 (Nov. 15 2016)
+ fix: large messages were sometimes incorrectly cleaned up, leaving behind temp files
+ fix: file descriptor leak when listening on a unix socket and suddenly 
+      aborting client connections
+ fix: invalid memory access after reloading twice with redis enabled
+ fix: crash after shutting down nginx when 'master_process' set to 'off'
+ change: nchan_max_channel_subscribers now always refers to subscribers on this instance of
+      Nchan, even when using Redis.
+ feature: subscribe/unsubscribe callbacks with nchan_subscribe_request and nchan_unsubscribe_request
+1.0.4 (Oct. 28 2016)
+ security: fix crash when receiving large messages over websocket with ws+nchan subprotocol
+1.0.3 (Sept. 3 2016)
+ feature: nchan_message_timeout and nchan_message_buffer_length 
+      can now use nginx variables for dynamic values
+ fix: unsolicited websocket PONGs disconnected the subscriber in violation of RFC6455
+ fix: possible script error when getting channel from Redis
+ fix: possible incorrect message IDs when using Redis (thanks @supertong)
+ security: possible invalid memory access on publisher GET, POST, or DELETE when
+      using Redis and the publisher connection is terminated before receiving
+      a response
+ fix: correct publisher response code when nchan_authorize_request is unavailable
+      (502 instead of 500)
+ security: crash if publisher POSTs request with no Content-Length header when 
+      using nchan_authorize_request
 1.0.2 (Aug. 29 2016)
  fix: more informative missed-message warnings
  fix: invalid memory access when Redis enabled without setting server URL

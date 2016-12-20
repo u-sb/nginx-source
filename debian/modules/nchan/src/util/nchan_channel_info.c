@@ -92,12 +92,8 @@ ngx_buf_t *nchan_channel_info_buf(ngx_str_t *accept_header, ngx_uint_t messages,
 ngx_int_t nchan_channel_info(ngx_http_request_t *r, ngx_uint_t messages, ngx_uint_t subscribers, time_t last_seen, nchan_msg_id_t *msgid) {
   ngx_buf_t                      *b;
   ngx_str_t                      *content_type;
-  ngx_str_t                      *accept_header = NULL;
-  
-  if(r->headers_in.accept) {
-    accept_header = &r->headers_in.accept->value;
-  }
-  
+  ngx_str_t                      *accept_header = nchan_get_accept_header_value(r);
+
   b = nchan_channel_info_buf(accept_header, messages, subscribers, last_seen, msgid, &content_type);
   
   return nchan_respond_membuf(r, NGX_HTTP_OK, content_type, b, 0);
@@ -123,11 +119,10 @@ ngx_int_t nchan_response_channel_ptr_info(nchan_channel_t *channel, ngx_http_req
     else if (status_code == NGX_HTTP_ACCEPTED) {
       ngx_memcpy(&r->headers_out.status_line, &ACCEPTED_LINE, sizeof(ngx_str_t));
     }
-    nchan_channel_info(r, messages, subscribers, last_seen, msgid);
+    return nchan_channel_info(r, messages, subscribers, last_seen, msgid);
   }
   else {
     //404!
-    nchan_respond_status(r, NGX_HTTP_NOT_FOUND, NULL, 0);
+    return nchan_respond_status(r, NGX_HTTP_NOT_FOUND, NULL, 0);
   }
-  return NGX_OK;
 }

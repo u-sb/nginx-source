@@ -1065,7 +1065,7 @@ static void redis_subscriber_callback(redisAsyncContext *c, void *r, void *privd
       unsigned    chid_present = 0;
       ngx_str_t   extracted_channel_id;
       unsigned    msgbuf_size_changed = 0;
-      int64_t     msgbuf_size;
+      int64_t     msgbuf_size = 0;
       //maybe a message?
       set_buf(&mpbuf, (u_char *)el->str, el->len);
       cmp_init(&cmp, &mpbuf, ngx_buf_reader, ngx_buf_writer);
@@ -1821,8 +1821,8 @@ static void redisChannelInfoCallback(redisAsyncContext *c, void *r, void *privda
           break;
         case NGX_ERROR:
         default:
-          d->callback(NGX_ERROR, NULL, d->privdata);
           redisEchoCallback(c, r, privdata);
+          d->callback(NGX_ERROR, NULL, d->privdata);
       }
     }
     else {
@@ -1890,7 +1890,7 @@ static void nchan_store_find_channel_send(rdstore_data_t *rdata, void *pd) {
 }
 
 static void redisChannelFindCallback(redisAsyncContext *ac, void *r, void *privdata) {
-  rdstore_data_t                 *rdata;
+  rdstore_data_t                 *rdata = NULL;
   
   if(ac) {
     rdata = ac->data;
@@ -2355,7 +2355,11 @@ static ngx_int_t nchan_store_init_postconfig(ngx_conf_t *cf) {
       ngx_str_t                   *upstream_url;
       
       for(i=0; i < servers->nelts; i++) {
+#if nginx_version >= 1007002
         upstream_url = &usrv[i].name;
+#else
+        upstream_url = &usrv[i].addrs->name;
+#endif
         redis_add_connection_data(rcf, cur->loc_conf, upstream_url);
       }
     }
@@ -2369,6 +2373,9 @@ static ngx_int_t nchan_store_init_postconfig(ngx_conf_t *cf) {
 
 static void nchan_store_create_main_conf(ngx_conf_t *cf, nchan_main_conf_t *mcf) {
   mcf->redis_publish_message_msgkey_size=NGX_CONF_UNSET_SIZE;
+  
+  //reset redis_conf_head for reloads
+  redis_conf_head = NULL;
 }
 
 void redis_store_prepare_to_exit_worker() {
@@ -2567,7 +2574,7 @@ typedef struct {
   time_t                msg_time;
   nchan_msg_t          *msg;
   unsigned              shared_msg:1;
-  time_t                buffer_timeout;
+  time_t                message_timeout;
   ngx_int_t             max_messages;
   ngx_int_t             msglen;
   callback_pt           callback;
@@ -2608,7 +2615,7 @@ static void redis_publish_message_send(rdstore_data_t *rdata, void *pd) {
   
   //input:  keys: [], values: [channel_id, time, message, content_type, eventsource_event, msg_ttl, max_msg_buf_size, pubsub_msgpacked_size_cutoff]
   //output: message_tag, channel_hash {ttl, time_last_seen, subscribers, messages}
-  redis_command(rdata, &redisPublishCallback, d, "EVALSHA %s 0 %b %i %b %b %b %i %i %i", redis_lua_scripts.publish.hash, STR(d->channel_id), msg->id.time, msgstart, msglen, STR(&(msg->content_type)), STR(&(msg->eventsource_event)), d->buffer_timeout, d->max_messages, redis_publish_message_msgkey_size);
+  redis_command(rdata, &redisPublishCallback, d, "EVALSHA %s 0 %b %i %b %b %b %i %i %i", redis_lua_scripts.publish.hash, STR(d->channel_id), msg->id.time, msgstart, msglen, STR(&(msg->content_type)), STR(&(msg->eventsource_event)), d->message_timeout, d->max_messages, redis_publish_message_msgkey_size);
   if(mmapped && munmap(msgstart, msglen) == -1) {
     ngx_log_error(NGX_LOG_ERR, ngx_cycle->log, 0, "munmap was a problem");
   }
@@ -2629,8 +2636,8 @@ static ngx_int_t nchan_store_publish_message(ngx_str_t *channel_id, nchan_msg_t 
   }
   d->msg = msg;
   d->shared_msg = msg->shared;
-  d->buffer_timeout = cf->buffer_timeout;
-  d->max_messages = cf->max_messages;
+  d->message_timeout = nchan_loc_conf_message_timeout(cf);
+  d->max_messages = nchan_loc_conf_max_messages(cf);
   
   assert(msg->id.tagcount == 1);
   if((rdata = redis_cluster_rdata_from_channel_id(rdata, channel_id)) == NULL) {

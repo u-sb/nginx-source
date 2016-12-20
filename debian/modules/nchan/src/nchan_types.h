@@ -202,13 +202,26 @@ typedef struct {
   ngx_int_t                       n;
 } nchan_complex_value_arr_t;
 
+typedef struct {
+ ngx_atomic_uint_t               message_timeout;
+ ngx_atomic_uint_t               max_messages;
+} nchan_loc_conf_shared_data_t;
+
 struct nchan_loc_conf_s { //nchan_loc_conf_t
   
-  time_t                          buffer_timeout;
+  ngx_int_t                       shared_data_index;
+  
+  time_t                          message_timeout;
   ngx_int_t                       max_messages;
+  
+  ngx_http_complex_value_t       *complex_message_timeout;
+  ngx_http_complex_value_t       *complex_max_messages;
   
   ngx_http_complex_value_t       *authorize_request_url;
   ngx_http_complex_value_t       *publisher_upstream_request_url;
+  
+  ngx_http_complex_value_t       *unsubscribe_request_url;
+  ngx_http_complex_value_t       *subscribe_request_url;
   
   nchan_complex_value_arr_t       pub_chid;
   nchan_complex_value_arr_t       sub_chid;
@@ -322,6 +335,10 @@ typedef struct {
   ngx_str_t                      channel_id[NCHAN_MULTITAG_REQUEST_CTX_MAX];
   int                            channel_id_count;
   ngx_str_t                      request_origin_header;
+  
+  ngx_int_t                      unsubscribe_request_callback_finalize_code;
+  unsigned                       sent_unsubscribe_request:1;
+  unsigned                       request_ran_content_handler:1;
 #if NCHAN_BENCHMARK
   struct timeval                 start_tv;
 #endif

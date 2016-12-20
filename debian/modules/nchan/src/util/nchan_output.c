@@ -174,7 +174,7 @@ static void nchan_flush_pending_output(ngx_http_request_t *r) {
     if (!wev->delayed) {
       ngx_log_error(NGX_LOG_INFO, c->log, NGX_ETIMEDOUT, "request timed out");
       c->timedout = 1;
-      ngx_http_finalize_request(r, NGX_HTTP_REQUEST_TIME_OUT);
+      nchan_http_finalize_request(r, NGX_HTTP_REQUEST_TIME_OUT);
       return;
     }
     wev->timedout = 0;
@@ -183,7 +183,7 @@ static void nchan_flush_pending_output(ngx_http_request_t *r) {
     if (!wev->ready) {
       ngx_add_timer(wev, clcf->send_timeout);
       if (ngx_handle_write_event(wev, clcf->send_lowat) != NGX_OK) {
-        ngx_http_finalize_request(r, 0);
+        nchan_http_finalize_request(r, 0);
       }
       return;
     }
@@ -192,7 +192,7 @@ static void nchan_flush_pending_output(ngx_http_request_t *r) {
   if (wev->delayed || r->aio) {
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, wev->log, 0, "http writer delayed");
     if (ngx_handle_write_event(wev, clcf->send_lowat) != NGX_OK) {
-      ngx_http_finalize_request(r, 0);
+      nchan_http_finalize_request(r, 0);
     }
     return;
   }
@@ -202,7 +202,7 @@ static void nchan_flush_pending_output(ngx_http_request_t *r) {
   //ngx_log_debug3(NGX_LOG_DEBUG_HTTP, c->log, 0, "http writer output filter: %d, \"%V?%V\"", rc, &r->uri, &r->args);
 
   if (rc == NGX_ERROR) {
-    ngx_http_finalize_request(r, rc);
+    nchan_http_finalize_request(r, rc);
     return;
   }
 
@@ -211,7 +211,7 @@ static void nchan_flush_pending_output(ngx_http_request_t *r) {
       ngx_add_timer(wev, clcf->send_timeout);
     }
     if (ngx_handle_write_event(wev, clcf->send_lowat) != NGX_OK) {
-      ngx_http_finalize_request(r, 0);
+      nchan_http_finalize_request(r, 0);
       return;
     }
   }
@@ -319,7 +319,7 @@ ngx_int_t nchan_respond_status(ngx_http_request_t *r, ngx_int_t status_code, con
   
   rc= ngx_http_send_header(r);
   if(finalize) {
-    ngx_http_finalize_request(r, rc);
+    nchan_http_finalize_request(r, rc);
   }
   return rc;
 }
@@ -521,7 +521,7 @@ ngx_int_t nchan_respond_msg(ngx_http_request_t *r, nchan_msg_t *msg, nchan_msg_i
   }
   
   if(finalize) {
-    ngx_http_finalize_request(r, rc);
+    nchan_http_finalize_request(r, rc);
   }
   return rc;
 }
@@ -564,12 +564,13 @@ ngx_int_t nchan_respond_string(ngx_http_request_t *r, ngx_int_t status_code, con
     b->end = body->data + body->len;
     b->last = b->end;
     
-    ngx_http_send_header(r);
-    rc= nchan_output_filter(r, chain);
+    if ((rc = ngx_http_send_header(r)) == NGX_OK) {
+      rc= nchan_output_filter(r, chain);
+    }
   }
   
   if(finalize) {
-    ngx_http_finalize_request(r, rc);
+    nchan_http_finalize_request(r, rc);
   }
   return rc;
 }
@@ -606,96 +607,13 @@ ngx_int_t nchan_OPTIONS_respond(ngx_http_request_t *r, const ngx_str_t *allow_or
   return nchan_respond_status(r, NGX_HTTP_OK, NULL, 0);
 }
 
-/*
-
-void nchan_copy_preallocated_buffer(ngx_buf_t *buf, ngx_buf_t *cbuf) {
-  if (cbuf!=NULL) {
-    ngx_memcpy(cbuf, buf, sizeof(*buf)); //overkill?
-    if(buf->temporary || buf->memory) { //we don't want to copy mmpapped memory, so no ngx_buf_in_momory(buf)
-      cbuf->pos = (u_char *) (cbuf+1);
-      cbuf->last = cbuf->pos + ngx_buf_size(buf);
-      cbuf->start=cbuf->pos;
-      cbuf->end = cbuf->start + ngx_buf_size(buf);
-      ngx_memcpy(cbuf->pos, buf->pos, ngx_buf_size(buf));
-      cbuf->memory=ngx_buf_in_memory_only(buf) ? 1 : 0;
-    }
-    if (buf->file!=NULL) {
-      cbuf->file = (ngx_file_t *) (cbuf+1) + ((buf->temporary || buf->memory) ? ngx_buf_size(buf) : 0);
-      cbuf->file->fd=buf->file->fd;
-      cbuf->file->log=ngx_cycle->log;
-      cbuf->file->offset=buf->file->offset;
-      cbuf->file->sys_offset=buf->file->sys_offset;
-      cbuf->file->name.len=buf->file->name.len;
-      cbuf->file->name.data=(u_char *) (cbuf->file+1);
-      ngx_memcpy(cbuf->file->name.data, buf->file->name.data, buf->file->name.len);
-    }
+void nchan_http_finalize_request(ngx_http_request_t *r, ngx_int_t code) {
+  if(r->connection && r->connection->write->error) {
+    r->write_event_handler = NULL;
+    //this will close the connection when request is finalized
+    ngx_http_finalize_request(r, NGX_ERROR);
+  }
+  else {
+    ngx_http_finalize_request(r, code);
   }
 }
-
-#define NGX_HTTP_BUF_ALLOC_SIZE(buf)                                         \
-(sizeof(*buf) +                                                              \
-(((buf)->temporary || (buf)->memory) ? ngx_buf_size(buf) : 0) +              \
-(((buf)->file!=NULL) ? (sizeof(*(buf)->file) + (buf)->file->name.len + 1) : 0))
-
-//buffer is _copied_
-ngx_chain_t * nchan_create_output_chain(ngx_buf_t *buf, ngx_pool_t *pool, ngx_log_t *log) {
-  ngx_chain_t                    *out;
-  ngx_file_t                     *file;
-  ngx_pool_cleanup_t             *cln = NULL;
-  ngx_pool_cleanup_file_t        *clnf = NULL;
-  if((out = ngx_pcalloc(pool, sizeof(*out)))==NULL) {
-    nchan_log(NGX_LOG_ERR, log, "can't create output chain, can't allocate chain  in pool");
-    return NULL;
-  }
-  ngx_buf_t                      *buf_copy;
-  
-  if((buf_copy = ngx_pcalloc(pool, NGX_HTTP_BUF_ALLOC_SIZE(buf)))==NULL) {
-    //TODO: don't zero the whole thing!
-    nchan_log(NGX_LOG_ERR, log, "can't create output chain, can't allocate buffer copy in pool");
-    return NULL;
-  }
-  nchan_copy_preallocated_buffer(buf, buf_copy);
-  
-  if (buf->file!=NULL) {
-    if(buf->mmap) { //just the mmap, please
-      buf->in_file=0;
-      buf->file=NULL;
-      buf->file_pos=0;
-      buf->file_last=0;
-    }
-    else {
-      file = buf_copy->file;
-      file->log=log;
-      if(file->fd==NGX_INVALID_FILE) {
-        //nchan_log(NGX_LOG_ERR, log, "opening invalid file at %s", file->name.data);
-        file->fd=ngx_open_file(file->name.data, NGX_FILE_RDONLY, NGX_FILE_OPEN, NGX_FILE_OWNER_ACCESS);
-      }
-      if(file->fd==NGX_INVALID_FILE) {
-        nchan_log(NGX_LOG_ERR, log, "can't create output chain, file in buffer is invalid");
-        return NULL;
-      }
-      else {
-        //close file on cleanup
-        if((cln = ngx_pool_cleanup_add(pool, sizeof(*clnf))) == NULL) {
-          ngx_close_file(file->fd);
-          file->fd=NGX_INVALID_FILE;
-          nchan_log(NGX_LOG_ERR, log, "can't create output chain file cleanup.");
-          return NULL;
-        }
-        cln->handler = ngx_pool_cleanup_file;
-        clnf = cln->data;
-        clnf->fd = file->fd;
-        clnf->name = file->name.data;
-        clnf->log = pool->log;
-      }
-    }
-  }
-  
-  
-  
-  buf_copy->last_buf = 1;
-  out->buf = buf_copy;
-  out->next = NULL;
-  return out;
-}
-*/
