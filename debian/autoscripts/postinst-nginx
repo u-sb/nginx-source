@@ -10,5 +10,7 @@ for confpair in #NAMES# ; do
 done
 
 if [ -s /run/nginx.pid ]; then
-	nginx -s reload
+	if which nginx >/dev/null 2>&1; then
+		nginx -s reload
+	fi
 fi
