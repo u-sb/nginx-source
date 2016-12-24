@@ -1,9 +1,22 @@
-nginx (1.10.2-3) UNRELEASED; urgency=medium
+nginx (1.10.2-3) unstable; urgency=medium
 
+  [ Michael Lustfield ]
   * debian/conf/sites-enabled/default:
     + Correcting location of default php-fpm socket. (Closes: #846145)
 
- -- Michael Lustfield <michael@lustfield.net>  Sat, 03 Dec 2016 07:57:39 +0000
+  [ Christos Trochalakis ]
+  * debian/rules: Correctly clean patched modules.
+    Thanks to Sven-Haegar Koch for the initial patch. (Closes: #844506)
+  * mod: Upgrade nchan to 1.0.8. (Closes: #844473)
+  * mod: Upgrade nginx-lua to 0.10.7.
+  * Update nginx-lua OpenSSL 1.1.0 patch.
+  * Reactivate PIE.
+    Thanks to Markus Waldeck for the suggestion.
+  * mod: Check if nginx binary exists before reloading.
+  * mod: Upgrade headers-mode to 0.32.
+  * mod: Upgrade development kit to 0.3.0.
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Sat, 24 Dec 2016 12:11:21 +0200
 
 nginx (1.10.2-2) unstable; urgency=medium
 
