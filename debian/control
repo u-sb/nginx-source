@@ -264,8 +264,8 @@ Architecture: any
 Depends: libnginx-mod-http-ndk (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
-Description: LUA module for Nginx
- Embed LUA runtime into nginx.
+Description: Lua module for Nginx
+ Embed Lua runtime into nginx.
  .
  This module embeds Lua, via the standard Lua 5.1 interpreter or LuaJIT
  2.0/2.1, into Nginx and by leveraging Nginx's subrequests, allows the
