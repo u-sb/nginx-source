@@ -9,8 +9,9 @@ for confpair in #NAMES# ; do
 	fi
 done
 
-if [ -s /run/nginx.pid ]; then
-	if which nginx >/dev/null 2>&1; then
-		nginx -s reload
+if [ "$1" = "configure" ] ; then
+	if which dpkg-trigger >/dev/null 2>&1 ; then
+		dpkg-trigger --no-await nginx-reload
 	fi
+
 fi

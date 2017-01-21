@@ -7,10 +7,4 @@ if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
 			rm /etc/nginx/modules-enabled/$to
 		fi
 	done
-
-	if [ -s /run/nginx.pid ]; then
-		if which nginx >/dev/null 2>&1; then
-			nginx -s reload
-		fi
-        fi
 fi
