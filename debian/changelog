@@ -1,3 +1,19 @@
+nginx (1.10.2-4) unstable; urgency=medium
+
+  * Switch module reloading logic to dpkg triggers.
+  * Enable modules after a remove -> install cycle.
+  * Move module patches to debian/modules/patches.
+  * Backport curve list support from 1.11.x. (Closes: #846085)
+  * Add a NEWS entry regarding dynamic modules.
+  * Merge de,fr,nl,pt_BR,da translations.
+    Thanks to Chris Leick. (Closes: #843770)
+    Thanks to Julien Patriarca. (Closes: #844712)
+    Thanks to Frans Spiesschaert. (Closes: #845693)
+    Thanks to Adriano Rafael Gomes. (Closes: #846522)
+    Thanks to Joe Dalton. (Closes: #850857)
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Sun, 22 Jan 2017 12:19:30 +0200
+
 nginx (1.10.2-3) unstable; urgency=medium
 
   [ Michael Lustfield ]
