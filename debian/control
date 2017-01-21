@@ -283,8 +283,7 @@ Description: Nginx Development Kit module
  It has functions and macros to deal with generic tasks that don't currently
  have generic code as part of the core distribution. The NDK itself adds few
  features that are seen from a user's point of view - it's just designed to help
- reduce the code that Nginx module developers need to write.  Embed LUA runtime
- into nginx.
+ reduce the code that Nginx module developers need to write.
 
 Package: libnginx-mod-nchan
 Architecture: any
