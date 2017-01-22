@@ -2,8 +2,17 @@ for confpair in #NAMES# ; do
 	from=$(echo $confpair | cut -d: -f1)
 	to=$(echo $confpair | cut -d: -f2)
 
-	# Symlink on fresh installations
-	if [ -z "$2" ]; then
+	if [ -L /etc/nginx/modules-enabled/$to.removed ]; then
+		rm /etc/nginx/modules-enabled/$to.removed
+		removed_link=true
+	else
+		removed_link=false
+	fi
+
+	# Symlink on
+	# 1) Fresh installations
+	# 2) Reinstalls after automatic removes (preserve admin actions)
+	if [ -z "$2" -o "$removed_link" = "true" ]; then
 		ln -sf /usr/share/nginx/modules-available/$from \
 			/etc/nginx/modules-enabled/$to
 	fi
