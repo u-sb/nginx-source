@@ -45,8 +45,8 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	MAKEFLAGS += -j$(NUMJOBS)
 endif
 
-MODULESPATCHDIR = $(CURDIR)/debian/patches/modules
-modules_with_patches := $(notdir $(wildcard $(CURDIR)/debian/patches/modules/*))
+MODULESPATCHDIR = $(CURDIR)/debian/modules/patches
+modules_with_patches := $(notdir $(wildcard $(CURDIR)/debian/modules/patches/*))
 
 # configure flags
 common_configure_flags := \
