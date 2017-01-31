@@ -27,8 +27,8 @@ Build-Depends: autotools-dev,
                zlib1g-dev
 Standards-Version: 3.9.8.0
 Homepage: http://nginx.net
-Vcs-Git: https://anonscm.debian.org/cgit/collab-maint/nginx.git
-Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/nginx.git
+Vcs-Git: https://anonscm.debian.org/cgit/pkg-nginx/nginx.git
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-nginx/nginx.git
 
 Package: nginx
 Architecture: all
