@@ -1,3 +1,11 @@
+nginx (1.10.2-5) UNRELEASED; urgency=medium
+
+  * debian/rules:
+    - Configure build flags to work with other arches and downstreams.
+      Thanks to Thomas Ward.
+
+ -- Michael Lustfield <michael@lustfield.net>  Sun, 12 Feb 2017 00:10:17 -0600
+
 nginx (1.10.2-4) unstable; urgency=medium
 
   * Switch module reloading logic to dpkg triggers.
