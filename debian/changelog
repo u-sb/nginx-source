@@ -1,3 +1,11 @@
+nginx (1.10.3-1) unstable; urgency=medium
+
+  * New upstream release. (Closes: #855113)
+  * Update Vcs fields to the new location.
+    The repo is now moved under the pkg-nginx namespace.
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Wed, 15 Feb 2017 09:58:13 +0200
+
 nginx (1.10.2-4) unstable; urgency=medium
 
   * Switch module reloading logic to dpkg triggers.
