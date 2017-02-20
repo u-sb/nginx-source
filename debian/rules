@@ -94,6 +94,7 @@ full_configure_flags := \
 			--with-http_xslt_module=dynamic \
 			--with-stream=dynamic \
 			--with-stream_ssl_module \
+			--with-stream_ssl_preread_module \
 			--with-mail=dynamic \
 			--with-mail_ssl_module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
@@ -120,6 +121,7 @@ extras_configure_flags := \
 			--with-mail_ssl_module \
 			--with-stream=dynamic \
 			--with-stream_ssl_module \
+			--with-stream_ssl_preread_module \
 			--add-dynamic-module=$(MODULESDIR)/headers-more-nginx-module \
 			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
 			--add-dynamic-module=$(MODULESDIR)/nginx-cache-purge \
