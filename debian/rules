@@ -7,7 +7,8 @@ debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
 # export necessary perl hardenging flags
 #  # see: src/http/modules/perl/Makefile.PL
-DEBIAN_NGINX_PERL_LDFLAGS:=$(shell DEB_BUILD_MAINT_OPTIONS=hardening=+all,-pie dpkg-buildflags --get LDFLAGS)
+DEBIAN_NGINX_PERL_LDFLAGS:=$(debian_ldflags)
+export DEBIAN_NGINX_PERL_LDFLAGS
 
 FLAVOURS := full light extras
 DYN_MODS := \

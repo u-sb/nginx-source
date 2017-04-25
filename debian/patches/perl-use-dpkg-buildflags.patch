@@ -17,7 +17,7 @@ Author: Christos Trochalakis <ctrochalakis@debian.org>
      CCFLAGS           => "$ENV{NGX_PM_CFLAGS}",
 +    # Pass link hardening flags
 +    # $Config{lddlflags} is the default
-+    LDDLFLAGS         => "$Config{lddlflags} $ENV{DEBIAN_NGINX_PERL_LDFLAGS}",
++    LDDLFLAGS         => "$ENV{DEBIAN_NGINX_PERL_LDFLAGS} $Config{lddlflags}",
      OPTIMIZE          => '-O',
  
      INC               => join(" ", map {
