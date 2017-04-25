@@ -1,10 +1,18 @@
-nginx (1.10.2-5) UNRELEASED; urgency=medium
+nginx (1.10.3-2) UNRELEASED; urgency=medium
 
   * debian/rules:
     - Configure build flags to work with other arches and downstreams.
       Thanks to Thomas Ward.
 
  -- Michael Lustfield <michael@lustfield.net>  Sun, 12 Feb 2017 00:10:17 -0600
+
+nginx (1.10.3-1) unstable; urgency=medium
+
+  * New upstream release. (Closes: #855113)
+  * Update Vcs fields to the new location.
+    The repo is now moved under the pkg-nginx namespace.
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Wed, 15 Feb 2017 09:58:13 +0200
 
 nginx (1.10.2-4) unstable; urgency=medium
 
