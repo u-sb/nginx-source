@@ -1,4 +1,4 @@
-nginx (1.12.0-1) UNRELEASED; urgency=medium
+nginx (1.12.0-1) experimental; urgency=medium
 
   [ Michael Lustfield ]
   * debian/rules:
@@ -16,7 +16,7 @@ nginx (1.12.0-1) UNRELEASED; urgency=medium
     (Closes: #854214)
   * Switch to debhelper 10, no changes needed.
 
- -- Christos Trochalakis <ctrochalakis@debian.org>  Fri, 28 Apr 2017 11:14:41 +0300
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Fri, 05 May 2017 11:16:30 +0300
 
 nginx (1.10.3-1) unstable; urgency=medium
 
