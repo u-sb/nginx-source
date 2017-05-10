@@ -1,9 +1,9 @@
-nginx (1.13.0-1) UNRELEASED; urgency=medium
+nginx (1.13.0-1) experimental; urgency=medium
 
   * New upstream release.
     We now target nginx mainline (1.13.x).
 
- -- Christos Trochalakis <ctrochalakis@debian.org>  Fri, 05 May 2017 13:01:30 +0300
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Wed, 10 May 2017 11:40:38 +0300
 
 nginx (1.12.0-1) experimental; urgency=medium
 
