@@ -1,3 +1,9 @@
+nginx (1.13.1-1) experimental; urgency=medium
+
+  * New upstream version 1.13.1.
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Wed, 31 May 2017 11:41:59 +0300
+
 nginx (1.13.0-1) experimental; urgency=medium
 
   * New upstream release.
