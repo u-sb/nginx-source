@@ -1,3 +1,9 @@
+nginx (1.13.1-2) unstable; urgency=medium
+
+  * Upload to unstable.
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Tue, 20 Jun 2017 14:16:52 +0300
+
 nginx (1.13.1-1) experimental; urgency=medium
 
   * New upstream version 1.13.1.
