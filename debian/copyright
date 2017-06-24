@@ -107,6 +107,10 @@ Files: debian/modules/ngx_http_substitutions_filter_module/*
 Copyright: Copyright (C) 2014 by Weibin Yao <yaoweibin@gmail.com>
 License: BSD-2-clause
 
+Files: debian/modules/nginx-rtmp/*
+Copyright: Copyright (C) 2012-2014, Roman Arutyunyan
+License: BSD-2-clause
+
 License: BSD-2-clause
  All rights reserved.
  .

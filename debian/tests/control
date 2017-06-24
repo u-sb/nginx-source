@@ -34,6 +34,7 @@ Depends: nginx-full,
          libnginx-mod-http-xslt-filter,
          libnginx-mod-mail,
          libnginx-mod-nchan,
+         libnginx-mod-rtmp,
          libnginx-mod-stream
 
 Tests: light-module-deps
@@ -56,6 +57,7 @@ Depends: nginx-light,
          libnginx-mod-http-xslt-filter,
          libnginx-mod-mail,
          libnginx-mod-nchan,
+         libnginx-mod-rtmp,
          libnginx-mod-stream
 
 Tests: extras-module-deps
@@ -78,4 +80,5 @@ Depends: nginx-extras,
          libnginx-mod-http-xslt-filter,
          libnginx-mod-mail,
          libnginx-mod-nchan,
+         libnginx-mod-rtmp,
          libnginx-mod-stream

@@ -61,3 +61,8 @@ README for Modules versions
   Homepage: https://github.com/yaoweibin/ngx_http_substitutions_filter_module
   Version: v0.6.4
   Patch: dynamic-module.patch
+
+ nginx-rtmp
+  Homepage: https://github.com/arut/nginx-rtmp-module
+    rm -r debian/modules/nginx-rtmp-module/test
+  Version: v1.1.11

@@ -24,6 +24,7 @@ DYN_MODS := \
 	http-xslt-filter \
 	mail \
 	nchan \
+	rtmp \
 	stream
 
 MODULESDIR = $(CURDIR)/debian/modules
@@ -131,6 +132,7 @@ extras_configure_flags := \
 			--add-dynamic-module=$(MODULESDIR)/ngx-fancyindex \
 			--add-dynamic-module=$(MODULESDIR)/nchan \
 			--add-dynamic-module=$(MODULESDIR)/nginx-lua \
+			--add-dynamic-module=$(MODULESDIR)/nginx-rtmp \
 			--add-dynamic-module=$(MODULESDIR)/nginx-upload-progress \
 			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
 			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module

@@ -383,3 +383,17 @@ Description: WebDAV missing commands support for Nginx
  WebDAV support.
  .
  WebDAV Ext provides the missing PROPFIND & OPTIONS methods.
+
+Package: libnginx-mod-rtmp
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: RTMP support for Nginx
+ The nginx RTMP module is a fully-featured streaming solution implemented in
+ nginx.
+ .
+ It provides the following features:
+  - Live streaming with RTMP, HLS and MPEG-DASH;
+  - RTMP Video on Demand from local or HTTP sources;
+  - Stream relay support via a push or pull model;
+  - Integrated stream recording;
+  - and more.
