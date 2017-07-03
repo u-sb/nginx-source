@@ -1,3 +1,22 @@
+nginx (1.13.2-1) unstable; urgency=medium
+
+  [ Christos Trochalakis ]
+  * New upstream version 1.13.2.
+  * Fix nginx-cache-purge segfaults (Closes: #866750)
+  * Merge ca translations.
+    Thanks to Alytidae (Closes: #865996)
+  * Merge es translations.
+    Thanks to Jonathan Bustillos (Closes: #855610)
+  * Merge pt translations.
+    Thanks to Rui Branco (Closes: #858741)
+  * Bump Standards to 4.0.0.
+    - Switch the copyright-format URL to https.
+
+  [ Nicolas Dandrimont ]
+  * Introduce libnginx-mod-rtmp (Closes: #843777)
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Mon, 03 Jul 2017 13:44:59 +0300
+
 nginx (1.13.1-2) unstable; urgency=medium
 
   * Upload to unstable.
