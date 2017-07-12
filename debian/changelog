@@ -1,3 +1,11 @@
+nginx (1.13.3-1) unstable; urgency=high
+
+  * New upstream version 1.13.3.
+    Fixes CVE-2017-7529 (Closes: #868109)
+  * Drop gzip_disable "msie6" directive. (Closes: #867024)
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Wed, 12 Jul 2017 11:20:27 +0300
+
 nginx (1.13.2-1) unstable; urgency=medium
 
   [ Christos Trochalakis ]
