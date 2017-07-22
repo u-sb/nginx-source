@@ -1,0 +1,4 @@
+version=4
+opts="dversionmangle=s/v//,filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%ngx-mod-devel-kit-$1.tar.gz%" \
+    https://github.com/simpl/ngx_devel_kit/tags \
+    (?:.*?/)?v?(\d[\d.]*)\.tar\.gz debian debian/modules/uupdate http-ndk ngx-mod-devel-kit

@@ -1,0 +1,4 @@
+version=4
+opts="dversionmangle=s/v//,filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%lua-nginx-module-$1.tar.gz%" \
+    https://github.com/openresty/lua-nginx-module/tags \
+    (?:.*?/)?v?(\d[\d.]*)\.tar\.gz debian debian/modules/uupdate http-lua lua-nginx-module

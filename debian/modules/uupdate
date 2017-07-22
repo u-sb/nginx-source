@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# debian/modules/uupdate - simple tar wrapper used by uscan to upgrade modules source
+
+MOD_TAR_NAME=$2
+MOD_TAR_VER=$4
+DESTDIR=debian/modules/$1
+
+tar --strip-components=1 -xf ../$MOD_TAR_NAME-$MOD_TAR_VER.tar.gz -C $DESTDIR
+echo $MOD_TAR_VER > /tmp/ngx_uupdate_version_$1

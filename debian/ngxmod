@@ -1,0 +1,156 @@
+#!/usr/bin/env python
+'''
+ngxmod - nginx modules management helper script
+
+Usage:
+  ngxmod <subcommand>
+
+Subcommands:
+
+  uscan - scan/watch upstream nginx module sources for new releases
+
+    It runs uscan for each nginx module listed in debian/modules/control.
+
+    If a new version is available, it will ask you if you want to upgrade.
+    If you agree it will use uscan to download the tarball, place it in the nginx
+    source's parent directory and unpack it using modules/uupdate to upgrade
+    the module's source.
+
+    After the upgrade, it will remove the files listed in the Files-Excluded
+    field and finally it will commit the changes.
+'''
+
+import deb822
+import os
+import sys
+import re
+from subprocess import call
+
+MODULES_PATH = 'modules/'
+MODULES_CTRL = os.path.join(MODULES_PATH, 'control')
+
+def prompt(query):
+    '''
+    Ask the given query and wait for an y/N answer.
+
+    :query: The query
+    :returns: The yes (True) or no (False) answer
+    '''
+    sys.stdout.write('%s [y/N]: ' % query)
+    choice = raw_input().lower()
+
+    return choice == 'y'
+
+
+def upgrade_module(mi, watchfile):
+    '''
+    Upgrade the given module using uscan and the custom modules/uupdate.
+    After the upgrade, remove the Files-Excluded.
+
+    :param mi: modules/control info for the module
+    :param watchfile: The watchfile of the module
+    :returns: The new module version
+    '''
+    uscan_upgrade_cmd = [
+        'uscan', '--upstream-version', mi['Version'],
+        '--watchfile', 'debian/%s' % watchfile, '--no-symlink'
+    ]
+    upgrade_ret = call(uscan_upgrade_cmd, stdout=open(os.devnull, 'w'))
+
+    if 'Files-Excluded' in mi and upgrade_ret == 0:
+        print 'Removing Files-Excluded: %s' % mi['Files-Excluded']
+
+        files = re.split('\s+', mi['Files-Excluded'])
+        files = filter(None, files)
+        abs_files = ['%s%s/%s' % (MODULES_PATH, mi['Module'], f) for f in files]
+
+        rm_cmd = ['rm', '-r']
+        rm_cmd.extend(abs_files)
+
+        call(rm_cmd)
+
+    return open('/tmp/ngx_uupdate_version_%s' % mi['Module']).read().rstrip()
+
+
+def update_module_version(mi, new_ver):
+    '''
+    Update the given module's version in modules/control.
+
+    :param mi: modules/control info for the module
+    :param new_ver: The new module version
+    '''
+    modules_info = deb822.Deb822.iter_paragraphs(file(MODULES_CTRL))
+    modules_ctrl_new = '%s%s' % (MODULES_CTRL, '.new')
+    with open(modules_ctrl_new, 'w') as c:
+        for m in modules_info:
+            if mi['Module'] == m['Module']:
+                m['Version'] = re.sub('[^v]+', new_ver, m['Version'])
+
+            c.write(m.dump() + '\n')
+    c.closed
+    os.rename(modules_ctrl_new, MODULES_CTRL)
+
+
+def commit_module(mi, new_ver):
+    '''
+    Git-commit the given module's upgraded source.
+
+    :param mi: modules/control info for the module
+    :param new_ver: The new module version
+    '''
+    module_name = mi['Module']
+    module_path = os.path.join(MODULES_PATH, module_name)
+
+    git_add_cmd = ['git', 'add', module_path, MODULES_CTRL]
+    call(git_add_cmd)
+
+    commit_msg = 'Update %s to v%s' % (module_name, new_ver)
+    git_commit_cmd = ['git', 'commit', '-m', commit_msg]
+    call(git_commit_cmd)
+
+
+def usage():
+    print("""
+Usage:
+    ngxmod <subcommand>
+
+Subcommands:
+
+    uscan - scan/watch upstream nginx module sources for new releases
+""")
+
+
+def main():
+    modules_info = deb822.Deb822.iter_paragraphs(file(MODULES_CTRL))
+
+    for mi in modules_info:
+        sys.stdout.write('Uscanning %s...' % mi['Module'])
+        sys.stdout.flush()
+
+        watchfile = os.path.join(MODULES_PATH, 'watch', mi['Module'])
+
+        if not os.path.isfile(watchfile):
+            print 'no watchfile available.'
+            continue
+
+        uscan_check_cmd = [
+            'uscan', '--upstream-version', mi['Version'],
+            '--watchfile', watchfile, '--package',
+            mi['Module']
+        ]
+        check_ret = call(uscan_check_cmd)
+
+        if check_ret == 0:
+            if prompt('Do you want to upgrade %s?' % mi['Module']):
+                new_module_ver = upgrade_module(mi, watchfile)
+                update_module_version(mi, new_module_ver)
+                commit_module(mi, new_module_ver)
+        else:
+            print 'up-to-date.'
+
+
+if __name__ == '__main__':
+	if len(sys.argv) == 2 and sys.argv[1] == 'uscan':
+		main()
+	else:
+		usage()
