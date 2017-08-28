@@ -1,7 +1,7 @@
-From 2f281b9def161d195da4d795fa916b686ac9fd87 Mon Sep 17 00:00:00 2001
+From 525d5a550f5f256af01de1264358086a4cd1ac4a Mon Sep 17 00:00:00 2001
 From: Alessandro Ghedini <alessandro@ghedini.me>
 Date: Tue, 13 Sep 2016 22:31:32 +0100
-Subject: [PATCH 1/6] bugfix: ssl: don't use SSLv3 in tests
+Subject: [PATCH 1/4] bugfix: ssl: don't use SSLv3 in tests.
 
 OpenSSL 1.1.0 disables SSLv3 by default. In order to disable SSL session
 tickets set ssl_session_tickets to off instead.
@@ -11,7 +11,7 @@ tickets set ssl_session_tickets to off instead.
  2 files changed, 24 insertions(+), 26 deletions(-)
 
 diff --git a/t/142-ssl-session-store.t b/t/142-ssl-session-store.t
-index 5c9fad35..b5955199 100644
+index 73b6e197..260fe490 100644
 --- a/t/142-ssl-session-store.t
 +++ b/t/142-ssl-session-store.t
 @@ -32,7 +32,7 @@ __DATA__
@@ -140,7 +140,7 @@ index 5c9fad35..b5955199 100644
          server_tokens off;
      }
 diff --git a/t/143-ssl-session-fetch.t b/t/143-ssl-session-fetch.t
-index bd800ff8..54f7a4a3 100644
+index 701ead72..3626f0fb 100644
 --- a/t/143-ssl-session-fetch.t
 +++ b/t/143-ssl-session-fetch.t
 @@ -33,7 +33,7 @@ __DATA__
@@ -273,25 +273,25 @@ index bd800ff8..54f7a4a3 100644
          server_tokens off;
      }
 -- 
-2.11.0
+2.14.1
 
 
-From ad8df79bccef37a0bbfd8e40283f3b81cd867760 Mon Sep 17 00:00:00 2001
+From d308b44b3daf7702d9218e2a5620a89a5eca8389 Mon Sep 17 00:00:00 2001
 From: Alessandro Ghedini <alessandro@cloudflare.com>
 Date: Thu, 12 May 2016 13:12:23 +0100
-Subject: [PATCH 2/6] bugfix: ssl: do not access SSL_SESSION struct directly
+Subject: [PATCH 2/4] bugfix: ssl: do not access SSL_SESSION struct directly.
 
 In OpenSSL 1.1.0 it was made opaque.
 ---
  src/ngx_http_lua_socket_tcp.c |  15 ++---
- t/129-ssl-socket.t            | 152 +++++++++++++++++++++---------------------
- 2 files changed, 82 insertions(+), 85 deletions(-)
+ t/129-ssl-socket.t            | 148 +++++++++++++++++++++---------------------
+ 2 files changed, 80 insertions(+), 83 deletions(-)
 
 diff --git a/src/ngx_http_lua_socket_tcp.c b/src/ngx_http_lua_socket_tcp.c
-index 6db6e2da..18352bfe 100644
+index 382a94de..07164746 100644
 --- a/src/ngx_http_lua_socket_tcp.c
 +++ b/src/ngx_http_lua_socket_tcp.c
-@@ -1311,9 +1311,8 @@ ngx_http_lua_socket_tcp_sslhandshake(lua_State *L)
+@@ -1316,9 +1316,8 @@ ngx_http_lua_socket_tcp_sslhandshake(lua_State *L)
                      return 2;
                  }
  
@@ -303,7 +303,7 @@ index 6db6e2da..18352bfe 100644
              }
          }
  
-@@ -1577,9 +1576,8 @@ ngx_http_lua_ssl_handshake_retval_handler(ngx_http_request_t *r,
+@@ -1583,9 +1582,8 @@ ngx_http_lua_ssl_handshake_retval_handler(ngx_http_request_t *r,
      } else {
          *ud = ssl_session;
  
@@ -315,7 +315,7 @@ index 6db6e2da..18352bfe 100644
  
          /* set up the __gc metamethod */
          lua_pushlightuserdata(L, &ngx_http_lua_ssl_session_metatable_key);
-@@ -5356,9 +5354,8 @@ ngx_http_lua_ssl_free_session(lua_State *L)
+@@ -5365,9 +5363,8 @@ ngx_http_lua_ssl_free_session(lua_State *L)
  
      psession = lua_touserdata(L, 1);
      if (psession && *psession != NULL) {
@@ -328,7 +328,7 @@ index 6db6e2da..18352bfe 100644
          ngx_ssl_free_session(*psession);
      }
 diff --git a/t/129-ssl-socket.t b/t/129-ssl-socket.t
-index 9da9a5c2..98fb5a2b 100644
+index 1c3f7cd0..0cd1f52f 100644
 --- a/t/129-ssl-socket.t
 +++ b/t/129-ssl-socket.t
 @@ -108,10 +108,10 @@ sent http request: 59 bytes.
@@ -345,21 +345,16 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  --- no_error_log
  lua ssl server name:
-@@ -185,10 +185,10 @@ received: HTTP/1.1 401 Unauthorized
- close: 1 nil
+@@ -182,7 +182,7 @@ connected: 1
+ failed to do SSL handshake: handshake failed
  
  --- log_level: debug
 ---- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+:\d+/
 +--- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+/
- --- grep_error_log_out eval
--qr/^lua ssl save session: ([0-9A-F]+):2
--lua ssl free session: ([0-9A-F]+):1
-+qr/^lua ssl save session: ([0-9A-F]+)
-+lua ssl free session: ([0-9A-F]+)
- $/
+ --- grep_error_log_out
  --- no_error_log
  lua ssl server name:
-@@ -262,10 +262,10 @@ received: HTTP/1.1 200 OK
+@@ -255,10 +255,10 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -372,8 +367,8 @@ index 9da9a5c2..98fb5a2b 100644
 +lua ssl free session: ([0-9A-F]+)
  $/
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -349,13 +349,13 @@ sent http request: 59 bytes.
+ lua ssl server name: "openresty.org"
+@@ -343,13 +343,13 @@ sent http request: 56 bytes.
  received: HTTP/1.1 200 OK
  close: 1 nil
  
@@ -393,25 +388,25 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  
  --- error_log
-@@ -437,7 +437,7 @@ failed to do SSL handshake: certificate host mismatch
- failed to send http request: closed
+@@ -432,7 +432,7 @@ failed to send http request: closed
+ \z
  
  --- log_level: debug
 ---- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+:\d+/
 +--- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+/
  --- grep_error_log_out
  --- error_log
- lua ssl server name: "blah.agentzh.org"
-@@ -517,7 +517,7 @@ failed to do SSL handshake: certificate host mismatch
- failed to send http request: closed
+ lua ssl server name: "blah.openresty.org"
+@@ -512,7 +512,7 @@ failed to send http request: closed
+ \z
  
  --- log_level: debug
 ---- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+:\d+/
 +--- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+/
  --- grep_error_log_out
  --- error_log
- lua ssl server name: "blah.agentzh.org"
-@@ -592,10 +592,10 @@ received: HTTP/1.1 200 OK
+ lua ssl server name: "blah.openresty.org"
+@@ -587,10 +587,10 @@ received: HTTP/1.1 404 Not Found
  close: 1 nil
  
  --- log_level: debug
@@ -425,7 +420,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  
  --- error_log
-@@ -677,10 +677,10 @@ received: HTTP/1.1 200 OK
+@@ -672,10 +672,10 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -439,7 +434,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  
  --- error_log
-@@ -759,7 +759,7 @@ failed to do SSL handshake: 20: unable to get local issuer certificate
+@@ -754,7 +754,7 @@ failed to do SSL handshake: 20: unable to get local issuer certificate
  failed to send http request: closed
  
  --- log_level: debug
@@ -447,8 +442,8 @@ index 9da9a5c2..98fb5a2b 100644
 +--- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+/
  --- grep_error_log_out
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -838,7 +838,7 @@ failed to do SSL handshake: 20: unable to get local issuer certificate
+ lua ssl server name: "openresty.org"
+@@ -833,7 +833,7 @@ failed to do SSL handshake: 20: unable to get local issuer certificate
  failed to send http request: closed
  
  --- log_level: debug
@@ -456,8 +451,8 @@ index 9da9a5c2..98fb5a2b 100644
 +--- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+/
  --- grep_error_log_out
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -928,10 +928,10 @@ sent http request: 59 bytes.
+ lua ssl server name: "openresty.org"
+@@ -923,10 +923,10 @@ sent http request: 59 bytes.
  received: HTTP/1.1 (?:200 OK|302 Found)
  close: 1 nil
  \z
@@ -471,7 +466,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  --- error_log
  lua ssl server name: "www.google.com"
-@@ -1018,7 +1018,7 @@ GET /t
+@@ -1013,7 +1013,7 @@ GET /t
  connected: 1
  failed to do SSL handshake: 20: unable to get local issuer certificate
  
@@ -480,7 +475,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- error_log
  lua ssl server name: "www.google.com"
-@@ -1100,10 +1100,10 @@ received: HTTP/1.1 200 OK
+@@ -1095,10 +1095,10 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -494,7 +489,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  
  --- error_log
-@@ -1179,10 +1179,10 @@ received: HTTP/1.1 200 OK
+@@ -1174,10 +1174,10 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -507,8 +502,8 @@ index 9da9a5c2..98fb5a2b 100644
 +lua ssl free session: ([0-9A-F]+)
  $/
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -1259,10 +1259,10 @@ received: HTTP/1.1 200 OK
+ lua ssl server name: "openresty.org"
+@@ -1254,10 +1254,10 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -521,8 +516,8 @@ index 9da9a5c2..98fb5a2b 100644
 +lua ssl free session: ([0-9A-F]+)
  $/
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -1339,10 +1339,10 @@ received: HTTP/1.1 200 OK
+ lua ssl server name: "openresty.org"
+@@ -1334,10 +1334,10 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -535,8 +530,8 @@ index 9da9a5c2..98fb5a2b 100644
 +lua ssl free session: ([0-9A-F]+)
  $/
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -1417,7 +1417,7 @@ failed to do SSL handshake: handshake failed
+ lua ssl server name: "openresty.org"
+@@ -1412,7 +1412,7 @@ failed to do SSL handshake: handshake failed
  failed to send http request: closed
  
  --- log_level: debug
@@ -545,7 +540,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- error_log eval
  [
-@@ -1493,10 +1493,10 @@ ssl handshake: userdata
+@@ -1488,10 +1488,10 @@ ssl handshake: userdata
  set keepalive: 1 nil
  
  --- log_level: debug
@@ -559,7 +554,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  
  --- error_log
-@@ -1569,14 +1569,14 @@ ssl handshake: userdata
+@@ -1564,14 +1564,14 @@ ssl handshake: userdata
  set keepalive: 1 nil
  
  --- log_level: debug
@@ -581,7 +576,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  
  --- error_log
-@@ -1620,7 +1620,7 @@ hello world
+@@ -1615,7 +1615,7 @@ hello world
  --- response_body_like: 500 Internal Server Error
  --- error_code: 500
  --- log_level: debug
@@ -590,7 +585,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- error_log
  attempt to call method 'sslhandshake' (a nil value)
-@@ -1719,10 +1719,10 @@ $::TestCertificateKey
+@@ -1714,10 +1714,10 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -604,7 +599,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  --- no_error_log
  lua ssl server name:
-@@ -1824,10 +1824,10 @@ $::TestCertificateKey
+@@ -1819,10 +1819,10 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -618,7 +613,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  --- error_log
  lua ssl server name: "test.com"
-@@ -1917,7 +1917,7 @@ failed to do SSL handshake: handshake failed
+@@ -1912,7 +1912,7 @@ failed to do SSL handshake: handshake failed
  ">>> test.crt
  $::TestCertificate"
  
@@ -627,7 +622,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- error_log eval
  qr/SSL_do_handshake\(\) failed .*?unknown protocol/
-@@ -2016,7 +2016,7 @@ $::TestCertificate
+@@ -2011,7 +2011,7 @@ $::TestCertificate
  >>> test.crl
  $::TestCRL"
  
@@ -636,7 +631,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- error_log
  lua ssl server name: "test.com"
-@@ -2095,12 +2095,12 @@ received: HTTP/1.1 200 OK
+@@ -2090,12 +2090,12 @@ received: HTTP/1.1 302 Moved Temporarily
  close: 1 nil
  
  --- log_level: debug
@@ -653,8 +648,8 @@ index 9da9a5c2..98fb5a2b 100644
 +lua ssl free session: ([0-9A-F]+)
  $/
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -2154,7 +2154,7 @@ connected: 1
+ lua ssl server name: "openresty.org"
+@@ -2149,7 +2149,7 @@ connected: 1
  failed to do SSL handshake: timeout
  
  --- log_level: debug
@@ -662,8 +657,8 @@ index 9da9a5c2..98fb5a2b 100644
 +--- grep_error_log eval: qr/lua ssl (?:set|save|free) session: [0-9A-F]+/
  --- grep_error_log_out
  --- error_log
- lua ssl server name: "iscribblet.org"
-@@ -2226,7 +2226,7 @@ $::TestCertificateKey
+ lua ssl server name: "openresty.org"
+@@ -2221,7 +2221,7 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -672,7 +667,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- no_error_log
  lua ssl server name:
-@@ -2297,10 +2297,10 @@ $::TestCertificateKey
+@@ -2292,10 +2292,10 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -686,7 +681,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  --- no_error_log
  lua ssl server name:
-@@ -2377,7 +2377,7 @@ $::TestCertificateKey
+@@ -2372,7 +2372,7 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -695,7 +690,7 @@ index 9da9a5c2..98fb5a2b 100644
  --- grep_error_log_out
  --- no_error_log
  lua ssl server name:
-@@ -2479,10 +2479,10 @@ $::TestCertificateKey
+@@ -2474,10 +2474,10 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -709,7 +704,7 @@ index 9da9a5c2..98fb5a2b 100644
  $/
  --- error_log
  --- no_error_log
-@@ -2575,7 +2575,7 @@ $::TestCertificateKey
+@@ -2570,7 +2570,7 @@ $::TestCertificateKey
  >>> test.crt
  $::TestCertificate"
  
@@ -719,43 +714,14 @@ index 9da9a5c2..98fb5a2b 100644
  --- error_log
  lua ssl certificate verify error: (18: self signed certificate)
 -- 
-2.11.0
+2.14.1
 
 
-From ee94698edd219607adbd4807f4e5173f6e51ad51 Mon Sep 17 00:00:00 2001
-From: Alessandro Ghedini <alessandro@cloudflare.com>
-Date: Thu, 12 May 2016 13:17:52 +0100
-Subject: [PATCH 3/6] bugfix: ssl: do not set tlsext_status_expected flag
-
-In OpenSSL 1.1.0 the SSL struct was made opaque, and setting this
-flag manually is not required anyway since OpenSSL already does that
-automatically when ngx_http_lua_ssl_empty_status_callback() returns
-"OK" (which is always), and an OCSP response has been set.
----
- src/ngx_http_lua_ssl_ocsp.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/src/ngx_http_lua_ssl_ocsp.c b/src/ngx_http_lua_ssl_ocsp.c
-index 3904aa8e..31b4f243 100644
---- a/src/ngx_http_lua_ssl_ocsp.c
-+++ b/src/ngx_http_lua_ssl_ocsp.c
-@@ -490,7 +490,6 @@ ngx_http_lua_ffi_ssl_set_ocsp_status_resp(ngx_http_request_t *r,
- 
-     dd("set ocsp resp: resp_len=%d", (int) resp_len);
-     (void) SSL_set_tlsext_status_ocsp_resp(ssl_conn, p, resp_len);
--    ssl_conn->tlsext_status_expected = 1;
- 
-     return NGX_OK;
- 
--- 
-2.11.0
-
-
-From 9794d2d1ba577fe4dd8771d69d1ca4a688efe36c Mon Sep 17 00:00:00 2001
+From 473c121668c658140dffdbeb70aa7df1fc48d2a7 Mon Sep 17 00:00:00 2001
 From: Alessandro Ghedini <alessandro@cloudflare.com>
 Date: Fri, 10 Jun 2016 13:23:21 +0100
-Subject: [PATCH 4/6] bugfix: ssl: do not access SSL struct directly for
- tlsext_status_type
+Subject: [PATCH 3/4] bugfix: ssl: do not access SSL struct directly for
+ tlsext_status_type.
 
 In OpenSSL 1.1.0 it was made opaque, and a getter function was added.
 ---
@@ -779,14 +745,14 @@ index 31b4f243..9ec8b509 100644
          return NGX_DECLINED;
      }
 -- 
-2.11.0
+2.14.1
 
 
-From 4d1f5bdcdade5e3c6ac0c09446ac1dcd8b4006b0 Mon Sep 17 00:00:00 2001
+From 44988918835b8b41e51e75c1618250a560bc11ca Mon Sep 17 00:00:00 2001
 From: Alessandro Ghedini <alessandro@ghedini.me>
 Date: Tue, 13 Sep 2016 22:19:10 +0100
-Subject: [PATCH 5/6] bugfix: ssl: make SSL session callback build with OpenSSL
- 1.1.0
+Subject: [PATCH 4/4] bugfix: ssl: make SSL session callback build with OpenSSL
+ 1.1.0.
 
 ---
  src/ngx_http_lua_ssl_session_fetchby.c | 9 ++++++---
@@ -795,7 +761,7 @@ Subject: [PATCH 5/6] bugfix: ssl: make SSL session callback build with OpenSSL
  3 files changed, 17 insertions(+), 6 deletions(-)
 
 diff --git a/src/ngx_http_lua_ssl_session_fetchby.c b/src/ngx_http_lua_ssl_session_fetchby.c
-index 4c450b56..6212c60d 100644
+index 556b7320..5289cb92 100644
 --- a/src/ngx_http_lua_ssl_session_fetchby.c
 +++ b/src/ngx_http_lua_ssl_session_fetchby.c
 @@ -171,8 +171,11 @@ ngx_http_lua_ssl_sess_fetch_by_lua(ngx_conf_t *cf, ngx_command_t *cmd,
@@ -839,7 +805,7 @@ index 5a6f96f5..50c6616d 100644
  
  
 diff --git a/src/ngx_http_lua_ssl_session_storeby.c b/src/ngx_http_lua_ssl_session_storeby.c
-index b5596bc7..85dbece1 100644
+index bae8273d..dc1fad9b 100644
 --- a/src/ngx_http_lua_ssl_session_storeby.c
 +++ b/src/ngx_http_lua_ssl_session_storeby.c
 @@ -172,6 +172,8 @@ int
@@ -868,97 +834,5 @@ index b5596bc7..85dbece1 100644
  
      dd("setting cctx");
 -- 
-2.11.0
-
-
-From 97ca52b469fcf4881c06ab26fbc46cbd37d8cf9f Mon Sep 17 00:00:00 2001
-From: Alessandro Ghedini <alessandro@ghedini.me>
-Date: Mon, 28 Nov 2016 21:01:00 +0000
-Subject: [PATCH 6/6] bugfix: ssl: don't use RC4 in tests
-
-RC4 ciphers are deprecated and disabled by default in OpenSSL 1.1.0.
----
- t/129-ssl-socket.t | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/t/129-ssl-socket.t b/t/129-ssl-socket.t
-index 98fb5a2b..1d9c5710 100644
---- a/t/129-ssl-socket.t
-+++ b/t/129-ssl-socket.t
-@@ -1129,7 +1129,7 @@ SSL reused session
-             sock:settimeout(2000)
- 
-             do
--                local ok, err = sock:connect("iscribblet.org", 443)
-+                local ok, err = sock:connect("openresty.org", 443)
-                 if not ok then
-                     ngx.say("failed to connect: ", err)
-                     return
-@@ -1137,7 +1137,7 @@ SSL reused session
- 
-                 ngx.say("connected: ", ok)
- 
--                local session, err = sock:sslhandshake(nil, "iscribblet.org")
-+                local session, err = sock:sslhandshake(nil, "openresty.org")
-                 if not session then
-                     ngx.say("failed to do SSL handshake: ", err)
-                     return
-@@ -1145,7 +1145,7 @@ SSL reused session
- 
-                 ngx.say("ssl handshake: ", type(session))
- 
--                local req = "GET / HTTP/1.1\\r\\nHost: iscribblet.org\\r\\nConnection: close\\r\\n\\r\\n"
-+                local req = "GET /en/ HTTP/1.1\\r\\nHost: openresty.org\\r\\nConnection: close\\r\\n\\r\\n"
-                 local bytes, err = sock:send(req)
-                 if not bytes then
-                     ngx.say("failed to send http request: ", err)
-@@ -1174,7 +1174,7 @@ GET /t
- --- response_body
- connected: 1
- ssl handshake: userdata
--sent http request: 59 bytes.
-+sent http request: 61 bytes.
- received: HTTP/1.1 200 OK
- close: 1 nil
- 
-@@ -1185,8 +1185,8 @@ qr/^lua ssl save session: ([0-9A-F]+)
- lua ssl free session: ([0-9A-F]+)
- $/
- --- error_log
--lua ssl server name: "iscribblet.org"
--SSL: TLSv1.2, cipher: "ECDHE-RSA-RC4-SHA SSLv3
-+lua ssl server name: "openresty.org"
-+SSL: TLSv1.2, cipher: "ECDHE-RSA-AES128-GCM-SHA256
- --- no_error_log
- SSL reused session
- [error]
-@@ -1199,7 +1199,7 @@ SSL reused session
- --- config
-     server_tokens off;
-     resolver $TEST_NGINX_RESOLVER;
--    lua_ssl_ciphers RC4-SHA;
-+    lua_ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256;
-     location /t {
-         #set $port 5000;
-         set $port $TEST_NGINX_MEMCACHED_PORT;
-@@ -1266,7 +1266,7 @@ lua ssl free session: ([0-9A-F]+)
- $/
- --- error_log
- lua ssl server name: "iscribblet.org"
--SSL: TLSv1.2, cipher: "RC4-SHA SSLv3
-+SSL: TLSv1.2, cipher: "ECDHE-RSA-AES128-GCM-SHA256
- --- no_error_log
- SSL reused session
- [error]
-@@ -1346,7 +1346,7 @@ lua ssl free session: ([0-9A-F]+)
- $/
- --- error_log
- lua ssl server name: "iscribblet.org"
--SSL: TLSv1, cipher: "ECDHE-RSA-RC4-SHA SSLv3
-+SSL: TLSv1
- --- no_error_log
- SSL reused session
- [error]
--- 
-2.11.0
+2.14.1
 
