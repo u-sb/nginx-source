@@ -26,6 +26,7 @@ README for Modules versions
   Version: v0.10.7
   Patch: openssl-1.1.0.patch
   Patch: build-nginx-1.11.11.patch
+  Patch: discover-luajit-2.1.patch
 
  nginx-upstream-fair
   Homepage: https://github.com/gnosek/nginx-upstream-fair
