@@ -23,7 +23,7 @@ README for Modules versions
 
  nginx-lua
   Homepage: https://github.com/openresty/lua-nginx-module
-  Version: v0.10.7
+  Version: v0.10.10
   Patch: openssl-1.1.0.patch
   Patch: build-nginx-1.11.11.patch
   Patch: discover-luajit-2.1.patch
