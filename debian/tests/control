@@ -6,6 +6,10 @@ Tests: ec-x25519
 Restrictions: allow-stderr isolation-container needs-root
 Depends: nginx-light, ssl-cert, curl
 
+Tests: lua
+Restrictions: allow-stderr isolation-container needs-root
+Depends: nginx-extras, curl
+
 Tests: full-simple
 Restrictions: allow-stderr isolation-container
 Depends: nginx-full, curl
