@@ -138,7 +138,7 @@ extras_configure_flags := \
 			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
 %:
-	dh $@ --with systemd
+	dh $@ --without autoreconf
 
 override_dh_auto_configure: config_patch_modules $(foreach flavour,$(FLAVOURS),config.arch.$(flavour))
 override_dh_auto_build:     $(foreach flavour,$(FLAVOURS),build.arch.$(flavour))

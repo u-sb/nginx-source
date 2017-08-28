@@ -5,8 +5,7 @@ Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@lists.alioth.debian.
 Uploaders: Kartik Mistry <kartik@debian.org>,
            Michael Lustfield <michael@lustfield.net>,
            Christos Trochalakis <ctrochalakis@debian.org>
-Build-Depends: autotools-dev,
-               debhelper (>= 10),
+Build-Depends: debhelper (>= 10),
                po-debconf,
                dh-systemd (>= 1.5),
                dpkg-dev (>= 1.15.5),
