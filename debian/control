@@ -24,7 +24,7 @@ Build-Depends: debhelper (>= 10),
                po-debconf,
                quilt,
                zlib1g-dev
-Standards-Version: 4.0.0
+Standards-Version: 4.1.0
 Homepage: http://nginx.net
 Vcs-Git: https://anonscm.debian.org/cgit/pkg-nginx/nginx.git
 Vcs-Browser: https://anonscm.debian.org/cgit/pkg-nginx/nginx.git
@@ -111,7 +111,6 @@ Description: nginx web/proxy server (standard version)
 
 Package: nginx-light
 Architecture: any
-Priority: extra
 Depends: libnginx-mod-http-echo (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
@@ -139,7 +138,6 @@ Description: nginx web/proxy server (basic version)
 
 Package: nginx-extras
 Architecture: any
-Priority: extra
 Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-cache-purge (= ${binary:Version}),
          libnginx-mod-http-dav-ext (= ${binary:Version}),
