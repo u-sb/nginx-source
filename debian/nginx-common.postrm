@@ -11,6 +11,10 @@ dpkg-maintscript-helper rm_conffile \
 dpkg-maintscript-helper rm_conffile \
 	          /etc/nginx/naxsi-ui.conf       1.6.2-2~ -- "$@"
 
+# Handle upstart removal
+dpkg-maintscript-helper rm_conffile \
+	          /etc/init/nginx.conf           1.13.4-2~ -- "$@"
+
 case "$1" in
   purge)
     rm -rf /var/lib/nginx /var/log/nginx /etc/nginx
