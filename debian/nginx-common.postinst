@@ -15,7 +15,7 @@ dpkg-maintscript-helper rm_conffile \
 
 # Handle upstart removal
 dpkg-maintscript-helper rm_conffile \
-	          /etc/init/nginx.conf           1.13.4-2~ -- "$@"
+	          /etc/init/nginx.conf           1.13.5-1~ -- "$@"
 
 case "$1" in
   configure)
