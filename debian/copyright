@@ -37,35 +37,35 @@ Copyright: 2007-2009, Fabio Tranchitella <kobold@debian.org>
            2013-2016, Christos Trochalakis <ctrochalakis@debian.org>
 License: BSD-2-clause
 
-Files: debian/modules/headers-more-nginx-module/*
+Files: debian/modules/http-headers-more-filter/*
 Copyright: Copyright (c) 2009-2014, Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, CloudFlare Inc.
            Copyright (c) 2010-2013, Bernd Dorn
            Copyright (c) Igor Sysoev
 License: BSD-2-clause
 
-Files: debian/modules/nginx-development-kit/*
+Files: debian/modules/http-ndk/*
 Copyright: Marcus Clyne
 License: BSD-3-clause
 
-Files: debian/modules/nginx-development-kit/src/hash/md5.h
-       debian/modules/nginx-development-kit/src/hash/sha.h
+Files: debian/modules/http-ndk/src/hash/md5.h
+       debian/modules/http-ndk/src/hash/sha.h
 Copyright: Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
 License: BSD-4-clause
 
-Files: debian/modules/nginx-auth-pam/*
+Files: debian/modules/http-auth-pam/*
 Copyright: 2008-2013, Sergio Talens Oliag
 License: BSD-2-clause
 
-Files: debian/modules/nginx-echo/*
+Files: debian/modules/http-echo/*
 Copyright: Copyright (c) 2009-2014, Yichun "agentzh" Zhang <agentzh@gmail.com>
 License: BSD-2-clause
 
-Files: debian/modules/nginx-lua/*
+Files: debian/modules/http-lua/*
 Copyright: Copyright (C) 2009-2014, by Xiaozhe Wang (chaoslawful) <chaoslawful@gmail.com>.
            Copyright (C) 2009-2014, by Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, CloudFlare Inc.
 License: BSD-2-clause
 
-Files: debian/modules/nginx-upstream-fair/*
+Files: debian/modules/http-upstream-fair/*
 Copyright: Copyright (c) 2007 Grzegorz Nosek
            Igor Sysoev
 License: BSD-2-clause
@@ -85,29 +85,29 @@ Copyright: 2009-2011, Salvatore Sanfilippo
                       Jan-Erik Rediger
 License: BSD-3-clause
 
-Files: debian/modules/nginx-upload-progress/*
+Files: debian/modules/http-uploadprogress/*
 Copyright: Brice Figureau
            2002-2007, Igor Sysoev
 License: BSD-2-clause
 
-Files: debian/modules/nginx-cache-purge/*
+Files: debian/modules/http-cache-purge/*
 Copyright: 2009-2012, FRiCKLE <info@frickle.com>,
            2009-2012, Piotr Sikora <piotr.sikora@frickle.com>
 License: BSD-2-clause
 
-Files: debian/modules/nginx-dav-ext-module/*
+Files: debian/modules/http-dav-ext/*
 Copyright: Arutyunyan Roman <arut@qip.ru>
 License: BSD-2-clause
 
-Files: debian/modules/ngx-fancyindex/*
+Files: debian/modules/http-fancyindex/*
 Copyright: Copyright (c) Adrian Perez <aperez@igalia.com>
 License: BSD-2-clause
 
-Files: debian/modules/ngx_http_substitutions_filter_module/*
+Files: debian/modules/http-subs-filter/*
 Copyright: Copyright (C) 2014 by Weibin Yao <yaoweibin@gmail.com>
 License: BSD-2-clause
 
-Files: debian/modules/nginx-rtmp/*
+Files: debian/modules/rtmp/*
 Copyright: Copyright (C) 2012-2014, Roman Arutyunyan
 License: BSD-2-clause
 

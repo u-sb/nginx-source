@@ -82,7 +82,7 @@ light_configure_flags := \
 			--without-http_referer_module \
 			--without-http_split_clients_module \
 			--without-http_userid_module \
-			--add-dynamic-module=$(MODULESDIR)/nginx-echo
+			--add-dynamic-module=$(MODULESDIR)/http-echo
 
 full_configure_flags := \
 			$(common_configure_flags) \
@@ -98,11 +98,11 @@ full_configure_flags := \
 			--with-stream_ssl_preread_module \
 			--with-mail=dynamic \
 			--with-mail_ssl_module \
-			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
-			--add-dynamic-module=$(MODULESDIR)/nginx-dav-ext-module \
-			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
-			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
-			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
+			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
+			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
+			--add-dynamic-module=$(MODULESDIR)/http-echo \
+			--add-dynamic-module=$(MODULESDIR)/http-upstream-fair \
+			--add-dynamic-module=$(MODULESDIR)/http-subs-filter
 
 extras_configure_flags := \
 			$(common_configure_flags) \
@@ -123,19 +123,19 @@ extras_configure_flags := \
 			--with-stream=dynamic \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
-			--add-dynamic-module=$(MODULESDIR)/headers-more-nginx-module \
-			--add-dynamic-module=$(MODULESDIR)/nginx-auth-pam \
-			--add-dynamic-module=$(MODULESDIR)/nginx-cache-purge \
-			--add-dynamic-module=$(MODULESDIR)/nginx-dav-ext-module \
-			--add-dynamic-module=$(MODULESDIR)/nginx-development-kit \
-			--add-dynamic-module=$(MODULESDIR)/nginx-echo \
-			--add-dynamic-module=$(MODULESDIR)/ngx-fancyindex \
+			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
+			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
+			--add-dynamic-module=$(MODULESDIR)/http-cache-purge \
+			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
+			--add-dynamic-module=$(MODULESDIR)/http-ndk \
+			--add-dynamic-module=$(MODULESDIR)/http-echo \
+			--add-dynamic-module=$(MODULESDIR)/http-fancyindex \
 			--add-dynamic-module=$(MODULESDIR)/nchan \
-			--add-dynamic-module=$(MODULESDIR)/nginx-lua \
-			--add-dynamic-module=$(MODULESDIR)/nginx-rtmp \
-			--add-dynamic-module=$(MODULESDIR)/nginx-upload-progress \
-			--add-dynamic-module=$(MODULESDIR)/nginx-upstream-fair \
-			--add-dynamic-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
+			--add-dynamic-module=$(MODULESDIR)/http-lua \
+			--add-dynamic-module=$(MODULESDIR)/rtmp \
+			--add-dynamic-module=$(MODULESDIR)/http-uploadprogress \
+			--add-dynamic-module=$(MODULESDIR)/http-upstream-fair \
+			--add-dynamic-module=$(MODULESDIR)/http-subs-filter
 
 %:
 	dh $@ --without autoreconf
