@@ -1,3 +1,9 @@
+nginx (1.13.6-2) unstable; urgency=medium
+
+  * rtmp: Ship docs & examples (Closes: #878368)
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Fri, 13 Oct 2017 12:59:28 +0300
+
 nginx (1.13.6-1) unstable; urgency=medium
 
   * New upstream version
