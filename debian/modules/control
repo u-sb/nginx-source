@@ -13,9 +13,8 @@ Version: v1.5.1
 
 Module: http-echo
 Homepage: https://github.com/agentzh/echo-nginx-module
-Version: v0.60
+Version: v0.61
 Files-Excluded: .gitignore .gitattributes .travis.yml
-Patch: build-nginx-1.11.11.patch
 
 Module: http-lua
 Homepage: https://github.com/openresty/lua-nginx-module
