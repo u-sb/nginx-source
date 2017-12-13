@@ -23,7 +23,7 @@ Build-Depends: debhelper (>= 10),
                po-debconf,
                quilt,
                zlib1g-dev
-Standards-Version: 4.1.1
+Standards-Version: 4.1.2
 Homepage: http://nginx.net
 Vcs-Git: https://anonscm.debian.org/cgit/pkg-nginx/nginx.git
 Vcs-Browser: https://anonscm.debian.org/cgit/pkg-nginx/nginx.git
