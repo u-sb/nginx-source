@@ -54,7 +54,7 @@ Version: v0.1.0
 
 Module: http-fancyindex
 Homepage: https://github.com/aperezdc/ngx-fancyindex
-Version: v0.4.1
+Version: v0.4.2
 Files-Excluded: .gitignore .travis.yml
 
 Module: http-subs-filter
