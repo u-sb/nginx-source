@@ -1,6 +1,6 @@
 Module: http-headers-more-filter
 Homepage: https://github.com/agentzh/headers-more-nginx-module
-Version: v0.32
+Version: v0.33
 Files-Excluded: .gitignore .gitattributes .travis.yml
 
 Module: http-ndk
