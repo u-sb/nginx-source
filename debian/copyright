@@ -78,13 +78,6 @@ Files: debian/modules/nchan/src/store/redis/cmp.*
 Copyright: 2015 Charles Gunyon
 License: MIT
 
-Files: debian/modules/nchan/src/hiredis/*
-Copyright: 2009-2011, Salvatore Sanfilippo
-           2010-2011, Pieter Noordhuis
-                      Matt Stancliff
-                      Jan-Erik Rediger
-License: BSD-3-clause
-
 Files: debian/modules/http-uploadprogress/*
 Copyright: Brice Figureau
            2002-2007, Igor Sysoev
