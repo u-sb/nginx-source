@@ -67,7 +67,7 @@ def commit(module, version):
     git_add_cmd = ['git', 'add', '--all', module_path, CTRL_PATH]
     call(git_add_cmd)
 
-    commit_msg = '%s: Upgrade to v%s' % (module, version)
+    commit_msg = '%s: Upgrade to %s' % (module, version)
     git_commit_cmd = [
         'git', 'commit', '-m', commit_msg,
         '--', module_path, CTRL_PATH]
@@ -129,7 +129,7 @@ def cmd_uupdate(args):
     unpack(args.module, args.upstream_version, exclude)
 
     # change ctrl version
-    c['Version'] = re.sub('[^v]+', args.upstream_version, c['Version'])
+    c['Version'] = args.upstream_version
     update_ctrl()
 
     commit(args.module, args.upstream_version)
