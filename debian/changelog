@@ -1,3 +1,9 @@
+nginx (1.13.8-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Christos Trochalakis <ctrochalakis@debian.org>  Wed, 27 Dec 2017 09:24:36 +0200
+
 nginx (1.13.7-1) unstable; urgency=medium
 
   [ Christos Trochalakis ]
