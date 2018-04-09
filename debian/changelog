@@ -1,3 +1,9 @@
+nginx (1.19.5-1sb) unstable; urgency=low
+
+  * Compile against openssl 1.1.1
+
+ -- Xinyue Lu <i@7086.in>  Mon, 30 Nov 2020 00:00:00 -0400
+ 
 nginx (1.19.5-1) unstable; urgency=medium
 
   * New upstream version
