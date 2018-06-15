@@ -1,3 +1,9 @@
+nginx (1.15.0-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Xinyue Lu <i@7086.in>  Fri, 15 Jun 2018 00:00:00 +0300
+
 nginx (1.13.12-1) unstable; urgency=medium
 
   * New upstream version
