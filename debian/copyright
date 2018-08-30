@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: nginx
-Source: http://nginx.org/en/download.html
+Source: https://nginx.org/en/download.html
 
 Files: *
 Copyright: 2002-2014 Igor Sysoev
