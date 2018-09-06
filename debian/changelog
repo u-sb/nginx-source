@@ -2,6 +2,21 @@ nginx (1.15.8-1) unstable; urgency=medium
 
   * New upstream version
 
+  [ Kartik Mistry ]
+  * debian/control:
+    + Removed duplicate Build-Depends.
+    + Use https in Homepage.
+  * Removed unused lintian override.
+
+  [ Christos Trochalakis ]
+  * http-lua: Upgrade to 0.10.13
+  * http-lua: Drop our OpenSSL patch, OpenSSL 1.1 is now supported upstream
+  * http-fancyindex: Upgrade to 0.4.3
+  * Order nginx after nss-lookup.target to synchronize host/network name lookups
+    (Closes: #900790)
+  * Merge ru translations.
+    Thanks to Lev Lamberov (Closes: #883104)
+
  -- Xinyue Lu <i@7086.in>  Tue, 25 Dec 2018 00:00:00 +0300
 
 nginx (1.15.7-1) unstable; urgency=medium
@@ -2058,14 +2073,14 @@ nginx (0.7.61-2) unstable; urgency=low
 nginx (0.7.61-1) unstable; urgency=low
 
   * New upstream version:
-    *) Bugfix: nginx could not be built --without-http-cache; the bug had 
+    *) Bugfix: nginx could not be built --without-http-cache; the bug had
        appeared in 0.7.60.
-    *) Bugfix: a segmentation fault occurred in worker process, if a 
-       backend 401 error was intercepted and the backend did not set the 
+    *) Bugfix: a segmentation fault occurred in worker process, if a
+       backend 401 error was intercepted and the backend did not set the
        "WWW-Authenticate" response header line.
        Thanks to Eugene Mychlo.
     *) Feature: the "keepalive_requests" directive.
-    *) Bugfix: in open_file_cache and proxy/fastcgi cache interaction on 
+    *) Bugfix: in open_file_cache and proxy/fastcgi cache interaction on
        start up.
     *) Bugfix: open_file_cache might cache open file descriptors too long.
     *) Bugfix: XLST filter did not work in subrequests.
@@ -2196,14 +2211,14 @@ nginx (0.5.33-1) unstable; urgency=low
   * New stable upstream release (Closes: #451173)
   * nginx now provides httpd, httpd-cgi virtual packages
     (Closes: #439468, #452025)
-  * sites-enabled/default link is now provided only on fresh 
+  * sites-enabled/default link is now provided only on fresh
     installations (Closes: #432961)
   * Updated code for online upgrading of nginx (Closes: #445246)
   * Reviewed maintainer scripts for correct behaviour on updates
     (Closes: #452787, #435965)
   * Removed debian/nginx.links and debian/preinst.
   * Changing Maintainer address to bureado@debian.org.
-  * Welcoming Fabio Tranchitella <kobold@debian.org> as an nginx 
+  * Welcoming Fabio Tranchitella <kobold@debian.org> as an nginx
     uploader for Debian. Thanks for your patches.
 
  -- Jose Parrella <bureado@debian.org>  Sat, 08 Dec 2007 11:27:54 -0400
@@ -2211,7 +2226,7 @@ nginx (0.5.33-1) unstable; urgency=low
 nginx (0.5.30-1) unstable; urgency=low
 
   * New stable upstream release.
-  * Adding mime.types (and other upstream conffiles) to the package 
+  * Adding mime.types (and other upstream conffiles) to the package
     since it was lost on 0.5.26 (Closes: #435964)
 
  -- Jose Parrella <joseparrella@cantv.net>  Sat, 04 Aug 2007 10:39:40 -0400
@@ -2241,7 +2256,7 @@ nginx (0.5.13-1) unstable; urgency=low
 
 nginx (0.5.12-2) unstable; urgency=low
 
-  * Patching src/core/ngx_shmtx.h in order to solve FTBFS problems in 
+  * Patching src/core/ngx_shmtx.h in order to solve FTBFS problems in
     non-x86 archs (Thanks to Igor Sysoev) (Closes: #410884)
 
  -- Jose Parrella <joseparrella@cantv.net>  Wed, 14 Feb 2007 13:32:01 -0400
