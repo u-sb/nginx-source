@@ -1,6 +1,7 @@
 nginx (1.21.1-1sb) unstable; urgency=low
 
   * Compile against openssl 1.1.1
+  * Set TLS v1.3 ciphers
 
  -- Xinyue Lu <i@7086.in>  Fri, 16 Jul 2020 00:00:00 -0400
  
