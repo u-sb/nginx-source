@@ -845,10 +845,70 @@ ngx_ssl_password_callback(char *buf, int size, int rwflag, void *userdata)
     return size;
 }
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10101000L && !defined LIBRESSL_VERSION_NUMBER)
+
+#define NGX_DEFAULT_CIPHERS     "HIGH:!aNULL:!MD5"
+
+ngx_int_t
+ngx_ssl_ciphers_real(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *ciphers,
+    ngx_uint_t prefer_server_ciphers);
 
 ngx_int_t
 ngx_ssl_ciphers(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *ciphers,
     ngx_uint_t prefer_server_ciphers)
+{
+    u_char s_tls13[ciphers->len + 1];
+    u_char s_legacy[ciphers->len + 1];
+    u_char *s_tls13_p = s_tls13;
+    u_char *s_legacy_p = s_legacy;
+    u_char *ciphers_p = ciphers->data;
+
+    // Terminate strings
+    *s_tls13 = *s_legacy = 0;
+
+    // Loop through ciphers
+    // Shall we use strtok?
+    while (ciphers_p < ciphers->data + ciphers->len)
+    {
+        // Parse list
+        u_char *end = (u_char *)ngx_strchr(ciphers_p, ':');
+        if (!end)
+            end = ciphers->data + ciphers->len;
+        if (ngx_strncmp(ciphers_p, "TLS_", 4) == 0)
+            // TLSv1.3 ciphersuites
+            s_tls13_p = ngx_cpymem(s_tls13_p, ciphers_p, end + 1 - ciphers_p);
+        else
+            // Legacy TLS ciphers
+            s_legacy_p = ngx_cpymem(s_legacy_p, ciphers_p, end + 1 - ciphers_p);
+        // Advance source buffer
+        ciphers_p = end + 1;
+    }
+    // Terminate strings
+    if (s_tls13 != s_tls13_p)
+        *(s_tls13_p - 1) = 0;
+    if (s_legacy != s_legacy_p)
+        *(s_legacy_p - 1) = 0;
+
+    // Only if user specified any TLSv1.3 ciphersuites
+    if (*s_tls13)
+        SSL_CTX_set_ciphersuites(ssl->ctx, (char *) s_tls13);
+
+    ngx_str_t ciphers_legacy = {ngx_strlen(s_legacy), s_legacy};
+    ngx_str_t ciphers_default = ngx_string(NGX_DEFAULT_CIPHERS);
+    return ngx_ssl_ciphers_real(cf, ssl, *s_legacy ? &ciphers_legacy : &ciphers_default, prefer_server_ciphers);
+}
+
+ngx_int_t
+ngx_ssl_ciphers_real(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *ciphers,
+    ngx_uint_t prefer_server_ciphers)
+
+#else
+
+ngx_int_t
+ngx_ssl_ciphers(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *ciphers,
+    ngx_uint_t prefer_server_ciphers)
+
+#endif
 {
     if (SSL_CTX_set_cipher_list(ssl->ctx, (char *) ciphers->data) == 0) {
         ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
