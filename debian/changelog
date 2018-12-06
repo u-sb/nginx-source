@@ -7,6 +7,9 @@ nginx (1.15.8-1) unstable; urgency=medium
     + Removed duplicate Build-Depends.
     + Use https in Homepage.
   * Removed unused lintian override.
+  * po/tr.po:
+    + Added Turkish translation. Thanks Atila KOÇ <koc@artielektronik.com.tr>
+      (Closes: #915728)
 
   [ Christos Trochalakis ]
   * http-lua: Upgrade to 0.10.13
