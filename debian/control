@@ -20,7 +20,7 @@ Build-Depends: debhelper (>= 10),
                po-debconf,
                quilt,
                zlib1g-dev
-Standards-Version: 4.1.4
+Standards-Version: 4.3.0
 Homepage: https://nginx.net
 Vcs-Git: https://salsa.debian.org/nginx-team/nginx.git
 Vcs-Browser: https://salsa.debian.org/nginx-team/nginx
