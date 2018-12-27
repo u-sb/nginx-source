@@ -51,7 +51,7 @@ Patch:
 
 Module: http-dav-ext
 Homepage: https://github.com/arut/nginx-dav-ext-module
-Version: 0.1.0
+Version: 3.0.0
 
 Module: http-fancyindex
 Homepage: https://github.com/aperezdc/ngx-fancyindex
