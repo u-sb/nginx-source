@@ -16,6 +16,10 @@ Homepage: https://github.com/agentzh/echo-nginx-module
 Version: v0.61
 Files-Excluded: .gitignore .gitattributes .travis.yml
 
+Module: http-geoip2
+Homepage: https://github.com/leev/ngx_http_geoip2_module
+Version: 3.3
+
 Module: http-lua
 Homepage: https://github.com/openresty/lua-nginx-module
 Version: 0.10.13

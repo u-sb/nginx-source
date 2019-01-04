@@ -44,6 +44,10 @@ Copyright: Copyright (c) 2009-2014, Yichun "agentzh" Zhang (章亦春) <agentzh@
            Copyright (c) Igor Sysoev
 License: BSD-2-clause
 
+Files: debian/modules/http-geoip2/*
+Copyright: Copyright (c) 2014, Lee Valentine <lee@leev.net>
+License: BSD-2-clause
+
 Files: debian/modules/http-ndk/*
 Copyright: Marcus Clyne
 License: BSD-3-clause
