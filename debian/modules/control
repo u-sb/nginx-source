@@ -5,7 +5,7 @@ Files-Excluded: .gitignore .gitattributes .travis.yml
 
 Module: http-ndk
 Homepage: https://github.com/simpl/ngx_devel_kit/
-Version: 0.3.0
+Version: 0.3.1
 
 Module: http-auth-pam
 Homepage: https://github.com/stogh/ngx_http_auth_pam_module
