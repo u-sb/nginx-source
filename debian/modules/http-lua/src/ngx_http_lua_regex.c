@@ -15,7 +15,6 @@
 #include "ngx_http_lua_regex.h"
 #include "ngx_http_lua_pcrefix.h"
 #include "ngx_http_lua_script.h"
-#include "ngx_http_lua_pcrefix.h"
 #include "ngx_http_lua_util.h"
 
 
@@ -249,7 +248,8 @@ ngx_http_lua_ngx_re_match_helper(lua_State *L, int wantcaps)
 
         dd("server pool %p", lmcf->pool);
 
-        lua_pushlightuserdata(L, &ngx_http_lua_regex_cache_key);
+        lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(
+                              regex_cache_key));
         lua_rawget(L, LUA_REGISTRYINDEX); /* table */
 
         lua_pushliteral(L, "m");
@@ -720,7 +720,8 @@ ngx_http_lua_ngx_re_gmatch(lua_State *L)
 
         dd("server pool %p", lmcf->pool);
 
-        lua_pushlightuserdata(L, &ngx_http_lua_regex_cache_key);
+        lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(
+                              regex_cache_key));
         lua_rawget(L, LUA_REGISTRYINDEX); /* table */
 
         lua_pushliteral(L, "m");
@@ -1388,7 +1389,8 @@ ngx_http_lua_ngx_re_sub_helper(lua_State *L, unsigned global)
 
         dd("server pool %p", lmcf->pool);
 
-        lua_pushlightuserdata(L, &ngx_http_lua_regex_cache_key);
+        lua_pushlightuserdata(L, ngx_http_lua_lightudata_mask(
+                              regex_cache_key));
         lua_rawget(L, LUA_REGISTRYINDEX); /* table */
 
         lua_pushliteral(L, "s");

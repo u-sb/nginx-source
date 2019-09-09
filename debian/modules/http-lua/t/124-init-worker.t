@@ -521,12 +521,11 @@ warn(): Thu, 01 Jan 1970 01:34:38 GMT
     }
 --- request
 GET /t
---- response_body
-timer created
+--- response_body_like
 connected: 1
 request sent: 56
-first line received: HTTP/1.1 200 OK
-second line received: Server: openresty
+first line received: HTTP\/1\.1 200 OK
+second line received: (?:Date|Server): .*?
 --- no_error_log
 [error]
 --- timeout: 10
@@ -550,6 +549,7 @@ second line received: Server: openresty
             else
                 say("connect: ", ok, " ", err)
             end
+            done = true
         end
 
         local ok, err = ngx.timer.at(0, handler)
@@ -600,6 +600,7 @@ qr/connect\(\) failed \(\d+: Connection refused\), context: ngx\.timer$/
             else
                 say("connect: ", ok, " ", err)
             end
+            done = true
         end
 
         local ok, err = ngx.timer.at(0, handler)
@@ -650,6 +651,7 @@ qr/connect\(\) failed \(\d+: Connection refused\)/
             else
                 say("connect: ", ok, " ", err)
             end
+            done = true
         end
 
         local ok, err = ngx.timer.at(0, handler)

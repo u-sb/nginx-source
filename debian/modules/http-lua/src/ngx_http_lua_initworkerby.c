@@ -12,6 +12,7 @@
 
 #include "ngx_http_lua_initworkerby.h"
 #include "ngx_http_lua_util.h"
+#include "ngx_http_lua_pipe.h"
 
 
 static u_char *ngx_http_lua_log_init_worker_error(ngx_log_t *log,
@@ -25,6 +26,7 @@ ngx_http_lua_init_worker(ngx_cycle_t *cycle)
     void                        *cur, *prev;
     ngx_uint_t                   i;
     ngx_conf_t                   conf;
+    ngx_conf_file_t              cf_file;
     ngx_cycle_t                 *fake_cycle;
     ngx_module_t               **modules;
     ngx_open_file_t             *file, *ofile;
@@ -64,7 +66,20 @@ ngx_http_lua_init_worker(ngx_cycle_t *cycle)
 
         return NGX_OK;
     }
+
+#ifdef HAVE_NGX_LUA_PIPE
+    if (ngx_http_lua_pipe_add_signal_handler(cycle) != NGX_OK) {
+        return NGX_ERROR;
+    }
+#endif
+
 #endif  /* NGX_WIN32 */
+
+#if (NGX_HTTP_LUA_HAVE_SA_RESTART)
+    if (lmcf->set_sa_restart) {
+        ngx_http_lua_set_sa_restart(ngx_cycle->log);
+    }
+#endif
 
     if (lmcf->init_worker_handler == NULL) {
         return NGX_OK;
@@ -165,6 +180,10 @@ ngx_http_lua_init_worker(ngx_cycle_t *cycle)
     conf.cycle = fake_cycle;
     conf.pool = fake_cycle->pool;
     conf.log = cycle->log;
+
+    ngx_memzero(&cf_file, sizeof(cf_file));
+    cf_file.file.name = cycle->conf_file;
+    conf.conf_file = &cf_file;
 
     http_ctx.loc_conf = ngx_pcalloc(conf.pool,
                                     sizeof(void *) * ngx_http_max_module);
