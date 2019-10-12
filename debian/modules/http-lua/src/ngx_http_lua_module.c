@@ -29,7 +29,6 @@
 #include "ngx_http_lua_ssl_session_storeby.h"
 #include "ngx_http_lua_ssl_session_fetchby.h"
 #include "ngx_http_lua_headers.h"
-#include "ngx_http_lua_pipe.h"
 
 
 static void *ngx_http_lua_create_main_conf(ngx_conf_t *cf);
@@ -77,13 +76,6 @@ static ngx_conf_bitmask_t  ngx_http_lua_ssl_protocols[] = {
 
 static ngx_command_t ngx_http_lua_cmds[] = {
 
-    { ngx_string("lua_load_resty_core"),
-      NGX_HTTP_MAIN_CONF|NGX_CONF_FLAG,
-      ngx_conf_set_flag_slot,
-      NGX_HTTP_MAIN_CONF_OFFSET,
-      offsetof(ngx_http_lua_main_conf_t, load_resty_core),
-      NULL },
-
     { ngx_string("lua_max_running_timers"),
       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
       ngx_conf_set_num_slot,
@@ -110,13 +102,6 @@ static ngx_command_t ngx_http_lua_cmds[] = {
       ngx_http_lua_capture_error_log,
       0,
       0,
-      NULL },
-
-    { ngx_string("lua_sa_restart"),
-      NGX_HTTP_MAIN_CONF|NGX_CONF_FLAG,
-      ngx_conf_set_flag_slot,
-      NGX_HTTP_MAIN_CONF_OFFSET,
-      offsetof(ngx_http_lua_main_conf_t, set_sa_restart),
       NULL },
 
 #if (NGX_PCRE)
@@ -653,18 +638,8 @@ ngx_http_lua_init(ngx_conf_t *cf)
 #if !defined(NGX_LUA_NO_FFI_API) || nginx_version >= 1011011
     ngx_pool_cleanup_t         *cln;
 #endif
-    ngx_str_t                   name = ngx_string("host");
-
-    if (ngx_process == NGX_PROCESS_SIGNALLER || ngx_test_config) {
-        return NGX_OK;
-    }
 
     lmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_lua_module);
-
-    lmcf->host_var_index = ngx_http_get_variable_index(cf, &name);
-    if (lmcf->host_var_index == NGX_ERROR) {
-        return NGX_ERROR;
-    }
 
     if (ngx_http_lua_prev_cycle != ngx_cycle) {
         ngx_http_lua_prev_cycle = ngx_cycle;
@@ -750,11 +725,6 @@ ngx_http_lua_init(ngx_conf_t *cf)
 
     cln->data = lmcf;
     cln->handler = ngx_http_lua_sema_mm_cleanup;
-
-#ifdef HAVE_NGX_LUA_PIPE
-    ngx_http_lua_pipe_init();
-#endif
-
 #endif
 
 #if nginx_version >= 1011011
@@ -769,19 +739,6 @@ ngx_http_lua_init(ngx_conf_t *cf)
 
     if (lmcf->lua == NULL) {
         dd("initializing lua vm");
-
-#ifndef OPENRESTY_LUAJIT
-        if (ngx_process != NGX_PROCESS_SIGNALLER && !ngx_test_config) {
-            ngx_log_error(NGX_LOG_ALERT, cf->log, 0,
-                          "detected a LuaJIT version which is not OpenResty's"
-                          "; many optimizations will be disabled and "
-                          "performance will be compromised (see "
-                          "https://github.com/openresty/luajit2 for "
-                          "OpenResty's LuaJIT or, even better, consider using "
-                          "the OpenResty releases from https://openresty.org/"
-                          "en/download.html)");
-        }
-#endif
 
         ngx_http_lua_content_length_hash =
                                   ngx_http_lua_hash_literal("content-length");
@@ -884,7 +841,6 @@ ngx_http_lua_create_main_conf(ngx_conf_t *cf)
      */
 
     lmcf->pool = cf->pool;
-    lmcf->load_resty_core = NGX_CONF_UNSET;
     lmcf->max_pending_timers = NGX_CONF_UNSET;
     lmcf->max_running_timers = NGX_CONF_UNSET;
 #if (NGX_PCRE)
@@ -893,8 +849,6 @@ ngx_http_lua_create_main_conf(ngx_conf_t *cf)
 #endif
     lmcf->postponed_to_rewrite_phase_end = NGX_CONF_UNSET;
     lmcf->postponed_to_access_phase_end = NGX_CONF_UNSET;
-
-    lmcf->set_sa_restart = NGX_CONF_UNSET;
 
 #if (NGX_HTTP_LUA_HAVE_MALLOC_TRIM)
     lmcf->malloc_trim_cycle = NGX_CONF_UNSET_UINT;
@@ -918,10 +872,6 @@ ngx_http_lua_init_main_conf(ngx_conf_t *cf, void *conf)
 {
     ngx_http_lua_main_conf_t *lmcf = conf;
 
-    if (lmcf->load_resty_core == NGX_CONF_UNSET) {
-        lmcf->load_resty_core = 1;
-    }
-
 #if (NGX_PCRE)
     if (lmcf->regex_cache_max_entries == NGX_CONF_UNSET) {
         lmcf->regex_cache_max_entries = 1024;
@@ -939,12 +889,6 @@ ngx_http_lua_init_main_conf(ngx_conf_t *cf, void *conf)
     if (lmcf->max_running_timers == NGX_CONF_UNSET) {
         lmcf->max_running_timers = 256;
     }
-
-#if (NGX_HTTP_LUA_HAVE_SA_RESTART)
-    if (lmcf->set_sa_restart == NGX_CONF_UNSET) {
-        lmcf->set_sa_restart = 1;
-    }
-#endif
 
 #if (NGX_HTTP_LUA_HAVE_MALLOC_TRIM)
     if (lmcf->malloc_trim_cycle == NGX_CONF_UNSET_UINT) {

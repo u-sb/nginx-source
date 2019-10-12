@@ -452,7 +452,7 @@ Hi
 --- config
     location /lua {
         content_by_lua '
-            local function f ()
+            function f ()
                 ngx.say("hello")
                 ngx.exit(200)
             end

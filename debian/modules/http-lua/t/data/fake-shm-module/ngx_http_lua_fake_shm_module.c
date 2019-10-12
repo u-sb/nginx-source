@@ -213,9 +213,10 @@ ngx_http_lua_fake_shm_preload(lua_State *L)
 
     ngx_uint_t                   i;
     ngx_shm_zone_t             **zone;
-    ngx_shm_zone_t             **zone_udata;
 
-    cycle = (ngx_cycle_t *) ngx_cycle;
+    lua_getglobal(L, "__ngx_cycle");
+    cycle = lua_touserdata(L, -1);
+    lua_pop(L, 1);
 
     hmcf_ctx = (ngx_http_conf_ctx_t *) cycle->conf_ctx[ngx_http_module.index];
     lfsmcf = hmcf_ctx->main_conf[ngx_http_lua_fake_shm_module.ctx_index];
@@ -241,9 +242,7 @@ ngx_http_lua_fake_shm_preload(lua_State *L)
 
             lua_createtable(L, 1 /* narr */, 0 /* nrec */);
                 /* table of zone[i] */
-            zone_udata = lua_newuserdata(L, sizeof(ngx_shm_zone_t *));
-                /* shared mt key ud */
-            *zone_udata = zone[i];
+            lua_pushlightuserdata(L, zone[i]); /* shared mt key ud */
             lua_rawseti(L, -2, 1); /* {zone[i]} */
             lua_pushvalue(L, -3); /* shared mt key ud mt */
             lua_setmetatable(L, -2); /* shared mt key ud */
@@ -263,10 +262,9 @@ ngx_http_lua_fake_shm_preload(lua_State *L)
 static int
 ngx_http_lua_fake_shm_get_info(lua_State *L)
 {
-    ngx_int_t                         n;
-    ngx_shm_zone_t                   *zone;
-    ngx_shm_zone_t                  **zone_udata;
-    ngx_http_lua_fake_shm_ctx_t      *ctx;
+    ngx_int_t                    n;
+    ngx_shm_zone_t              *zone;
+    ngx_http_lua_fake_shm_ctx_t *ctx;
 
     n = lua_gettop(L);
 
@@ -278,14 +276,12 @@ ngx_http_lua_fake_shm_get_info(lua_State *L)
     luaL_checktype(L, 1, LUA_TTABLE);
 
     lua_rawgeti(L, 1, 1);
-    zone_udata = lua_touserdata(L, -1);
+    zone = lua_touserdata(L, -1);
     lua_pop(L, 1);
 
-    if (zone_udata == NULL) {
+    if (zone == NULL) {
         return luaL_error(L, "bad \"zone\" argument");
     }
-
-    zone = *zone_udata;
 
     ctx = (ngx_http_lua_fake_shm_ctx_t *) zone->data;
 

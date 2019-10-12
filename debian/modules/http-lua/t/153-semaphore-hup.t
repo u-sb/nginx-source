@@ -67,7 +67,7 @@ add_block_preprocessor(sub {
                 return
             end
 
-            local shdict = ngx.shared.shdict
+            shdict = ngx.shared.shdict
             local success = shdict:add("reloaded", 1)
             if not success then
                 return

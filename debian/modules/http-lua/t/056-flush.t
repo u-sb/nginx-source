@@ -317,7 +317,7 @@ lua http 1.0 buffering makes ngx.flush() a no-op
 --- config
     location /test {
         content_by_lua '
-            local function f()
+            function f()
                 ngx.say("hello, world")
                 ngx.flush(true)
                 coroutine.yield()

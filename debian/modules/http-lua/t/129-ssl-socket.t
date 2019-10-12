@@ -301,7 +301,7 @@ SSL reused session
 
         content_by_lua '
             local sock = ngx.socket.tcp()
-            sock:settimeout(7000)
+            sock:settimeout(2000)
 
             do
 
@@ -380,7 +380,7 @@ lua ssl free session
 --- no_error_log
 [error]
 [alert]
---- timeout: 10
+--- timeout: 5
 
 
 
@@ -573,7 +573,7 @@ SSL reused session
 
                 ngx.say("ssl handshake: ", type(session))
 
-                local req = "GET /en/linux-packages.html HTTP/1.1\\r\\nHost: openresty.com\\r\\nConnection: close\\r\\n\\r\\n"
+                local req = "GET / HTTP/1.1\\r\\nHost: agentzh.org\\r\\nConnection: close\\r\\n\\r\\n"
                 local bytes, err = sock:send(req)
                 if not bytes then
                     ngx.say("failed to send http request: ", err)
@@ -602,7 +602,7 @@ GET /t
 --- response_body
 connected: 1
 ssl handshake: userdata
-sent http request: 80 bytes.
+sent http request: 56 bytes.
 received: HTTP/1.1 404 Not Found
 close: 1 nil
 
@@ -1333,13 +1333,13 @@ failed to send http request: closed
 --- grep_error_log_out
 --- error_log eval
 [
-qr/\[(crit|error)\] .*?SSL_do_handshake\(\) failed .*?(unsupported protocol|no protocols available)/,
+qr/\[crit\] .*?SSL_do_handshake\(\) failed .*?(unsupported protocol|no protocols available)/,
 'lua ssl server name: "openresty.org"',
 ]
 --- no_error_log
 SSL reused session
+[error]
 [alert]
-[emerg]
 --- timeout: 5
 
 
@@ -2508,7 +2508,7 @@ SSL reused session
 
         content_by_lua_block {
             local sock = ngx.socket.tcp()
-            sock:settimeout(7000)
+            sock:settimeout(2000)
 
             local ok, err = sock:connect("openresty.org", 443)
             if not ok then
@@ -2529,4 +2529,4 @@ GET /t
 qr/\[error\] .* ngx.socket sslhandshake: expecting 1 ~ 5 arguments \(including the object\), but seen 0/
 --- no_error_log
 [alert]
---- timeout: 10
+--- timeout: 5

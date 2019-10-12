@@ -326,7 +326,7 @@ hello
 --- config
     location /main {
         access_by_lua '
-            local res = ngx.location.capture("/test_loc");
+            res = ngx.location.capture("/test_loc");
             ngx.print("hello, ", res.body)
         ';
         content_by_lua return;

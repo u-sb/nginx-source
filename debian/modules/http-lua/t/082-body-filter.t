@@ -460,8 +460,7 @@ GET /t
 --- config
     location /t {
         body_filter_by_lua '
-            local bar
-            local function foo()
+            function foo()
                 bar()
             end
 

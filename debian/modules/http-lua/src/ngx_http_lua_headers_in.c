@@ -432,13 +432,9 @@ static ngx_int_t
 ngx_http_set_host_header(ngx_http_request_t *r, ngx_http_lua_header_val_t *hv,
     ngx_str_t *value)
 {
-    ngx_str_t                    host;
-    ngx_http_lua_main_conf_t    *lmcf;
-    ngx_http_variable_value_t   *var;
+    ngx_str_t host;
 
     dd("server new value len: %d", (int) value->len);
-
-    lmcf = ngx_http_get_module_main_conf(r, ngx_http_lua_module);
 
     if (value->len) {
         host= *value;
@@ -452,10 +448,6 @@ ngx_http_set_host_header(ngx_http_request_t *r, ngx_http_lua_header_val_t *hv,
     } else {
         r->headers_in.server = *value;
     }
-
-    var = &r->variables[lmcf->host_var_index];
-    var->valid = 0;
-    var->not_found = 0;
 
     return ngx_http_set_builtin_header(r, hv, value);
 }

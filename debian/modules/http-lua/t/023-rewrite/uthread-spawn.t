@@ -23,7 +23,7 @@ __DATA__
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("hello in thread")
             end
 
@@ -68,11 +68,11 @@ after
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("in thread 1")
             end
 
-            local function g()
+            function g()
                 ngx.say("in thread 2")
             end
 
@@ -117,7 +117,7 @@ after 2
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("before sleep")
                 ngx.sleep(0.1)
                 ngx.say("after sleep")
@@ -154,13 +154,13 @@ after sleep
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("1: before sleep")
                 ngx.sleep(0.2)
                 ngx.say("1: after sleep")
             end
 
-            local function g()
+            function g()
                 ngx.say("2: before sleep")
                 ngx.sleep(0.1)
                 ngx.say("2: after sleep")
@@ -210,7 +210,7 @@ delete thread 2
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.blah()
             end
 
@@ -241,9 +241,9 @@ qr/lua user thread aborted: runtime error: rewrite_by_lua\(nginx\.conf:\d+\):3: 
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("before capture")
-                local res = ngx.location.capture("/proxy")
+                res = ngx.location.capture("/proxy")
                 ngx.say("after capture: ", res.body)
             end
 
@@ -287,7 +287,7 @@ after capture: hello world
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("before capture")
                 local res = ngx.location.capture("/proxy?foo")
                 ngx.say("after capture: ", res.body)
@@ -340,7 +340,7 @@ after capture: hello foo
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("before capture")
                 local res = ngx.location.capture("/proxy?foo")
                 ngx.say("after capture: ", res.body)
@@ -394,13 +394,13 @@ capture: hello bar
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("f: before capture")
                 local res = ngx.location.capture("/proxy?foo")
                 ngx.say("f: after capture: ", res.body)
             end
 
-            local function g()
+            function g()
                 ngx.say("g: before capture")
                 local res = ngx.location.capture("/proxy?bah")
                 ngx.say("g: after capture: ", res.body)
@@ -472,8 +472,7 @@ g: after capture: hello bah
 --- config
     location /lua {
         rewrite_by_lua '
-            local g
-            local function f()
+            function f()
                 ngx.say("before g")
                 ngx.thread.spawn(g)
                 ngx.say("after g")
@@ -519,8 +518,7 @@ after g
 --- config
     location /lua {
         rewrite_by_lua '
-            local g
-            local function f()
+            function f()
                 ngx.say("before g")
                 ngx.thread.spawn(g)
                 ngx.say("after g")
@@ -568,7 +566,7 @@ hello in g()
     location /lua {
         rewrite_by_lua '
             local co
-            local function f()
+            function f()
                 co = coroutine.running()
                 ngx.sleep(0.1)
             end
@@ -601,7 +599,7 @@ status: running
     location /lua {
         rewrite_by_lua '
             local co
-            local function f()
+            function f()
                 co = coroutine.running()
             end
 
@@ -633,8 +631,7 @@ status: zombie
     location /lua {
         rewrite_by_lua '
             local co
-            local g
-            local function f()
+            function f()
                 co = coroutine.running()
                 local co2 = coroutine.create(g)
                 coroutine.resume(co2)
@@ -673,8 +670,7 @@ status: normal
 --- config
     location /lua {
         rewrite_by_lua '
-            local g
-            local function f()
+            function f()
                 ngx.say("before g")
                 ngx.thread.spawn(g)
                 ngx.say("after g")
@@ -721,7 +717,7 @@ after f
         rewrite_by_lua '
             local yield = coroutine.yield
 
-            local function f()
+            function f()
                 local self = coroutine.running()
                 ngx.say("f 1")
                 yield(self)
@@ -774,7 +770,7 @@ f 3
         rewrite_by_lua '
             local yield = coroutine.yield
 
-            local function f()
+            function f()
                 local self = coroutine.running()
                 ngx.say("f 1")
                 yield(self)
@@ -783,7 +779,7 @@ f 3
                 ngx.say("f 3")
             end
 
-            local function g()
+            function g()
                 local self = coroutine.running()
                 ngx.say("g 1")
                 yield(self)
@@ -830,7 +826,7 @@ g 3
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("hello in thread")
                 coroutine.yield(coroutine.running)
                 ngx.flush(true)
@@ -867,12 +863,12 @@ after
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.say("hello from f")
                 ngx.flush(true)
             end
 
-            local function g()
+            function g()
                 ngx.say("hello from g")
                 ngx.flush(true)
             end
@@ -918,7 +914,7 @@ hello from g
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 local sock = ngx.socket.tcp()
                 local ok, err = sock:connect("127.0.0.1", $TEST_NGINX_MEMCACHED_PORT)
                 if not ok then
@@ -970,7 +966,7 @@ received: OK
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 local sock = ngx.socket.udp()
                 local ok, err = sock:setpeername("127.0.0.1", 12345)
                 local bytes, err = sock:send("blah")
@@ -1031,7 +1027,7 @@ after)$
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 ngx.req.read_body()
                 local body = ngx.req.get_body_data()
                 ngx.say("body: ", body)
@@ -1077,7 +1073,7 @@ body: hello world)$
 --- config
     location /lua {
         rewrite_by_lua '
-            local function f()
+            function f()
                 local sock = ngx.req.socket()
                 local body, err = sock:receive(11)
                 if not body then

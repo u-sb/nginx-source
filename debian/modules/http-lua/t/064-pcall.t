@@ -22,11 +22,11 @@ __DATA__
 
 === TEST 1: pcall works
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
 --- config
         location = /test {
             content_by_lua '
-                local function f(a, b)
+                function f(a, b)
                     if a == 0 and b == 0 then
                         error("zero error")
                     end
@@ -58,11 +58,11 @@ $/s
 
 === TEST 2: xpcall works
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
 --- config
         location = /test {
             content_by_lua '
-                local function f(a, b)
+                function f(a, b)
                     if a == 0 and b == 0 then
                         error("zero error")
                     end
@@ -70,15 +70,15 @@ $/s
                     return 23, "hello", true
                 end
 
-                local function g()
+                function g()
                     return f(0, 0)
                 end
 
-                local function h()
+                function h()
                     return f(0)
                 end
 
-                local function err(...)
+                function err(...)
                     ngx.say("error handler called: ", ...)
                     return "this is the new err"
                 end
