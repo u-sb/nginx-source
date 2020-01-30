@@ -31,6 +31,7 @@ DYN_MODS := \
 	stream-geoip2
 
 MODULESDIR = $(CURDIR)/debian/modules
+SBMODULESDIR = $(CURDIR)/sb-modules
 BASEDIR = $(CURDIR)
 $(foreach flavour,$(FLAVOURS) src,$(eval BUILDDIR_$(flavour) = $(CURDIR)/debian/build-$(flavour)))
 
@@ -99,6 +100,7 @@ core_configure_flags := \
 			--with-http_gunzip_module \
 			--with-http_gzip_static_module \
 			--with-http_sub_module \
+			--add-module=$(SBMODULESDIR)/ngx_brotli
 
 extras_configure_flags := \
 			$(common_configure_flags) \
@@ -120,6 +122,7 @@ extras_configure_flags := \
 			--with-stream_geoip_module=dynamic \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
+			--add-module=$(SBMODULESDIR)/ngx_brotli \
 			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
 			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULESDIR)/http-cache-purge \
