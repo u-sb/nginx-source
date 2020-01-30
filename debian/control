@@ -18,6 +18,7 @@ Build-Depends: debhelper (>= 10),
                libssl-dev,
                libxslt1-dev,
                libmaxminddb-dev,
+               libjson-c-dev,
                po-debconf,
                quilt,
                zlib1g-dev
@@ -156,6 +157,7 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-nchan (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-stream-geoip2 (= ${binary:Version}),
+         libnginx-mod-http-ipdb (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
@@ -405,3 +407,8 @@ Package: libnginx-mod-stream-geoip2
 Architecture: any
 Depends: libnginx-mod-stream, ${misc:Depends}, ${shlibs:Depends}
 Description: GeoIP2 Stream module for Nginx
+
+Package: libnginx-mod-http-ipdb
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: IPDB HTTP module for Nginx
