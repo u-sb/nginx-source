@@ -13,6 +13,7 @@ DYN_MODS := \
 	http-echo \
 	http-fancyindex \
 	http-geoip \
+	http-geoip2 \
 	http-headers-more-filter \
 	http-image-filter \
 	http-lua \
@@ -25,9 +26,11 @@ DYN_MODS := \
 	mail \
 	nchan \
 	rtmp \
-	stream
+	stream \
+	stream-geoip2
 
 MODULESDIR = $(CURDIR)/debian/modules
+SBMODULESDIR = $(CURDIR)/sb-modules
 BASEDIR = $(CURDIR)
 $(foreach flavour,$(FLAVOURS),$(eval BUILDDIR_$(flavour) = $(CURDIR)/debian/build-$(flavour)))
 
@@ -99,6 +102,8 @@ full_configure_flags := \
 			--with-stream_ssl_preread_module \
 			--with-mail=dynamic \
 			--with-mail_ssl_module \
+			--add-dynamic-module=$(SBMODULESDIR)/ngx_http_geoip2_module \
+			--add-module=$(SBMODULESDIR)/ngx_brotli \
 			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
 			--add-dynamic-module=$(MODULESDIR)/http-echo \
@@ -124,6 +129,8 @@ extras_configure_flags := \
 			--with-stream=dynamic \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
+			--add-dynamic-module=$(SBMODULESDIR)/ngx_http_geoip2_module \
+			--add-module=$(SBMODULESDIR)/ngx_brotli \
 			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
 			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULESDIR)/http-cache-purge \
