@@ -17,6 +17,7 @@ Build-Depends: debhelper (>= 10),
                libperl-dev,
                libssl-dev,
                libxslt1-dev,
+               libmaxminddb-dev,
                po-debconf,
                quilt,
                zlib1g-dev
@@ -69,12 +70,14 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-dav-ext (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
+         libnginx-mod-http-geoip2 (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
          libnginx-mod-http-subs-filter (= ${binary:Version}),
          libnginx-mod-http-upstream-fair (= ${binary:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-stream-geoip2 (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
@@ -140,6 +143,7 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-fancyindex (= ${binary:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
+         libnginx-mod-http-geoip2 (= ${binary:Version}),
          libnginx-mod-http-headers-more-filter (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
          libnginx-mod-http-lua (= ${binary:Version}),
@@ -151,6 +155,7 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-nchan (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-stream-geoip2 (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
@@ -390,3 +395,13 @@ Description: RTMP support for Nginx
   - Stream relay support via a push or pull model;
   - Integrated stream recording;
   - and more.
+
+Package: libnginx-mod-http-geoip2
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GeoIP2 HTTP module for Nginx
+
+Package: libnginx-mod-stream-geoip2
+Architecture: any
+Depends: libnginx-mod-stream, ${misc:Depends}, ${shlibs:Depends}
+Description: GeoIP2 Stream module for Nginx
