@@ -1,0 +1,36 @@
+_HTTP_IPDB_SRCS="\
+    $ngx_addon_dir/ngx_http_ipdb_module.c \
+    $ngx_addon_dir/ipdb/ipdb.c \
+"
+_HTTP_JSON_LIB="-ljson-c"
+ngx_addon_name=ngx_http_ipdb_module
+
+ngx_feature="json-c library"
+ngx_feature_name="NGX_JSON_C"
+ngx_feature_run=no
+ngx_feature_incs="#include <json-c/json.h>"
+ngx_feature_path=
+ngx_feature_libs="$_HTTP_JSON_LIB"
+ngx_feature_test="json_c_version_num()"
+. auto/feature
+
+if [ $ngx_found = yes ]; then
+
+    if test -n "$ngx_module_link"; then
+        ngx_module_type=HTTP
+        ngx_module_name=$ngx_addon_name
+        ngx_module_srcs="$_HTTP_IPDB_SRCS"
+        ngx_module_libs="$_HTTP_JSON_LIB"
+        . auto/module
+    else
+        HTTP_MODULES="$HTTP_MODULES $ngx_addon_name"
+        NGX_ADDON_SRCS="$NGX_ADDON_SRCS $_HTTP_IPDB_SRCS"
+        CORE_LIBS="$CORE_LIBS $_HTTP_JSON_LIB"
+        HTTP_INCS="$HTTP_INCS $ngx_addon_dir"
+    fi
+
+else
+    cat << END
+$0: error: the ipdb module requires the json-c library.
+END
+fi
