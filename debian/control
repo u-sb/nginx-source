@@ -19,6 +19,7 @@ Build-Depends: debhelper (>= 10),
                libperl-dev,
                libssl-dev,
                libxslt1-dev,
+               libjson-c-dev,
                po-debconf,
                quilt,
                zlib1g-dev
@@ -221,6 +222,7 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-stream-geoip (= ${binary:Version}),
          libnginx-mod-stream-geoip2 (= ${binary:Version}),
+         libnginx-mod-http-ipdb (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          iproute2,
          ${misc:Depends},
@@ -516,3 +518,9 @@ Description: RTMP support for Nginx
   - Stream relay support via a push or pull model;
   - Integrated stream recording;
   - and more.
+
+Package: libnginx-mod-http-ipdb
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Recommends: nginx,
+Description: IPDB HTTP module for Nginx
