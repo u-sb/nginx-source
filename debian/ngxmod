@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Handy Debian nginx module management helper
 """
@@ -13,12 +13,12 @@ import tempfile
 
 from subprocess import call
 
-import deb822
+import debian.deb822 as deb822
 
 DEBIAN_PATH = os.path.dirname(os.path.realpath(__file__))
 MODULES_PATH = os.path.join(DEBIAN_PATH, 'modules')
 CTRL_PATH = os.path.join(MODULES_PATH, 'control')
-CTRL = [p for p in deb822.Deb822.iter_paragraphs(file(CTRL_PATH))]
+CTRL = [p for p in deb822.Deb822.iter_paragraphs(open(CTRL_PATH))]
 
 
 def ctrl(name):
@@ -50,7 +50,7 @@ def prompt(query):
     :returns: The yes (True) or no (False) answer
     """
     sys.stdout.write('%s [y/N]: ' % query)
-    choice = raw_input().lower()
+    choice = input().lower()
 
     return choice == 'y'
 
@@ -80,7 +80,7 @@ def unpack(module, version, exclude):
     tar_gz = os.path.join(
         "..", "libnginx-mod-%s-%s.tar.gz" % (module, version))
     if not os.path.exists(tar_gz):
-        print "%s doesn't exist!" % tar_gz
+        print("%s doesn't exist!" % tar_gz)
         exit(1)
 
     module_path = os.path.join(MODULES_PATH, module)
@@ -91,12 +91,12 @@ def unpack(module, version, exclude):
         # stip top-level directory from tar
         topdir = members[0]
         if not topdir or not topdir.isdir():
-            print "No top directory found!"
+            print("No top directory found!")
             exit(1)
 
         topdir = members[0].path
         if any(topdir not in ti.path for ti in members):
-            print "Not all files are under the top directory '%s'" % topdir
+            print("Not all files are under the top directory '%s'" % topdir)
             exit(1)
 
         def remove_topdir_prefix(tarinfo):
@@ -110,12 +110,16 @@ def unpack(module, version, exclude):
     shutil.move(tmpdir, module_path)
 
     for e in exclude:
-        print "Removing %s..." % e
+        print("Removing %s..." % e)
         abspath = os.path.join(module_path, e)
         if os.path.isdir(abspath):
             shutil.rmtree(abspath)
         else:
-            os.remove(abspath)
+            try:
+                os.remove(abspath)
+            except FileNotFoundError as e:
+                # if it not exists, ignore it
+                pass
 
 
 def cmd_uupdate(args):
@@ -156,7 +160,7 @@ def cmd_uscan(args):
         watchfile = os.path.join(MODULES_PATH, 'watch', mi['Module'])
 
         if not os.path.isfile(watchfile):
-            print 'no watchfile available.'
+            print('no watchfile available.')
             continue
 
         # Check
@@ -166,7 +170,7 @@ def cmd_uscan(args):
             mi['Module']
         ]
         if call(uscan_check_cmd) != 0:
-            print 'up-to-date'
+            print('up-to-date')
             continue
 
         # Ask
@@ -179,7 +183,7 @@ def cmd_uscan(args):
             '--watchfile', watchfile, '--no-symlink'
         ]
         if call(uscan_upgrade_cmd, stdout=open(os.devnull, 'w')) != 0:
-            print "Uscan for %s failed!" % mi['Module']
+            print("Uscan for %s failed!" % mi['Module'])
             exit(1)
 
 
