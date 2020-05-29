@@ -2,7 +2,8 @@ Source: nginx
 Section: httpd
 Priority: optional
 Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
-Uploaders: Christos Trochalakis <ctrochalakis@debian.org>
+Uploaders: Christos Trochalakis <ctrochalakis@debian.org>,
+           Ondřej Nový <onovy@debian.org>,
 Build-Depends: debhelper (>= 10),
                dpkg-dev (>= 1.15.5),
                libexpat-dev,
