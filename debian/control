@@ -29,16 +29,16 @@ Vcs-Browser: https://salsa.debian.org/nginx-team/nginx
 
 Package: nginx
 Architecture: all
-Depends: nginx-full (<< ${source:Version}.1~) | nginx-light (<< ${source:Version}.1~) | nginx-extras (<< ${source:Version}.1~),
-         nginx-full (>= ${source:Version}) | nginx-light (>= ${source:Version}) | nginx-extras (>= ${source:Version}),
+Depends: nginx-core (<< ${source:Version}.1~) | nginx-full (<< ${source:Version}.1~) | nginx-light (<< ${source:Version}.1~) | nginx-extras (<< ${source:Version}.1~),
+         nginx-core (>= ${source:Version}) | nginx-full (>= ${source:Version}) | nginx-light (>= ${source:Version}) | nginx-extras (>= ${source:Version}),
          ${misc:Depends}
 Description: small, powerful, scalable web/proxy server
  Nginx ("engine X") is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
  and as a proxy to reduce the load on back-end HTTP or mail servers.
  .
- This is a dependency package to install either nginx-full (by default),
- nginx-light or nginx-extras.
+ This is a dependency package to install either nginx-core (by default),
+ nginx-full, nginx-light or nginx-extras.
 
 Package: nginx-doc
 Architecture: all
@@ -65,23 +65,19 @@ Description: small, powerful, scalable web/proxy server - common files
  This package contains base configuration files used by all versions of
  nginx.
 
-Package: nginx-full
+Package: nginx-core
 Architecture: any
-Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
-         libnginx-mod-http-dav-ext (= ${binary:Version}),
-         libnginx-mod-http-echo (= ${binary:Version}),
-         libnginx-mod-http-geoip (= ${binary:Version}),
-         libnginx-mod-http-geoip2 (= ${binary:Version}),
+Depends: libnginx-mod-http-geoip (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
-         libnginx-mod-http-subs-filter (= ${binary:Version}),
-         libnginx-mod-http-upstream-fair (= ${binary:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
-Breaks: nginx (<< 1.4.5-1)
+Breaks: nginx (<< 1.4.5-1),
+        nginx-full (<< 1.18.0-1),
+Replaces: nginx-full (<< 1.18.0-1),
 Provides: httpd, httpd-cgi, nginx
 Conflicts: nginx-extras, nginx-light
 Suggests: nginx-doc (= ${source:Version})
@@ -90,9 +86,44 @@ Description: nginx web/proxy server (standard version)
  created by Igor Sysoev. It can be used both as a standalone web server
  and as a proxy to reduce the load on back-end HTTP or mail servers.
  .
- This package provides a version of nginx with the complete set of
+ This package provides a version of nginx identical to that of nginx-full,
+ but without any third-party modules, and only modules in the original
+ nginx code base.
+ .
+ STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser, Empty
+ GIF, FastCGI, Geo, Limit Connections, Limit Requests, Map, Memcached, Proxy,
+ Referer, Rewrite, SCGI, Split Clients, UWSGI.
+ .
+ OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, GeoIP, Gunzip,
+ Gzip, Gzip Precompression, Headers, HTTP/2, Image Filter, Index, Log, Real IP,
+ Slice, SSI, SSL, Stream, SSL Preread, Stub Status, Substitution, Thread  Pool,
+ Upstream, User ID, XSLT.
+ .
+ MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+
+Package: nginx-full
+Architecture: all
+Depends: libnginx-mod-http-auth-pam,
+         libnginx-mod-http-dav-ext,
+         libnginx-mod-http-echo,
+         libnginx-mod-http-geoip2,
+         libnginx-mod-http-subs-filter,
+         libnginx-mod-http-upstream-fair,
+         nginx-core (>= ${source:Version}),
+         nginx-core (<< ${source:Version}.1~),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Breaks: nginx (<< 1.4.5-1)
+Provides: httpd, httpd-cgi, nginx
+Suggests: nginx-doc (= ${source:Version})
+Description: nginx web/proxy server (standard version with 3rd parties)
+ Nginx ("engine X") is a high-performance web and reverse proxy server
+ created by Igor Sysoev. It can be used both as a standalone web server
+ and as a proxy to reduce the load on back-end HTTP or mail servers.
+ .
+ This metapackage provides a version of nginx with the complete set of
  standard modules included (but omitting some of those included in
- nginx-extra).
+ nginx-extras).
  .
  STANDARD HTTP MODULES: Core, Access, Auth Basic, Auto Index, Browser, Empty
  GIF, FastCGI, Geo, Limit Connections, Limit Requests, Map, Memcached, Proxy,
@@ -116,7 +147,7 @@ Depends: libnginx-mod-http-echo (= ${binary:Version}),
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
-Conflicts: nginx-extras, nginx-full
+Conflicts: nginx-extras, nginx-core
 Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (basic version)
  Nginx ("engine X") is a high-performance web and reverse proxy server
@@ -160,7 +191,7 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
 Provides: httpd, httpd-cgi, nginx
-Conflicts: nginx-full, nginx-light
+Conflicts: nginx-core, nginx-light
 Suggests: nginx-doc (= ${source:Version})
 Description: nginx web/proxy server (extended version)
  Nginx ("engine X") is a high-performance web and reverse proxy server

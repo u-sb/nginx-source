@@ -5,7 +5,7 @@ export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 debian_cflags:=$(shell dpkg-buildflags --get CFLAGS) -fPIC $(shell dpkg-buildflags --get CPPFLAGS)
 debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
-FLAVOURS := full light extras
+FLAVOURS := core light extras
 DYN_MODS := \
 	http-auth-pam \
 	http-cache-purge \
@@ -85,7 +85,7 @@ light_configure_flags := \
 			--without-http_split_clients_module \
 			--without-http_userid_module
 
-full_configure_flags := \
+core_configure_flags := \
 			$(common_configure_flags) \
 			--with-http_addition_module \
 			--with-http_gunzip_module \
