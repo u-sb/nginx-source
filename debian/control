@@ -72,6 +72,7 @@ Depends: libnginx-mod-http-geoip (= ${binary:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-stream-geoip (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
@@ -96,10 +97,12 @@ Description: nginx web/proxy server (standard version)
  .
  OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, GeoIP, Gunzip,
  Gzip, Gzip Precompression, Headers, HTTP/2, Image Filter, Index, Log, Real IP,
- Slice, SSI, SSL, Stream, SSL Preread, Stub Status, Substitution, Thread  Pool,
+ Slice, SSI, SSL, SSL Preread, Stub Status, Substitution, Thread  Pool,
  Upstream, User ID, XSLT.
  .
- MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+ OPTIONAL MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+ .
+ OPTIONAL STREAM MODULES: Stream Core, GeoIP
 
 Package: nginx-full
 Architecture: all
@@ -109,6 +112,7 @@ Depends: libnginx-mod-http-auth-pam,
          libnginx-mod-http-geoip2,
          libnginx-mod-http-subs-filter,
          libnginx-mod-http-upstream-fair,
+         libnginx-mod-stream-geoip2,
          nginx-core (>= ${source:Version}),
          nginx-core (<< ${source:Version}.1~),
          ${misc:Depends},
@@ -134,7 +138,9 @@ Description: nginx web/proxy server (standard version with 3rd parties)
  Slice, SSI, SSL, Stream, SSL Preread, Stub Status, Substitution, Thread  Pool,
  Upstream, User ID, XSLT.
  .
- MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+ OPTIONAL MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+ .
+ OPTIONAL STREAM MODULES: Stream Core, GeoIP, GeoIP2
  .
  THIRD PARTY MODULES: Auth PAM, DAV Ext, Echo, HTTP Substitutions, Upstream
  Fair Queue.
@@ -186,6 +192,8 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
          libnginx-mod-nchan (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-stream-geoip (= ${binary:Version}),
+         libnginx-mod-stream-geoip2 (= ${binary:Version}),
          nginx-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
@@ -209,10 +217,11 @@ Description: nginx web/proxy server (extended version)
  OPTIONAL HTTP MODULES: Addition, Auth Request, Charset, WebDAV, FLV, GeoIP,
  Gunzip, Gzip, Gzip Precompression, Headers, HTTP/2, Image Filter, Index, Log,
  MP4, Embedded Perl, Random Index, Real IP, Slice, Secure Link, SSI, SSL,
- Stream, SSL Preread, Stub Status, Substitution, Thread Pool, Upstream,
- User ID, XSLT.
+ SSL Preread, Stub Status, Substitution, Thread Pool, Upstream, User ID, XSLT.
  .
- MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+ OPTIONAL MAIL MODULES: Mail Core, Auth HTTP, Proxy, SSL, IMAP, POP3, SMTP.
+ .
+ OPTIONAL STREAM MODULES: Stream, GeoIP, GeoIP2
  .
  THIRD PARTY MODULES: Auth PAM, Cache Purge, DAV Ext, Echo, Fancy Index,
  Headers More, Embedded Lua, HTTP Substitutions, Nchan, Upload Progress,
@@ -276,6 +285,30 @@ Description: Stream module for Nginx
  Stream module supports loadbalancing & proxying to TCP servers. The module
  also supports ACLs/connection limiting and configuring multiple operational
  parameters.
+
+Package: libnginx-mod-stream-geoip
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+ libnginx-mod-stream (= ${binary:Version}),
+ nginx-core (= ${binary:Version}) | nginx-full (= ${binary:Version}) | nginx-light (= ${binary:Version}) | nginx-extras (= ${binary:Version}),
+Description: GeoIP Stream module for Nginx
+ The ngx_stream_geoip module creates variables with values depending on the
+ client IP address, using the precompiled MaxMind databases.
+ .
+ Those variables include country, region, city, latitude, longitude, postal
+ code, etc.
+
+Package: libnginx-mod-stream-geoip2
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+ libnginx-mod-stream (= ${binary:Version}),
+ nginx-core (= ${binary:Version}) | nginx-full (= ${binary:Version}) | nginx-light (= ${binary:Version}) | nginx-extras (= ${binary:Version}),
+Description: GeoIP2 Stream module for Nginx
+ The ngx_stream_geoip2 module creates variables with values depending on the
+ client IP address, using the precompiled MaxMind GeoIP2 databases.
+ .
+ Those variables include country, region, city, latitude, longitude, postal
+ code, etc.
 
 Package: libnginx-mod-http-perl
 Architecture: any

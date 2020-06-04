@@ -44,7 +44,9 @@ Depends: nginx-core,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,
 
 Tests: full-module-deps
 Restrictions: allow-stderr isolation-container
@@ -68,7 +70,9 @@ Depends: nginx-full,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,
 
 Tests: light-module-deps
 Restrictions: allow-stderr isolation-container
@@ -92,7 +96,9 @@ Depends: nginx-light,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,
 
 Tests: extras-module-deps
 Restrictions: allow-stderr isolation-container
@@ -116,4 +122,6 @@ Depends: nginx-extras,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,

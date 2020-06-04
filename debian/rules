@@ -26,7 +26,9 @@ DYN_MODS := \
 	mail \
 	nchan \
 	rtmp \
-	stream
+	stream \
+	stream-geoip \
+	stream-geoip2
 
 MODULESDIR = $(CURDIR)/debian/modules
 BASEDIR = $(CURDIR)
@@ -109,6 +111,7 @@ extras_configure_flags := \
 			--with-mail=dynamic \
 			--with-mail_ssl_module \
 			--with-stream=dynamic \
+			--with-stream_geoip_module=dynamic \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
