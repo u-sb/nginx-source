@@ -83,28 +83,14 @@ light_configure_flags := \
 			--without-http_memcached_module \
 			--without-http_referer_module \
 			--without-http_split_clients_module \
-			--without-http_userid_module \
-			--add-dynamic-module=$(MODULESDIR)/http-echo
+			--without-http_userid_module
 
 full_configure_flags := \
 			$(common_configure_flags) \
 			--with-http_addition_module \
-			--with-http_geoip_module=dynamic \
 			--with-http_gunzip_module \
 			--with-http_gzip_static_module \
-			--with-http_image_filter_module=dynamic \
 			--with-http_sub_module \
-			--with-http_xslt_module=dynamic \
-			--with-stream=dynamic \
-			--with-stream_ssl_module \
-			--with-stream_ssl_preread_module \
-			--with-mail=dynamic \
-			--with-mail_ssl_module \
-			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
-			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
-			--add-dynamic-module=$(MODULESDIR)/http-echo \
-			--add-dynamic-module=$(MODULESDIR)/http-upstream-fair \
-			--add-dynamic-module=$(MODULESDIR)/http-subs-filter
 
 extras_configure_flags := \
 			$(common_configure_flags) \
