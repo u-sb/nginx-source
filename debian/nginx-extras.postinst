@@ -24,7 +24,12 @@ if [ -x /etc/init.d/nginx ]; then
     invoke-rc.d nginx upgrade || invoke-rc.d nginx restart
     exit $?
   else
-    invoke-rc.d nginx start || exit $?
+    if [ -z "$(ss -nlt 'sport = 80' | grep -v ^State)" ]; then
+      invoke-rc.d nginx start || exit $?
+    else
+      echo "Not attempting to start NGINX, port 80 is already in use."
+      exit 0
+    fi
   fi
 fi
 

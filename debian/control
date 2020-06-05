@@ -74,6 +74,7 @@ Depends: libnginx-mod-http-geoip (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-stream-geoip (= ${binary:Version}),
          nginx-common (= ${source:Version}),
+         iproute2,
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1),
@@ -149,6 +150,7 @@ Package: nginx-light
 Architecture: any
 Depends: libnginx-mod-http-echo (= ${binary:Version}),
          nginx-common (= ${source:Version}),
+         iproute2,
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
@@ -195,6 +197,7 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-stream-geoip (= ${binary:Version}),
          libnginx-mod-stream-geoip2 (= ${binary:Version}),
          nginx-common (= ${source:Version}),
+         iproute2,
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: nginx (<< 1.4.5-1)
