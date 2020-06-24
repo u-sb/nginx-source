@@ -69,7 +69,7 @@ Copyright: Austin Appleby
 License: BSD-3-clause
 
 Files: debian/modules/http-auth-pam/*
-Copyright: 2008-2016, Sergio Talens Oliag
+Copyright: 2008-2020, Sergio Talens Oliag
 License: BSD-2-clause
 
 Files: debian/modules/http-echo/*
