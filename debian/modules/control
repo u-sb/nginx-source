@@ -9,7 +9,7 @@ Version: 0.3.1
 
 Module: http-auth-pam
 Homepage: https://github.com/sto/ngx_http_auth_pam_module
-Version: 1.5.1
+Version: 1.5.2
 
 Module: http-echo
 Homepage: https://github.com/agentzh/echo-nginx-module
