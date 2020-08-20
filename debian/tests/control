@@ -10,6 +10,10 @@ Tests: lua
 Restrictions: allow-stderr isolation-container needs-root
 Depends: nginx-extras, curl
 
+Tests: core-simple
+Restrictions: allow-stderr isolation-container
+Depends: nginx-core, curl
+
 Tests: full-simple
 Restrictions: allow-stderr isolation-container
 Depends: nginx-full, curl
@@ -17,6 +21,32 @@ Depends: nginx-full, curl
 Tests: extras-simple
 Restrictions: allow-stderr isolation-container
 Depends: nginx-extras, curl
+
+Tests: core-module-deps
+Restrictions: allow-stderr isolation-container
+Depends: nginx-core,
+         curl,
+         libnginx-mod-http-auth-pam,
+         libnginx-mod-http-cache-purge,
+         libnginx-mod-http-dav-ext,
+         libnginx-mod-http-echo,
+         libnginx-mod-http-fancyindex,
+         libnginx-mod-http-geoip,
+         libnginx-mod-http-geoip2,
+         libnginx-mod-http-headers-more-filter,
+         libnginx-mod-http-image-filter,
+         libnginx-mod-http-lua,
+         libnginx-mod-http-perl,
+         libnginx-mod-http-subs-filter,
+         libnginx-mod-http-uploadprogress,
+         libnginx-mod-http-upstream-fair,
+         libnginx-mod-http-xslt-filter,
+         libnginx-mod-mail,
+         libnginx-mod-nchan,
+         libnginx-mod-rtmp,
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,
 
 Tests: full-module-deps
 Restrictions: allow-stderr isolation-container
@@ -28,6 +58,7 @@ Depends: nginx-full,
          libnginx-mod-http-echo,
          libnginx-mod-http-fancyindex,
          libnginx-mod-http-geoip,
+         libnginx-mod-http-geoip2,
          libnginx-mod-http-headers-more-filter,
          libnginx-mod-http-image-filter,
          libnginx-mod-http-lua,
@@ -39,7 +70,9 @@ Depends: nginx-full,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,
 
 Tests: light-module-deps
 Restrictions: allow-stderr isolation-container
@@ -51,6 +84,7 @@ Depends: nginx-light,
          libnginx-mod-http-echo,
          libnginx-mod-http-fancyindex,
          libnginx-mod-http-geoip,
+         libnginx-mod-http-geoip2,
          libnginx-mod-http-headers-more-filter,
          libnginx-mod-http-image-filter,
          libnginx-mod-http-lua,
@@ -62,7 +96,9 @@ Depends: nginx-light,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,
 
 Tests: extras-module-deps
 Restrictions: allow-stderr isolation-container
@@ -74,6 +110,7 @@ Depends: nginx-extras,
          libnginx-mod-http-echo,
          libnginx-mod-http-fancyindex,
          libnginx-mod-http-geoip,
+         libnginx-mod-http-geoip2,
          libnginx-mod-http-headers-more-filter,
          libnginx-mod-http-image-filter,
          libnginx-mod-http-lua,
@@ -85,4 +122,6 @@ Depends: nginx-extras,
          libnginx-mod-mail,
          libnginx-mod-nchan,
          libnginx-mod-rtmp,
-         libnginx-mod-stream
+         libnginx-mod-stream-geoip,
+         libnginx-mod-stream-geoip2,
+         libnginx-mod-stream,

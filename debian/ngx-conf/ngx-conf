@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ##
 # copyright (c) 2015 Michael Lustfield <michael@lustfield.net>
@@ -37,7 +37,7 @@ import subprocess
 
 
 # Read configuration values
-config_opts = ConfigParser.SafeConfigParser({
+config_opts = ConfigParser.ConfigParser({
     'base_dir': '/etc/nginx/',
     'conf_dir': 'conf.d/',
     'sites_en': 'sites-enabled/',
@@ -211,7 +211,7 @@ def remove_configs(configs, verbose, force):
         for f in files:
             if os.path.isfile(f):
                 if not force:
-                    answer = str(raw_input('Are you sure you want to delete {}? (y/N) '.format(f)))
+                    answer = str(input('Are you sure you want to delete {}? (y/N) '.format(f)))
                     if answer.lower() != 'y' and answer.lower() != 'yes':
                         break
                 try:

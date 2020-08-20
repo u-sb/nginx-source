@@ -8,13 +8,17 @@ Homepage: https://github.com/simpl/ngx_devel_kit/
 Version: 0.3.1
 
 Module: http-auth-pam
-Homepage: https://github.com/stogh/ngx_http_auth_pam_module
-Version: 1.5.1
+Homepage: https://github.com/sto/ngx_http_auth_pam_module
+Version: 1.5.2
 
 Module: http-echo
 Homepage: https://github.com/agentzh/echo-nginx-module
 Version: v0.61
 Files-Excluded: .gitignore .gitattributes .travis.yml
+
+Module: http-geoip2
+Homepage: https://github.com/leev/ngx_http_geoip2_module
+Version: 3.3
 
 Module: http-lua
 Homepage: https://github.com/openresty/lua-nginx-module
@@ -34,8 +38,8 @@ Patch:
 
 Module: nchan
 Homepage: https://github.com/slact/nchan
-Version: 1.0.8
-Files-Excluded: dev nchan_logo.png NchanSubscriber.js src/hiredis
+Version: 1.2.7
+Files-Excluded: dev nchan_logo.png NchanSubscriber.js src/hiredis nchan
 
 Module: http-uploadprogress
 Homepage: https://github.com/masterzen/nginx-upload-progress-module
@@ -55,7 +59,7 @@ Version: 3.0.0
 
 Module: http-fancyindex
 Homepage: https://github.com/aperezdc/ngx-fancyindex
-Version: 0.4.3
+Version: 0.4.4
 Files-Excluded: .gitignore .travis.yml
 
 Module: http-subs-filter
