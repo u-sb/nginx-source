@@ -1,3 +1,5 @@
+#pragma GCC diagnostic ignored "-Waddress"
+
 #include <nchan_module.h>
 
 #include <assert.h>
