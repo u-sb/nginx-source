@@ -161,6 +161,9 @@ override_dh_systemd_enable:
 override_dh_installlogrotate:
 	dh_installlogrotate --package nginx-common --name=nginx
 
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
+
 build.arch.%:
 	$(MAKE) -C $(BUILDDIR_$*) build
 
