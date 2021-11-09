@@ -1,50 +1,56 @@
+nginx (1.21.4-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Xinyue Lu <i@7086.in>  Mon, 08 Nov 2021 00:00:00 -0400
+
 nginx (1.21.3-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Tue, 14 Sep 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Tue, 14 Sep 2021 00:00:00 -0400
 
 nginx (1.21.2-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Tue, 31 Aug 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Tue, 31 Aug 2021 00:00:00 -0400
 
 nginx (1.21.1-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Fri, 16 Jul 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Fri, 16 Jul 2021 00:00:00 -0400
 
 nginx (1.21.0-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Wed, 26 May 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Wed, 26 May 2021 00:00:00 -0400
 
 nginx (1.19.10-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Mon, 19 Apr 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Mon, 19 Apr 2021 00:00:00 -0400
 
 nginx (1.19.9-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Fri, 02 Apr 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Fri, 02 Apr 2021 00:00:00 -0400
 
 nginx (1.19.8-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Fri, 19 Mar 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Fri, 19 Mar 2021 00:00:00 -0400
 
 nginx (1.19.7-1) unstable; urgency=medium
 
   * New upstream version
 
- -- Xinyue Lu <i@7086.in>  Wed, 24 Feb 2020 00:00:00 -0400
+ -- Xinyue Lu <i@7086.in>  Wed, 24 Feb 2021 00:00:00 -0400
 
 nginx (1.19.6-1) unstable; urgency=medium
 
