@@ -13,6 +13,9 @@
 #define NGINX_VERSION      "1.21.5"
 #define NGINX_VER          "nginx/" NGINX_VERSION
 
+#undef  NGINX_VER
+#define NGINX_VER          "nginx.io/" NGINX_VERSION
+
 #ifdef NGX_BUILD
 #define NGINX_VER_BUILD    NGINX_VER " (" NGX_BUILD ")"
 #else
