@@ -7,28 +7,7 @@ debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
 FLAVOURS := core light extras
 DYN_MODS := \
-	http-auth-pam \
-	http-cache-purge \
-	http-dav-ext \
-	http-echo \
-	http-fancyindex \
-	http-geoip \
 	http-geoip2 \
-	http-headers-more-filter \
-	http-image-filter \
-	http-ipdb \
-	http-lua \
-	http-ndk \
-	http-perl \
-	http-subs-filter \
-	http-uploadprogress \
-	http-upstream-fair \
-	http-xslt-filter \
-	mail \
-	nchan \
-	rtmp \
-	stream \
-	stream-geoip \
 	stream-geoip2
 
 MODULESDIR = $(CURDIR)/debian/modules
@@ -49,11 +28,14 @@ endif
 MODULESPATCHDIR = $(CURDIR)/debian/modules/patches
 modules_with_patches := $(notdir $(wildcard $(CURDIR)/debian/modules/patches/*))
 
+# for boringssl
+debian_cflags += -I$(CURDIR)/../boringssl/include
+debian_ldflags += -L$(CURDIR)/../boringssl/build/ssl -L$(CURDIR)/../boringssl/build/crypto
+
 # configure flags
 common_configure_flags := \
 			--with-cc-opt="$(debian_cflags)" \
 			--with-ld-opt="$(debian_ldflags)" \
-			--with-openssl="$(CURDIR)/../openssl" \
 			--prefix=/usr/share/nginx \
 			--conf-path=/etc/nginx/nginx.conf \
 			--http-log-path=/var/log/nginx/access.log \
@@ -120,21 +102,7 @@ extras_configure_flags := \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--add-module=$(SBMODULESDIR)/ngx_brotli \
-			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
-			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
-			--add-dynamic-module=$(MODULESDIR)/http-cache-purge \
-			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
-			--add-dynamic-module=$(MODULESDIR)/http-ndk \
-			--add-dynamic-module=$(MODULESDIR)/http-echo \
-			--add-dynamic-module=$(MODULESDIR)/http-fancyindex \
-			--add-dynamic-module=$(MODULESDIR)/http-geoip2 \
-			--add-dynamic-module=$(SBMODULESDIR)/ngx_http_ipdb_module \
-			--add-dynamic-module=$(MODULESDIR)/nchan \
-			--add-dynamic-module=$(MODULESDIR)/http-lua \
-			--add-dynamic-module=$(MODULESDIR)/rtmp \
-			--add-dynamic-module=$(MODULESDIR)/http-uploadprogress \
-			--add-dynamic-module=$(MODULESDIR)/http-upstream-fair \
-			--add-dynamic-module=$(MODULESDIR)/http-subs-filter
+			--add-dynamic-module=$(MODULESDIR)/http-geoip2
 
 %:
 	dh $@ --without autoreconf
@@ -170,27 +138,27 @@ strip.arch.%:
 strip.mods.%:
 	dh_strip --package=libnginx-mod-$(*) -O--automatic-dbgsym
 
-config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
-config.patch.%:
-	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
+# config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
+# config.patch.%:
+# 	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
 
-clean_patch_modules: $(foreach mod,$(modules_with_patches),clean.patch.$(mod))
-clean.patch.%:
-	if [ -s $(MODULESDIR)/$*/.pc/applied-patches ]; then \
-		cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt pop -q -a; \
-		rm -rf $(MODULESDIR)/$*/.pc; \
-	fi
+# clean_patch_modules: $(foreach mod,$(modules_with_patches),clean.patch.$(mod))
+# clean.patch.%:
+# 	if [ -s $(MODULESDIR)/$*/.pc/applied-patches ]; then \
+# 		cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt pop -q -a; \
+# 		rm -rf $(MODULESDIR)/$*/.pc; \
+# 	fi
 
 config.arch.%:
 	dh_testdir
 	mkdir -p $(BUILDDIR_$*)
 	cp -Pa $(CURDIR)/auto $(BUILDDIR_$*)/
 	cp -Pa $(CURDIR)/conf $(BUILDDIR_$*)/
-	cp -Pa $(CURDIR)/configure $(BUILDDIR_$*)/
 	cp -Pa $(CURDIR)/contrib $(BUILDDIR_$*)/
 	cp -Pa $(CURDIR)/src $(BUILDDIR_$*)/
-	cp -Pa $(CURDIR)/man $(BUILDDIR_$*)/
-	cd $(BUILDDIR_$*) && ./configure $($*_configure_flags)
+	cp -Pa $(CURDIR)/docs $(BUILDDIR_$*)/
+	cd $(BUILDDIR_$*) && ./auto/configure $($*_configure_flags)
+	touch $(CURDIR)/../boringssl/.openssl/include/openssl/ssl.h
 
 clean.%:
 	rm -rf $(BUILDDIR_$*)
