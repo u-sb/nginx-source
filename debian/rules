@@ -7,7 +7,28 @@ debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
 FLAVOURS := core light extras
 DYN_MODS := \
+	http-auth-pam \
+	http-cache-purge \
+	http-dav-ext \
+	http-echo \
+	http-fancyindex \
+	http-geoip \
 	http-geoip2 \
+	http-headers-more-filter \
+	http-image-filter \
+	http-ipdb \
+	http-lua \
+	http-ndk \
+	http-perl \
+	http-subs-filter \
+	http-uploadprogress \
+	http-upstream-fair \
+	http-xslt-filter \
+	mail \
+	nchan \
+	rtmp \
+	stream \
+	stream-geoip \
 	stream-geoip2
 
 MODULESDIR = $(CURDIR)/debian/modules
