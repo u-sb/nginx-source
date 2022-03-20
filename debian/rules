@@ -8,7 +8,6 @@ debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 FLAVOURS := core light extras
 DYN_MODS := \
 	http-auth-pam \
-	http-cache-purge \
 	http-dav-ext \
 	http-echo \
 	http-fancyindex \
@@ -17,15 +16,11 @@ DYN_MODS := \
 	http-headers-more-filter \
 	http-image-filter \
 	http-ipdb \
-	http-lua \
 	http-ndk \
 	http-perl \
-	http-subs-filter \
 	http-uploadprogress \
-	http-upstream-fair \
 	http-xslt-filter \
 	mail \
-	nchan \
 	rtmp \
 	stream \
 	stream-geoip \
@@ -55,6 +50,7 @@ debian_ldflags += -L$(CURDIR)/../boringssl/build/ssl -L$(CURDIR)/../boringssl/bu
 
 # configure flags
 common_configure_flags := \
+			--build=nginx-quic \
 			--with-cc-opt="$(debian_cflags)" \
 			--with-ld-opt="$(debian_ldflags)" \
 			--prefix=/usr/share/nginx \
@@ -80,6 +76,8 @@ common_configure_flags := \
 			--with-http_v2_module \
 			--with-http_dav_module \
 			--with-http_slice_module \
+			--with-http_v3_module \
+			--with-stream_quic_module \
 			--with-threads
 
 light_configure_flags := \
@@ -123,7 +121,16 @@ extras_configure_flags := \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--add-module=$(SBMODULESDIR)/ngx_brotli \
-			--add-dynamic-module=$(MODULESDIR)/http-geoip2
+			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
+			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
+			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
+			--add-dynamic-module=$(MODULESDIR)/http-ndk \
+			--add-dynamic-module=$(MODULESDIR)/http-echo \
+			--add-dynamic-module=$(MODULESDIR)/http-fancyindex \
+			--add-dynamic-module=$(MODULESDIR)/http-geoip2 \
+			--add-dynamic-module=$(SBMODULESDIR)/ngx_http_ipdb_module \
+			--add-dynamic-module=$(MODULESDIR)/rtmp \
+			--add-dynamic-module=$(MODULESDIR)/http-uploadprogress
 
 %:
 	dh $@ --without autoreconf
@@ -159,16 +166,16 @@ strip.arch.%:
 strip.mods.%:
 	dh_strip --package=libnginx-mod-$(*) -O--automatic-dbgsym
 
-# config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
-# config.patch.%:
-# 	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
+config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
+config.patch.%:
+	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
 
-# clean_patch_modules: $(foreach mod,$(modules_with_patches),clean.patch.$(mod))
-# clean.patch.%:
-# 	if [ -s $(MODULESDIR)/$*/.pc/applied-patches ]; then \
-# 		cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt pop -q -a; \
-# 		rm -rf $(MODULESDIR)/$*/.pc; \
-# 	fi
+clean_patch_modules: $(foreach mod,$(modules_with_patches),clean.patch.$(mod))
+clean.patch.%:
+	if [ -s $(MODULESDIR)/$*/.pc/applied-patches ]; then \
+		cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt pop -q -a; \
+		rm -rf $(MODULESDIR)/$*/.pc; \
+	fi
 
 config.arch.%:
 	dh_testdir

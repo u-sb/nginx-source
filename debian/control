@@ -112,8 +112,6 @@ Depends: libnginx-mod-http-auth-pam,
          libnginx-mod-http-dav-ext,
          libnginx-mod-http-echo,
          libnginx-mod-http-geoip2,
-         libnginx-mod-http-subs-filter,
-         libnginx-mod-http-upstream-fair,
          libnginx-mod-stream-geoip2,
          nginx-core (>= ${source:Version}),
          nginx-core (<< ${source:Version}.1~),
@@ -178,7 +176,6 @@ Description: nginx web/proxy server (basic version)
 Package: nginx-extras
 Architecture: any
 Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
-         libnginx-mod-http-cache-purge (= ${binary:Version}),
          libnginx-mod-http-dav-ext (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
          libnginx-mod-http-fancyindex (= ${binary:Version}),
@@ -186,14 +183,10 @@ Depends: libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-geoip2 (= ${binary:Version}),
          libnginx-mod-http-headers-more-filter (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
-         libnginx-mod-http-lua (= ${binary:Version}),
          libnginx-mod-http-perl (= ${binary:Version}),
-         libnginx-mod-http-subs-filter (= ${binary:Version}),
          libnginx-mod-http-uploadprogress (= ${binary:Version}),
-         libnginx-mod-http-upstream-fair (= ${binary:Version}),
          libnginx-mod-http-xslt-filter (= ${binary:Version}),
          libnginx-mod-mail (= ${binary:Version}),
-         libnginx-mod-nchan (= ${binary:Version}),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-stream-geoip (= ${binary:Version}),
          libnginx-mod-stream-geoip2 (= ${binary:Version}),
@@ -344,20 +337,6 @@ Description: PAM authentication module for Nginx
  The module uses PAM as a backend for simple http authentication. It
  also allows setting the pam service name to allow more fine grained control.
 
-Package: libnginx-mod-http-lua
-Architecture: any
-Depends: libnginx-mod-http-ndk (= ${binary:Version}),
-         ${misc:Depends},
-         ${shlibs:Depends},
-Recommends: nginx,
-Description: Lua module for Nginx
- Embed Lua runtime into nginx.
- .
- This module embeds Lua, via the standard Lua 5.1 interpreter or LuaJIT
- 2.0/2.1, into Nginx and by leveraging Nginx's subrequests, allows the
- integration of the powerful Lua threads (Lua coroutines) into the Nginx event
- model.
-
 Package: libnginx-mod-http-ndk
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
@@ -371,20 +350,6 @@ Description: Nginx Development Kit module
  have generic code as part of the core distribution. The NDK itself adds few
  features that are seen from a user's point of view - it's just designed to help
  reduce the code that Nginx module developers need to write.
-
-Package: libnginx-mod-nchan
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
-Recommends: nginx,
-Description: Fast, flexible pub/sub server for Nginx
- Nchan is a scalable, flexible pub/sub server for the modern web, It can be
- configured as a standalone server, or as a shim between your application and
- tens, thousands, or millions of live subscribers. It can buffer messages in
- memory, on-disk, or via Redis. All connections are handled asynchronously and
- distributed among any number of worker processes. It can also scale to many
- nginx server instances with Redis.
- .
- Full documentation available at https://nchan.slact.net
 
 Package: libnginx-mod-http-echo
 Architecture: any
@@ -408,15 +373,6 @@ Description: Bring echo and more shell style goodies to Nginx
  3. Merge contents of various "Nginx locations" (i.e., subrequests) together in
     a single main request (using echo_location and its friends).
 
-Package: libnginx-mod-http-upstream-fair
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
-Recommends: nginx,
-Description: Nginx Upstream Fair Proxy Load Balancer
- The Nginx fair proxy balancer enhances the standard round-robin load balancer
- provided with Nginx so that it tracks busy backend servers and adjusts
- balancing accordingly.
-
 Package: libnginx-mod-http-headers-more-filter
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
@@ -428,15 +384,6 @@ Description: Set and clear input and output headers for Nginx
  This is an enhanced version of the standard headers module because it provides
  more utilities like resetting or clearing "builtin headers" like Content-Type,
  Content-Length, and Server.
-
-Package: libnginx-mod-http-cache-purge
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
-Recommends: nginx,
-Description: Purge content from Nginx caches
- Cache Purge module adds purging capabilities to Nginx. It allows purging
- content from caches used by all of Nginx proxy modules, like FastCGI, Proxy,
- SCGI and uWSGI.
 
 Package: libnginx-mod-http-fancyindex
 Architecture: any
@@ -458,16 +405,6 @@ Description: Upload progress system for Nginx
  It works by tracking the uploads proxied by Nginx to upstream servers without
  analysing the uploaded content and offers a web API to report upload progress
  in Javscript, Json or any other format.
-
-Package: libnginx-mod-http-subs-filter
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
-Recommends: nginx,
-Description: Substitution filter module for Nginx
- Subsitution Nginx module can do both regular expression and fixed string
- substitutions on response bodies. The module is quite different from Nginx's
- native Substitution module. It scans the output chains buffer and
- matches string line by line, just like Apache's mod_substitute.
 
 Package: libnginx-mod-http-dav-ext
 Architecture: any
