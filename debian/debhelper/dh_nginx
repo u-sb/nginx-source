@@ -48,7 +48,7 @@ sub nginx_modules_conf_installdir
 
 =head1 SYNOPSIS
 
-B<dh_nginx> [S<I<debhelper options>>] [B<-n>|B<--noscripts>]
+B<dh_nginx> [S<I<debhelper options>>] [B<-n>|B<--noscripts>] [B<--in-nginx-tree>]
 
 =head1 DESCRIPTION
 
@@ -62,6 +62,8 @@ It supports the following configuration types
 
 =item *
 Nginx modules
+
+=back
 
 =head1 INVOCATION
 
@@ -81,6 +83,11 @@ Nginx modules
 Lists files to be registered with the Nginx HTTP server. The file is
 interpreted as line separated list of installation stanzas, where each entry
 consists of whitespace separated values conforming to the file semantics below.
+
+When this file is missing but the name of the package looks like a nginx module,
+the module load file and its loading priority is automatically generated inferring
+from the package name. In this case, I<package-name>B<.install> or other mechanisms
+should be used for copying the B<.so> library into the correct place.
 
 =head2 FILE SEMANTICS
 
@@ -128,6 +135,10 @@ configuration by default.
 
 Do not modify F<postinst>/F<postrm>/F<prerm> maintainer scripts.
 
+=item B<--in-nginx-tree>
+
+Specify this option when building in-tree modules along with nginx. When
+specified, nginx abi version is not required in package name.
 
 =back
 
@@ -150,8 +161,11 @@ dh_nginx is heavily influnced by dh_apache2 written by Arno Toell
 ## main code starts here
 ##
 
+my $nginx_in_tree;
+
 init(options => {
 	"e|noenable" => \$dh{NOENABLE},
+	"in-nginx-tree" => \$nginx_in_tree,
 });
 
 foreach my $package ((@{$dh{DOPACKAGES}}))
@@ -162,65 +176,96 @@ foreach my $package ((@{$dh{DOPACKAGES}}))
 
 	my $file = pkgfile($package, "nginx");
 	my $tmp  = tmpdir($package);
+	my $installdir = $tmp . "/" . nginx_modules_conf_installdir();
+	my $modinstalldir = $tmp . "/" . nginx_api_installdir();
 
-	my @files_to_register = filedoublearray($file, ".") if $file;
-	foreach my $line (@files_to_register)
-	{
-		my $type = lc(shift @{$line}) if $line->[0];
-		my $source = shift @{$line} if $line->[0];
-		my @arguments = @{$line};
-		my $destination;
-
-		$type = "modules" if $type eq "mod";
-		my $installdir = $tmp . "/" . nginx_modules_conf_installdir();
-
-		verbose_print("$type -- $source -- @arguments\n\n");
-
-		if ($type eq "modules")
+	if ($file){
+		my @files_to_register = filedoublearray($file, ".") if $file;
+		foreach my $line (@files_to_register)
 		{
-			my $basesource = basename($source);
+			my $type = lc(shift @{$line}) if $line->[0];
+			my $source = shift @{$line} if $line->[0];
+			my @arguments = @{$line};
+			my $destination;
+
+			$type = "modules" if $type eq "mod";
+
+			verbose_print("$type -- $source -- @arguments\n\n");
 
 			if ($type eq "modules")
 			{
-				if ($basesource =~ m/\.conf$/)
+				my $basesource = basename($source);
+
+				if ($type eq "modules")
 				{
-					my $enablename = $basesource;
-					my $prio = $#arguments >= 0 ? $arguments[0] : 50;
-					$destination = "$prio-$basesource";
-					push @{$PACKAGE_TYPE{'has_a_module'}}, "$enablename:$destination";
-					verbose_print("Installing module configuration $enablename into $installdir prio:$prio\n");
-				}
-				elsif ($basesource =~ m/\.so$/)
-			{
-					my $modinstalldir = $tmp . "/" . nginx_api_installdir();
-					verbose_print("Installing module binary $source into $modinstalldir\n");
-					if (! -d $modinstalldir)
+					if ($basesource =~ m/\.conf$/)
 					{
-						complex_doit("mkdir","-p", $modinstalldir);
-						complex_doit("chmod","755","$modinstalldir");
+						my $enablename = $basesource;
+						my $prio = $#arguments >= 0 ? $arguments[0] : 50;
+						$destination = "$prio-$basesource";
+						push @{$PACKAGE_TYPE{'has_a_module'}}, "$enablename:$destination";
+						verbose_print("Installing module configuration $enablename into $installdir prio:$prio\n");
 					}
-					complex_doit("cp", $source, $modinstalldir);
-					next;
+					elsif ($basesource =~ m/\.so$/)
+					{
+						verbose_print("Installing module binary $source into $modinstalldir\n");
+						if (! -d $modinstalldir)
+						{
+							complex_doit("mkdir","-p", $modinstalldir);
+							complex_doit("chmod","755","$modinstalldir");
+						}
+						complex_doit("cp", $source, $modinstalldir);
+						next;
+					}
+
+					# TODO
+					error("module: \"$basesource\" needs .conf, .so or suffix") if $basesource !~ m/\.(conf|so)/;
 				}
 
-				# TODO
-				error("module: \"$basesource\" needs .conf, .so or suffix") if $basesource !~ m/\.(conf|so)/;
-			}
+				if (! -d $installdir)
+				{
+					complex_doit("mkdir","-p",$installdir);
+					complex_doit("chmod","755","$installdir");
+				}
+				complex_doit("cp",$source,$installdir);
+				complex_doit("chmod","644","$installdir/$basesource");
 
-			if (! -d $installdir)
+			}
+			else
 			{
-				complex_doit("mkdir","-p",$installdir);
-				complex_doit("chmod","755","$installdir");
+				error("Unknown parameter: $type\n");
 			}
-			complex_doit("cp",$source,$installdir);
-			complex_doit("chmod","644","$installdir/$basesource");
 
 		}
-		else
-		{
-			error("Unknown parameter: $type\n");
-		}
+	} elsif ($package =~ /^libnginx-mod-/){
+		verbose_print("$package might be a nginx module\n");
 
+		my $module = $package;
+		$module =~ s/^libnginx-mod-//;
+		verbose_print("Guessed module name: $module\n");
+
+		my $modulepath = $module;
+		$modulepath =~ s/-/_/g;
+
+		if (-e "$modinstalldir/ngx_${modulepath}_module.so"){
+			my $prio = 50;
+			if ($module =~ /^\w+-/ && !($module =~ /^http-/) ){
+				$prio = 70;
+			}
+			verbose_print("Guessed load priority: $prio\n");
+
+			my $conf_name = "mod-$module.conf";
+			install_dir($installdir);
+			verbose_print("Installing module configuration $conf_name into $installdir prio:$prio\n");
+			open(MOD_CONF, $dh{NO_ACT} ? ">&STDERR" : ">$installdir/$conf_name") or error("open($installdir/$conf_name): $!");
+			print(MOD_CONF "load_module modules/ngx_${modulepath}_module.so;\n");
+			close(MOD_CONF);
+			chmod(0644, "$installdir/$conf_name") or error("chmod(0644, $installdir/$conf_name): $!");
+			push @{$PACKAGE_TYPE{'has_a_module'}}, "$conf_name:$prio-$conf_name";
+		} else {
+			verbose_print("$package is not a nginx module because $modinstalldir/ngx_${modulepath}_module.so not found");
+			verbose_print("If it is not correct, check if the module is installed before invoking this script");
+		}
 	}
 
         my @postinst_autoscripts;
@@ -231,7 +276,13 @@ foreach my $package ((@{$dh{DOPACKAGES}}))
                 {
                         warning("Package $package appears to be an Nginx module. It should comply to the package naming scheme libnginx-mod-<modulename>\n");
                 }
-                addsubstvar($package, "misc:Depends", nginx_depends());
+                if ($nginx_in_tree){
+                            addsubstvar($package, "misc:Depends", nginx_depends());
+                } else {
+                            my $ngx_ver = `grep 'define NGINX_VERSION' /usr/share/nginx/src/src/core/nginx.h | sed -e 's/^.*"\\(.*\\)".*/\\1/'`;
+                            chomp($ngx_ver);
+                            addsubstvar($package, "misc:Depends", "nginx-common (>= $ngx_ver), nginx-common (<< $ngx_ver.1~)");
+                }
 
                 my $modules = "";
                 foreach my $module (@{$PACKAGE_TYPE{'has_a_module'}})
