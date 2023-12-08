@@ -1,3 +1,9 @@
+nginx (1.29.4-1nwtf) unstable; urgency=low
+
+  * Compile against OpenSSL 3.5 and enable kernel-tls
+
+ -- Xinyue Lu <i@7086.in>  Mon, 12 Jan 2026 00:00:00 -0800
+
 nginx (1.29.4-1) unstable; urgency=medium
 
   * New upstream version
