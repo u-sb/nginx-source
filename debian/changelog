@@ -1,3 +1,9 @@
+nginx (1.25.3-1nwtf) unstable; urgency=low
+
+  * Compile against OpenSSL 3.2
+
+ -- Xinyue Lu <i@7086.in>  Thu, 07 Dec 2023 00:00:00 -0800
+
 nginx (1.25.3-1) unstable; urgency=medium
 
   * New upstream version
