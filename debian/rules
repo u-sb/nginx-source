@@ -78,6 +78,8 @@ basic_configure_flags := \
 common_configure_flags := \
 			--with-cc-opt="$(debian_cflags)" \
 			--with-ld-opt="$(debian_ldflags)" \
+			--with-openssl="$(CURDIR)/../openssl" \
+			--with-openssl-opt="enable-ktls" \
 			$(basic_configure_flags)
 
 light_configure_flags := \
