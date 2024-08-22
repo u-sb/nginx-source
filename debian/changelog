@@ -1,3 +1,9 @@
+nginx (1.27.1-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Xinyue Lu <i@7086.in>  Wed, 21 Aug 2024 00:00:00 -0700
+
 nginx (1.27.0-1) unstable; urgency=medium
 
   * New upstream version
