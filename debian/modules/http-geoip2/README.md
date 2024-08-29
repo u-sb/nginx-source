@@ -7,7 +7,7 @@ The module now supports nginx streams and can be used in the same way the http m
 
 ## Installing
 First install [libmaxminddb](https://github.com/maxmind/libmaxminddb) as described in its [README.md
-file](https://github.com/maxmind/libmaxminddb/blob/master/README.md#installing-from-a-tarball).
+file](https://github.com/maxmind/libmaxminddb/blob/main/README.md#installing-from-a-tarball).
 
 #### Download nginx source
 ```
@@ -18,9 +18,8 @@ cd nginx-VERSION
 
 ##### To build as a dynamic module (nginx 1.9.11+):
 ```
-./configure --add-dynamic-module=/path/to/ngx_http_geoip2_module
-make
-make install
+./configure --with-compat --add-dynamic-module=/path/to/ngx_http_geoip2_module
+make modules
 ```
 
 This will produce ```objs/ngx_http_geoip2_module.so```. It can be copied to your nginx module path manually if you wish.
@@ -37,11 +36,16 @@ make
 make install
 ```
 
-## Download Maxmind GeoLite2 Database (optional)
-The free GeoLite2 databases are available from [Maxminds website](http://dev.maxmind.com/geoip/geoip2/geolite2/)
+##### If you need stream support, make sure to compile with stream:
+```
+./configure --add-dynamic-module=/path/to/ngx_http_geoip2_module --with-stream
+OR
+./configure --add-module=/path/to/ngx_http_geoip2_module --with-stream
+```
 
-[GeoLite2 City](http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz)
-[GeoLite2 Country](http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz)
+
+## Download Maxmind GeoLite2 Database (optional)
+The free GeoLite2 databases are available from [Maxminds website](http://dev.maxmind.com/geoip/geoip2/geolite2/) (requires signing up)
 
 ## Example Usage:
 ```
@@ -131,3 +135,18 @@ This translates to:
 ```
 $country_name "default=United States" source=$remote_addr country names en
 ```
+
+##### Additional Commands:
+These commands works the same as the original ngx_http_geoip_module documented here: http://nginx.org/en/docs/http/ngx_http_geoip_module.html#geoip_proxy.
+
+However, if you provide the `source=$variable_with_ip` option on a variable, these settings will be ignored for that particular variable.
+
+```
+geoip2_proxy < cidr >
+```
+Defines trusted addresses.  When a request comes from a trusted address, an address from the "X-Forwarded-For" request header field will be used instead.
+
+```
+geoip2_proxy_recursive < on | off >
+```
+If recursive search is disabled then instead of the original client address that matches one of the trusted addresses, the last address sent in "X-Forwarded-For" will be used. If recursive search is enabled then instead of the original client address that matches one of the trusted addresses, the last non-trusted address sent in "X-Forwarded-For" will be used.
