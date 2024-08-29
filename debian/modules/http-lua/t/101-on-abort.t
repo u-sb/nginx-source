@@ -1,6 +1,14 @@
 # vim:set ft= ts=4 sw=4 et fdm=marker:
 
-use Test::Nginx::Socket::Lua;
+BEGIN {
+    if ($ENV{TEST_NGINX_USE_HTTP3}) {
+        $SkipReason = "client abort detect does not support in http3";
+    } elsif ($ENV{TEST_NGINX_USE_HTTP2}) {
+        $SkipReason = "client abort detect does not support in http2";
+    }
+}
+
+use Test::Nginx::Socket::Lua $SkipReason ? (skip_all => $SkipReason) : ();
 use t::StapThread;
 
 our $GCScript = <<_EOC_;
@@ -408,7 +416,7 @@ main handler done
 
 
 
-=== TEST 9: regsiter on_abort callback but no client abortion
+=== TEST 9: register on_abort callback but no client abortion
 --- config
     location /t {
         lua_check_client_abort on;
@@ -546,7 +554,7 @@ on abort called
 
 
 
-=== TEST 12: regsiter on_abort callback but no client abortion (uthread)
+=== TEST 12: register on_abort callback but no client abortion (uthread)
 --- config
     location /t {
         lua_check_client_abort on;
@@ -591,7 +599,7 @@ main handler done
 
 
 
-=== TEST 13: regsiter on_abort callback multiple times
+=== TEST 13: register on_abort callback multiple times
 --- config
     location /t {
         lua_check_client_abort on;
@@ -794,7 +802,7 @@ on abort called
 
 
 
-=== TEST 18: regsiter on_abort callback but no client abortion (2 uthreads and 1 pending)
+=== TEST 18: register on_abort callback but no client abortion (2 uthreads and 1 pending)
 --- config
     location /t {
         lua_check_client_abort on;

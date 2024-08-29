@@ -16,6 +16,7 @@ BEGIN {
         $ENV{MOCKEAGAIN} = 'w';
     }
 
+    delete($ENV{TEST_NGINX_USE_HTTP2});
     $ENV{TEST_NGINX_EVENT_TYPE} = 'poll';
     $ENV{MOCKEAGAIN_WRITE_TIMEOUT_PATTERN} = 'get helloworld';
 }
@@ -51,7 +52,7 @@ __DATA__
     location /t {
         content_by_lua '
             local sock = ngx.socket.tcp()
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -66,7 +67,7 @@ GET /t
 failed to connect: timeout
 --- error_log
 lua tcp socket connect timeout: 100
-lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
+lua tcp socket connect timed out, when connecting to 127.0.0.2:12345
 --- timeout: 10
 
 
@@ -81,7 +82,7 @@ lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
         content_by_lua '
             local sock = ngx.socket.tcp()
             sock:settimeout(150)
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -96,7 +97,7 @@ GET /t
 failed to connect: timeout
 --- error_log
 lua tcp socket connect timeout: 150
-lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
+lua tcp socket connect timed out, when connecting to 127.0.0.2:12345
 --- timeout: 10
 
 
@@ -110,7 +111,7 @@ lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
         content_by_lua '
             local sock = ngx.socket.tcp()
             sock:settimeout(nil)
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -125,7 +126,7 @@ GET /t
 failed to connect: timeout
 --- error_log
 lua tcp socket connect timeout: 102
-lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
+lua tcp socket connect timed out, when connecting to 127.0.0.2:12345
 
 
 
@@ -139,7 +140,7 @@ lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
         content_by_lua '
             local sock = ngx.socket.tcp()
             sock:settimeout(0)
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -154,7 +155,7 @@ GET /t
 failed to connect: timeout
 --- error_log
 lua tcp socket connect timeout: 102
-lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
+lua tcp socket connect timed out, when connecting to 127.0.0.2:12345
 --- timeout: 10
 
 
@@ -168,7 +169,7 @@ lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
         content_by_lua '
             local sock = ngx.socket.tcp()
             sock:settimeout(-1)
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -584,7 +585,7 @@ bad timeout value
 --- config
     location /lua {
         content_by_lua '
-            function f()
+            local function f()
                 ngx.say("hello in thread")
                 ngx.sleep(0.1)
                 ngx.exit(0)
@@ -683,7 +684,7 @@ after
     location /t {
         content_by_lua '
             local sock = ngx.socket.tcp()
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             if not ok then
                 ngx.say("1: failed to connect: ", err)
 
@@ -707,7 +708,7 @@ GET /t
 2: connected: 1
 --- error_log
 lua tcp socket connect timeout: 100
-lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
+lua tcp socket connect timed out, when connecting to 127.0.0.2:12345
 --- timeout: 10
 
 
@@ -873,6 +874,7 @@ quitting request now
 --- no_error_log
 lua tcp socket write timed out
 [alert]
+--- skip_eval: 4: $ENV{TEST_NGINX_USE_HTTP3}
 
 
 
