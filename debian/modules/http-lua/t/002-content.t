@@ -10,7 +10,7 @@ use Test::Nginx::Socket::Lua;
 repeat_each(2);
 #repeat_each(1);
 
-plan tests => repeat_each() * (blocks() * 2 + 23);
+plan tests => repeat_each() * (blocks() * 2 + 32);
 
 #no_diff();
 #no_long_string();
@@ -36,6 +36,14 @@ GET /lua
 Hello, Lua!
 --- no_error_log
 [error]
+--- grep_error_log eval: qr/lua caching unused lua thread|lua reusing cached lua thread/
+--- grep_error_log_out eval
+[
+    "lua caching unused lua thread\n",
+    "lua reusing cached lua thread
+lua caching unused lua thread
+",
+]
 
 
 
@@ -86,7 +94,7 @@ qr/content_by_lua\(nginx\.conf:\d+\):1: attempt to call field 'echo' \(a nil val
     location /lua {
         # NOTE: the newline escape sequence must be double-escaped, as nginx config
         # parser will unescape first!
-        content_by_lua 'v = ngx.var["request_uri"] ngx.print("request_uri: ", v, "\\n")';
+        content_by_lua 'local v = ngx.var["request_uri"] ngx.print("request_uri: ", v, "\\n")';
     }
 --- request
 GET /lua?a=1&b=2
@@ -102,7 +110,7 @@ request_uri: /lua?a=1&b=2
     }
 --- user_files
 >>> test.lua
-v = ngx.var["request_uri"]
+local v = ngx.var["request_uri"]
 ngx.print("request_uri: ", v, "\n")
 --- request
 GET /lua?a=1&b=2
@@ -154,7 +162,7 @@ result: -0.4090441561579
 === TEST 7: read $arg_xxx
 --- config
     location = /lua {
-        content_by_lua 'who = ngx.var.arg_who
+        content_by_lua 'local who = ngx.var.arg_who
             ngx.print("Hello, ", who, "!")';
     }
 --- request
@@ -171,7 +179,7 @@ Hello, agentzh!
     }
 
     location /lua {
-        content_by_lua 'res = ngx.location.capture("/other"); ngx.print("status=", res.status, " "); ngx.print("body=", res.body)';
+        content_by_lua 'local res = ngx.location.capture("/other"); ngx.print("status=", res.status, " "); ngx.print("body=", res.body)';
     }
 --- request
 GET /lua
@@ -183,7 +191,7 @@ status=200 body=hello, world
 ei= TEST 9: capture non-existed location
 --- config
     location /lua {
-        content_by_lua 'res = ngx.location.capture("/other"); ngx.print("status=", res.status)';
+        content_by_lua 'local res = ngx.location.capture("/other"); ngx.print("status=", res.status)';
     }
 --- request
 GET /lua
@@ -194,7 +202,7 @@ GET /lua
 === TEST 9: invalid capture location (not as expected...)
 --- config
     location /lua {
-        content_by_lua 'res = ngx.location.capture("*(#*"); ngx.say("res=", res.status)';
+        content_by_lua 'local res = ngx.location.capture("*(#*"); ngx.say("res=", res.status)';
     }
 --- request
 GET /lua
@@ -247,7 +255,7 @@ GET /lua
            ngx.print("num is: ", num, "\\n");
 
            if (num > 0) then
-               res = ngx.location.capture("/recur?num="..tostring(num - 1));
+               local res = ngx.location.capture("/recur?num="..tostring(num - 1));
                ngx.print("status=", res.status, " ");
                ngx.print("body=", res.body, "\\n");
            else
@@ -271,7 +279,7 @@ end
            ngx.print("num is: ", num, "\\n");
 
            if (num > 0) then
-               res = ngx.location.capture("/recur?num="..tostring(num - 1));
+               local res = ngx.location.capture("/recur?num="..tostring(num - 1));
                ngx.print("status=", res.status, " ");
                ngx.print("body=", res.body);
            else
@@ -353,7 +361,7 @@ location /sub {
 }
 location /parent {
     set $a 12;
-    content_by_lua 'res = ngx.location.capture("/sub"); ngx.print(res.body)';
+    content_by_lua 'local res = ngx.location.capture("/sub"); ngx.print(res.body)';
 }
 --- request
 GET /parent
@@ -369,7 +377,7 @@ location /sub {
 location /parent {
     set $a 12;
     content_by_lua '
-        res = ngx.location.capture(
+        local res = ngx.location.capture(
             "/sub",
             { share_all_vars = true }
         );
@@ -390,7 +398,7 @@ location /sub {
 }
 location /parent {
     content_by_lua '
-        res = ngx.location.capture("/sub", { share_all_vars = true });
+        local res = ngx.location.capture("/sub", { share_all_vars = true });
         ngx.say(ngx.var.a)
     ';
 }
@@ -408,7 +416,7 @@ location /sub {
 }
 location /parent {
     content_by_lua '
-        res = ngx.location.capture("/sub", { share_all_vars = false });
+        local res = ngx.location.capture("/sub", { share_all_vars = false });
         ngx.say(ngx.var.a)
     ';
 }
@@ -427,7 +435,7 @@ GET /parent
 
     location /lua {
         content_by_lua '
-            res = ngx.location.capture("/other");
+            local res = ngx.location.capture("/other");
             ngx.say("type: ", res.header["Content-Type"]);
         ';
     }
@@ -454,7 +462,7 @@ type: foo/bar
 
     location /lua {
         content_by_lua '
-            res = ngx.location.capture("/other");
+            local res = ngx.location.capture("/other");
             ngx.say("type: ", type(res.header["Set-Cookie"]));
             ngx.say("len: ", #res.header["Set-Cookie"]);
             ngx.say("value: ", table.concat(res.header["Set-Cookie"], "|"))
@@ -482,7 +490,7 @@ value: a|hello, world|foo
 
     location /lua {
         content_by_lua '
-            res = ngx.location.capture("/other");
+            local res = ngx.location.capture("/other");
             ngx.say("type: ", res.header["Content-Type"]);
             ngx.say("Bar: ", res.header["Bar"]);
         ';
@@ -507,7 +515,7 @@ Bar: Bah
 
     location /lua {
         content_by_lua '
-            res = ngx.location.capture("/other");
+            local res = ngx.location.capture("/other");
             ngx.say("type: ", res.header["Content-Type"]);
             ngx.say("Bar: ", res.header["Bar"] or "nil");
         ';
@@ -524,7 +532,7 @@ Bar: nil
 --- config
     location /lua {
         content_by_lua '
-            data = "hello, world"
+            local data = "hello, world"
             -- ngx.header["Content-Length"] = #data
             -- ngx.header.content_length = #data
             ngx.print(data)
@@ -742,7 +750,7 @@ true
 --- config
     location /lua {
         content_by_lua '
-            data = "hello,\\nworld\\n"
+            local data = "hello,\\nworld\\n"
             ngx.header["Content-Length"] = #data
             ngx.say("hello,")
             ngx.flush()
@@ -801,7 +809,7 @@ world
     }
 --- user_files
 >>> test.lua
-v = ngx.var["request_uri"]
+local v = ngx.var["request_uri"]
 ngx.print("request_uri: ", v, "\n")
 --- request
 GET /lua?a=1&b=2
@@ -841,4 +849,274 @@ GET /lua
 --- response_body_like: 500 Internal Server Error
 --- error_code: 500
 --- error_log eval
-qr/failed to load inlined Lua code: /
+qr/failed to load inlined Lua code: content_by_lua\(nginx.conf:40\)/
+
+
+
+=== TEST 43: syntax error in content_by_lua_block
+--- config
+    location /lua {
+
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log eval
+qr/failed to load inlined Lua code: content_by_lua\(nginx.conf:41\)/
+
+
+
+=== TEST 44: syntax error in second content_by_lua_block
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /lua {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log eval
+qr/failed to load inlined Lua code: content_by_lua\(nginx.conf:46\)/
+
+
+
+=== TEST 45: syntax error in thrid content_by_lua_block
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /bar {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /lua {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log eval
+qr/failed to load inlined Lua code: content_by_lua\(nginx.conf:52\)/
+
+
+
+=== TEST 46: syntax error in included file
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /bar {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    include ../html/lua.conf;
+--- user_files
+>>> lua.conf
+    location /lua {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log
+failed to load inlined Lua code: content_by_lua(../html/lua.conf:2):2: unexpected symbol near ''for end''
+
+
+
+=== TEST 47: syntax error with very long filename
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /bar {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    include ../html/1234567890123456789012345678901234.conf;
+--- user_files
+>>> 1234567890123456789012345678901234.conf
+    location /lua {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log
+failed to load inlined Lua code: content_by_lua(...234567890123456789012345678901234.conf:2)
+
+
+
+=== TEST 48: syntax error in /tmp/lua.conf
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /bar {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    include /tmp/lua.conf;
+--- user_files
+>>> /tmp/lua.conf
+    location /lua {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log
+failed to load inlined Lua code: content_by_lua(/tmp/lua.conf:2)
+
+
+
+=== TEST 49: syntax error in /tmp/12345678901234567890123456789012345.conf
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /bar {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    include /tmp/12345678901234567890123456789012345.conf;
+
+--- user_files
+>>> /tmp/12345678901234567890123456789012345.conf
+    location /lua {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log
+failed to load inlined Lua code: content_by_lua(...345678901234567890123456789012345.conf:2)
+
+
+
+=== TEST 50: the error line number greater than 9
+--- config
+    location /foo {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    location /bar {
+        content_by_lua_block {
+            'for end';
+        }
+    }
+
+    include /tmp/12345678901234567890123456789012345.conf;
+
+--- user_files
+>>> /tmp/12345678901234567890123456789012345.conf
+    location /lua {
+
+
+
+
+
+
+
+
+
+
+
+
+        content_by_lua_block {
+            'for end';
+        }
+    }
+--- request
+GET /lua
+--- response_body_like: 500 Internal Server Error
+--- error_code: 500
+--- error_log
+failed to load inlined Lua code: content_by_lua(...45678901234567890123456789012345.conf:14)
+
+
+
+=== TEST 51: Lua file permission denied
+--- config
+    location /lua {
+        content_by_lua_file /etc/shadow;
+    }
+--- request
+GET /lua
+--- response_body_like: 503 Service Temporarily Unavailable
+--- error_code: 503
+
+
+
+=== TEST 52: send_header trigger filter finalize does not clear the ctx
+--- config
+    location /lua {
+        content_by_lua_block {
+            ngx.header["Last-Modified"] = ngx.http_time(ngx.time())
+            ngx.send_headers()
+            local phase = ngx.get_phase()
+        }
+        header_filter_by_lua_block {
+            ngx.header["X-Hello-World"] = "Hello World"
+        }
+    }
+--- request
+GET /lua
+--- more_headers
+If-Unmodified-Since: Wed, 01 Jan 2020 07:28:00 GMT
+--- error_code: 412
+--- no_error_log
+unknown phase: 0
