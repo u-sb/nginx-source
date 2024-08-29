@@ -243,7 +243,7 @@ GET /log
 --- response_body
 32
 --- error_log eval
-qr/\[error\] \S+: \S+ \[lua\] set_by_lua:2: HELLO,/
+qr/\[error\] \S+: \S+ \[lua\] set_by_lua\(nginx.conf:43\):2: HELLO,/
 
 
 
@@ -261,7 +261,7 @@ GET /log
 --- response_body
 32
 --- error_log eval
-qr/\[error\] \S+: \S+ \[lua\] set_by_lua:2: truefalsenil,/
+qr/\[error\] \S+: \S+ \[lua\] set_by_lua\(nginx.conf:43\):2: truefalsenil,/
 
 
 
@@ -368,7 +368,7 @@ GET /log
 --- response_headers
 foo: 32
 --- error_log eval
-qr/\[notice\] .*? \[lua\] header_filter_by_lua:2: hello world/
+qr/\[notice\] .*? \[lua\] header_filter_by_lua\(nginx.conf:43\):2: hello world/
 --- response_body
 hi
 
@@ -390,7 +390,7 @@ foo: 32
 --- response_body
 hi
 --- error_log eval
-qr/\[error\] .*? \[lua\] header_filter_by_lua:2: howdy, lua!/
+qr/\[error\] .*? \[lua\] header_filter_by_lua\(nginx.conf:43\):2: howdy, lua!/
 
 
 
@@ -414,6 +414,8 @@ GET /log
 --- config
     location /log {
         content_by_lua '
+            local foo
+            local bar
             function foo()
                 bar()
             end
@@ -431,7 +433,7 @@ GET /log
 --- response_body
 done
 --- error_log eval
-qr/\[error\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):7: bar\(\): hello, log12343.14159/
+qr/\[error\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):9: bar\(\): hello, log12343.14159/
 
 
 
@@ -439,6 +441,8 @@ qr/\[error\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):7: bar\(\): hell
 --- config
     location /log {
         content_by_lua '
+            local foo
+            local bar
             function foo()
                 return bar(5)
             end
@@ -461,7 +465,7 @@ GET /log
 --- response_body
 done
 --- error_log eval
-qr/\[error\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):8:(?: foo\(\):)? hello, log12343.14159/
+qr/\[error\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):10:(?: foo\(\):)? hello, log12343.14159/
 
 
 
@@ -472,6 +476,8 @@ qr/\[error\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):8:(?: foo\(\):)?
     }
 --- user_files
 >>> test.lua
+local foo
+local bar
 function foo()
     bar()
 end
@@ -488,7 +494,7 @@ GET /log
 --- response_body
 done
 --- error_log eval
-qr/\[error\] \S+: \S+ \[lua\] test.lua:6: bar\(\): hello, log12343.14159/
+qr/\[error\] \S+: \S+ \[lua\] test.lua:8: bar\(\): hello, log12343.14159/
 
 
 
@@ -542,3 +548,23 @@ ok
 [error]
 --- error_log eval
 "2: hello\0world, client: "
+
+
+
+=== TEST 27: test log-level STDERR
+Note: maximum number of digits after the decimal-point character is 13
+--- config
+    location /log {
+        content_by_lua_block {
+            ngx.say("before log")
+            ngx.log(ngx.STDERR, 3.14159265357939723846)
+            ngx.say("after log")
+        }
+    }
+--- request
+GET /log
+--- response_body
+before log
+after log
+--- error_log eval
+qr/\[\] \S+: \S+ \[lua\] content_by_lua\(nginx\.conf:\d+\):3: 3.1415926535794/

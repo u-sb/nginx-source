@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # this script is for developers only.
-# dependent on the ngx-build script from the nginx-devel-utils repostory:
+# dependent on the ngx-build script from the nginx-devel-utils repository:
 #   https://github.com/openresty/nginx-devel-utils/blob/master/ngx-build
 # the resulting nginx is located at ./work/nginx/sbin/nginx
 
@@ -22,11 +22,32 @@ force=$2
             #--without-http_referer_module \
             #--with-http_spdy_module \
 
+add_fake_shm_module="--add-module=$root/t/data/fake-shm-module"
+
+add_http3_module=--with-http_v3_module
+answer=`$root/util/ver-ge "$version" 1.25.1`
+if [ "$OPENSSL_VER" = "1.1.0l" ] || [ "$answer" = "N" ]; then
+    add_http3_module=""
+fi
+
+disable_pcre2=--without-pcre2
+answer=`$root/util/ver-ge "$version" 1.25.1`
+if [ "$answer" = "N" ] || [ "$USE_PCRE2" = "Y" ]; then
+    disable_pcre2=""
+fi
+if [ "$USE_PCRE2" = "Y" ]; then
+    PCRE_INC=$PCRE2_INC
+    PCRE_LIB=$PCRE2_LIB
+fi
+
 time ngx-build $force $version \
+            --with-threads \
             --with-pcre-jit \
+            $disable_pcre2 \
             --with-ipv6 \
-            --with-cc-opt="-I$PCRE_INC -I$OPENSSL_INC" \
+            --with-cc-opt="-DNGX_LUA_USE_ASSERT -I$PCRE_INC -I$OPENSSL_INC" \
             --with-http_v2_module \
+            $add_http3_module \
             --with-http_realip_module \
             --with-http_ssl_module \
             --add-module=$root/../ndk-nginx-module \
@@ -55,7 +76,7 @@ time ngx-build $force $version \
                 --add-module=$root/../redis2-nginx-module \
                 --add-module=$root/../stream-lua-nginx-module \
                 --add-module=$root/t/data/fake-module \
-                --add-module=$root/t/data/fake-shm-module \
+                $add_fake_shm_module \
                 --add-module=$root/t/data/fake-delayed-load-module \
                 --with-http_gunzip_module \
                 --with-http_dav_module \
