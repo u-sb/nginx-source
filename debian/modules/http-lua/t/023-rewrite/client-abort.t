@@ -19,7 +19,13 @@ our $StapScript = $t::StapThread::StapScript;
 
 repeat_each(2);
 
-plan tests => repeat_each() * (blocks() * 3 - 1);
+if (defined $ENV{TEST_NGINX_USE_HTTP3}) {
+    plan(skip_all => "HTTP3 does not support client abort");
+} elsif (defined $ENV{TEST_NGINX_USE_HTTP2}) {
+    plan(skip_all => "HTTP2 does not support client abort");
+} else {
+    plan tests => repeat_each() * (blocks() * 3 - 1);
+}
 
 $ENV{TEST_NGINX_RESOLVER} ||= '8.8.8.8';
 $ENV{TEST_NGINX_MEMCACHED_PORT} ||= '11211';
@@ -199,7 +205,7 @@ bad things happen
 
     location = /sub {
         proxy_ignore_client_abort on;
-        proxy_pass http://agentzh.org:12345/;
+        proxy_pass http://127.0.0.2:12345/;
     }
 
     location = /sleep {
@@ -240,7 +246,7 @@ client prematurely closed connection
 
     location = /sub {
         proxy_ignore_client_abort off;
-        proxy_pass http://agentzh.org:12345/;
+        proxy_pass http://127.0.0.2:12345/;
     }
 --- request
 GET /t
@@ -545,7 +551,7 @@ client prematurely closed connection
                 return
             end
 
-            ok, err = sock:connect("127.0.0.1", $TEST_NGINX_REDIS_PORT)
+            local ok, err = sock:connect("127.0.0.1", $TEST_NGINX_REDIS_PORT)
             if not ok then
                 ngx.log(ngx.ERR, "failed to connect: ", err)
                 return

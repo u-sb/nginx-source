@@ -63,7 +63,7 @@ qr/\[lua\] content_by_lua\(nginx\.conf:\d+\):\d+: elapsed: 0\.(?:09|10)\d*, cont
 
 
 
-=== TEST 2: separated global env
+=== TEST 2: shared global env
 --- config
     location /t {
         content_by_lua_block {
@@ -84,7 +84,7 @@ qr/\[lua\] content_by_lua\(nginx\.conf:\d+\):\d+: elapsed: 0\.(?:09|10)\d*, cont
 --- request
 GET /t
 --- response_body
-foo = nil
+foo = 3
 --- wait: 0.12
 --- no_error_log
 [error]
@@ -224,6 +224,7 @@ registered timer
 
 
 === TEST 6: memory leak check
+--- quic_max_idle_timeout: 8
 --- config
     location /t {
         content_by_lua_block {

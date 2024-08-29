@@ -19,9 +19,14 @@ BEGIN {
     $ENV{TEST_NGINX_EVENT_TYPE} = 'poll';
     $ENV{MOCKEAGAIN_WRITE_TIMEOUT_PATTERN} = 'hello, world';
     $ENV{TEST_NGINX_POSTPONE_OUTPUT} = 1;
+    delete($ENV{TEST_NGINX_USE_HTTP2});
+
+    if ($ENV{TEST_NGINX_USE_HTTP3}) {
+        $SkipReason = "HTTP3 does not support mockeagain";
+    }
 }
 
-use Test::Nginx::Socket::Lua;
+use Test::Nginx::Socket::Lua $SkipReason ? (skip_all => $SkipReason) : ();
 use t::StapThread;
 
 our $GCScript = $t::StapThread::GCScript;
@@ -127,7 +132,7 @@ del timer 1234
     send_timeout 200ms;
     location /lua {
         content_by_lua '
-            function f()
+            local function f()
                 ngx.say("hello in thread")
                 ngx.sleep(0.1)
                 ngx.exit(0)

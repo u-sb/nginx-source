@@ -233,6 +233,8 @@ GET /t
 --- error_code: 101
 --- no_error_log
 [error]
+--- skip_eval: 3:$ENV{TEST_NGINX_USE_HTTP3}
+--- no_http2
 
 
 
@@ -272,7 +274,7 @@ ngx.status = 502
 
 
 
-=== TEST 16: ngx.status assignmnt should clear r->err_status
+=== TEST 16: ngx.status assignment should clear r->err_status
 --- config
 location = /t {
     return 502;

@@ -480,8 +480,11 @@ a [b c] [b] [c] [] [] d
     }
 --- request
     GET /re
---- response_body
-error: pcre_compile() failed: missing ) in "(abc"
+--- response_body eval
+$Test::Nginx::Util::PcreVersion == 2 ?
+"error: pcre2_compile() failed: missing closing parenthesis in \"(abc\"\n"
+:
+"error: pcre_compile() failed: missing ) in \"(abc\"\n"
 --- no_error_log
 [error]
 
@@ -506,8 +509,11 @@ error: pcre_compile() failed: missing ) in "(abc"
     }
 --- request
 GET /t
---- response_body_like chop
-error: pcre_exec\(\) failed: -10
+--- response_body eval
+$Test::Nginx::Util::PcreVersion == 2 ?
+"error: pcre_exec\(\) failed: -4\n"
+:
+"error: pcre_exec\(\) failed: -10\n"
 
 --- no_error_log
 [error]
@@ -590,7 +596,7 @@ s: a好
 >>> a.lua
 local re = [==[(?i:([\s'\"`´’‘\(\)]*)?([\d\w]+)([\s'\"`´’‘\(\)]*)?(?:=|<=>|r?like|sounds\s+like|regexp)([\s'\"`´’‘\(\)]*)?\2|([\s'\"`´’‘\(\)]*)?([\d\w]+)([\s'\"`´’‘\(\)]*)?(?:!=|<=|>=|<>|<|>|\^|is\s+not|not\s+like|not\s+regexp)([\s'\"`´’‘\(\)]*)?(?!\6)([\d\w]+))]==]
 
-s = string.rep([[ABCDEFG]], 10)
+local s = string.rep([[ABCDEFG]], 10)
 
 local start = ngx.now()
 
@@ -610,8 +616,14 @@ ngx.say("sub: ", cnt)
 
 --- request
     GET /re
---- response_body
-error: pcre_exec() failed: -8
+--- response_body eval
+# lua_regex_match_limit uses pcre_extra->match_limit in the PCRE,
+# but PCRE2 replaces this with pcre2_set_match_limit interface,
+# which has different effects.
+$Test::Nginx::Util::PcreVersion == 2 ?
+"sub: 0\n"
+:
+"error: pcre_exec() failed: -8\n"
 
 
 
@@ -693,7 +705,7 @@ ab.cd
 
 location = /t {
     content_by_lua '
-        function test()
+        local function test()
             local data = [[
                 OUTER {FIRST}
 ]]

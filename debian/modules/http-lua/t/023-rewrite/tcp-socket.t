@@ -86,6 +86,7 @@ failed to receive a line: closed []
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -155,6 +156,7 @@ failed to receive a line: closed [foo]
 closed
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -197,6 +199,7 @@ connected: nil
 failed to send request: closed
 --- error_log
 attempt to send data on a closed socket:
+--- no_http2
 
 
 
@@ -250,11 +253,11 @@ attempt to send data on a closed socket:
     }
 --- request
 GET /t
---- response_body
+--- response_body_like
 connected: 1
 request sent: 56
-first line received: HTTP/1.1 200 OK
-second line received: Server: openresty
+first line received: HTTP\/1\.1 200 OK
+second line received: (?:Date|Server): .*?
 --- no_error_log
 [error]
 
@@ -304,7 +307,7 @@ qr/connect\(\) failed \(\d+: Connection refused\)/
     location /test {
         rewrite_by_lua '
             local sock = ngx.socket.tcp()
-            local ok, err = sock:connect("agentzh.org", 12345)
+            local ok, err = sock:connect("127.0.0.2", 12345)
             ngx.say("connect: ", ok, " ", err)
 
             local bytes
@@ -329,7 +332,7 @@ send: nil closed
 receive: nil closed
 close: nil closed
 --- error_log
-lua tcp socket connect timed out, when connecting to 172.105.207.225:12345
+lua tcp socket connect timed out, when connecting to 127.0.0.2:12345
 --- timeout: 10
 
 
@@ -521,6 +524,7 @@ failed to receive a line: closed
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -591,6 +595,7 @@ close: 1 nil
 "
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -672,6 +677,7 @@ close: 1 nil
 "
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -749,6 +755,7 @@ close: 1 nil
 "
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -827,6 +834,7 @@ close: 1 nil
 "
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -898,6 +906,7 @@ failed to receive a line: closed []
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -940,7 +949,7 @@ close: 1 nil
                 end
             end
 
-            ok, err = sock:close()
+            local ok, err = sock:close()
             ngx.say("close: ", ok, " ", err)
         ';
 
@@ -967,6 +976,7 @@ failed to receive a line: closed []
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -1077,12 +1087,13 @@ close: 1 nil
 "
 --- no_error_log
 [error]
+--- no_http2
 
 
 
 === TEST 19: cannot survive across request boundary (send)
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location /t {
@@ -1143,7 +1154,7 @@ received: OK|failed to send request: closed)\$"
 
 === TEST 20: cannot survive across request boundary (receive)
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location /t {
@@ -1214,7 +1225,7 @@ received: OK|failed to receive a line: closed \[nil\])$/
 
 === TEST 21: cannot survive across request boundary (close)
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location /t {
@@ -1285,7 +1296,7 @@ received: OK|failed to close: closed)$/
 
 === TEST 22: cannot survive across request boundary (connect)
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location /t {
@@ -1521,6 +1532,7 @@ GET /t
 2: close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -1593,6 +1605,7 @@ failed to receive a line: closed []
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -1654,6 +1667,9 @@ GET /t
 --- ignore_response
 --- error_log
 bad argument #1 to 'send' (bad data type nil found)
+--- curl_error eval
+qr#curl: \(52\) Empty reply from server|curl: \(95\) HTTP/3 stream 0 reset by server#
+--- no_http2
 
 
 
@@ -1715,6 +1731,9 @@ GET /t
 --- ignore_response
 --- error_log
 bad argument #1 to 'send' (bad data type boolean found)
+--- curl_error eval
+qr#curl: \(52\) Empty reply from server|curl: \(95\) HTTP/3 stream 0 reset by server#
+--- no_http2
 
 
 
@@ -1776,6 +1795,9 @@ GET /t
 --- ignore_response
 --- error_log
 bad argument #1 to 'send' (bad data type userdata found)
+--- curl_error eval
+qr#curl: \(52\) Empty reply from server|curl: \(95\) HTTP/3 stream 0 reset by server#
+--- no_http2
 
 
 
@@ -1845,6 +1867,7 @@ subrequest: 200, OK\r
 "
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -1916,6 +1939,7 @@ close: 1 nil
 --- no_error_log
 [error]
 --- SKIP
+--- no_http2
 
 
 
@@ -1976,6 +2000,7 @@ receive(0): []
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
@@ -2036,12 +2061,13 @@ send(""): 0
 close: 1 nil
 --- no_error_log
 [error]
+--- no_http2
 
 
 
 === TEST 33: bad request tries to connect
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location = /main {
@@ -2092,12 +2118,13 @@ qr/runtime error: rewrite_by_lua\(nginx\.conf:\d+\):7: bad request/
 
 --- no_error_log
 [alert]
+--- no_http2
 
 
 
 === TEST 34: bad request tries to receive
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location = /main {
@@ -2151,12 +2178,13 @@ qr/runtime error: rewrite_by_lua\(nginx\.conf:\d+\):14: bad request/
 
 --- no_error_log
 [alert]
+--- no_http2
 
 
 
 === TEST 35: bad request tries to send
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location = /main {
@@ -2215,7 +2243,7 @@ qr/runtime error: rewrite_by_lua\(nginx\.conf:\d+\):14: bad request/
 
 === TEST 36: bad request tries to close
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location = /main {
@@ -2274,7 +2302,7 @@ qr/runtime error: rewrite_by_lua\(nginx\.conf:\d+\):14: bad request/
 
 === TEST 37: bad request tries to set keepalive
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location = /main {
@@ -2333,7 +2361,7 @@ qr/runtime error: rewrite_by_lua\(nginx\.conf:\d+\):14: bad request/
 
 === TEST 38: bad request tries to receiveuntil
 --- http_config eval
-    "lua_package_path '$::HtmlDir/?.lua;./?.lua';"
+    "lua_package_path '$::HtmlDir/?.lua;./?.lua;;';"
 --- config
     server_tokens off;
     location = /main {
