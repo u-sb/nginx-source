@@ -10,7 +10,7 @@ log_level('debug');
 
 repeat_each(2);
 
-plan tests => repeat_each() * 94;
+plan tests => repeat_each() * (blocks() * 2 + 13);
 
 #no_diff();
 #no_long_string();
@@ -124,6 +124,8 @@ Hi
 GET /read
 --- error_code
 --- response_body
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -416,7 +418,7 @@ lua release ngx.ctx
 
 
 
-=== TEST 20: global got cleared for each single request
+=== TEST 20: globals are shared by all requests
 --- config
     location /lua {
         set $foo '';
@@ -428,6 +430,7 @@ lua release ngx.ctx
             if not foo then
                 foo = 1
             else
+                ngx.log(ngx.INFO, "old foo: ", foo)
                 foo = foo + 1
             end
             ngx.var.foo = foo
@@ -435,10 +438,13 @@ lua release ngx.ctx
     }
 --- request
 GET /lua
---- response_body
-1
+--- response_body_like
+^[12]$
 --- no_error_log
 [error]
+--- grep_error_log eval: qr/old foo: \d+/
+--- grep_error_log_out eval
+["", "old foo: 1\n"]
 
 
 
@@ -458,9 +464,11 @@ GET /lua
 GET /lua
 --- ignore_response
 --- error_log
-failed to run header_filter_by_lua*: header_filter_by_lua:2: Something bad
+failed to run header_filter_by_lua*: header_filter_by_lua(nginx.conf:47):2: Something bad
 --- no_error_log
 [alert]
+--- curl_error eval
+qr/curl: \(56\) Failure when receiving data from the peer|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(52\) Empty reply from server|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -483,6 +491,8 @@ GET /lua
 failed to run header_filter_by_lua*: unknown reason
 --- no_error_log
 [alert]
+--- curl_error eval
+qr/curl: \(56\) Failure when receiving data from the peer|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(52\) Empty reply from server|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -497,6 +507,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -511,6 +523,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -525,6 +539,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -539,6 +555,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -553,6 +571,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -571,6 +591,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -589,6 +611,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -603,6 +627,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -617,6 +643,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -631,6 +659,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -661,8 +691,10 @@ uri: /blah
 --- request
 GET /lua
 --- ignore_response
---- error_log
-API disabled in the context of header_filter_by_lua*
+--- error_log eval
+qr/API disabled in the context of header_filter_by_lua\*|http3 requests are not supported without content-length header/ms
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -675,8 +707,18 @@ API disabled in the context of header_filter_by_lua*
 --- request
 GET /lua
 --- ignore_response
---- error_log
-API disabled in the context of header_filter_by_lua*
+--- error_log eval
+my $err_log;
+
+if (defined $ENV{TEST_NGINX_USE_HTTP3}) {
+    $err_log = "http v3 not supported yet";
+} else {
+    $err_log = "API disabled in the context of header_filter_by_lua*";
+}
+
+$err_log;
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -691,6 +733,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -705,6 +749,8 @@ GET /lua
 --- ignore_response
 --- error_log
 API disabled in the context of header_filter_by_lua*
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -730,7 +776,8 @@ hello world
 --- config
     location /t {
         header_filter_by_lua '
-            function foo()
+            local bar
+            local function foo()
                 bar()
             end
 
@@ -751,6 +798,8 @@ stack traceback:
 in function 'error'
 in function 'bar'
 in function 'foo'
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -769,6 +818,8 @@ GET /lua?a=1&b=2
 --- ignore_response
 --- error_log eval
 qr/failed to load external Lua file ".*?test2\.lua": cannot open .*? No such file or directory/
+--- curl_error eval
+qr/curl: \(52\) Empty reply from server|curl: \(92\) HTTP\/2 stream 0 was not closed cleanly|curl: \(95\) HTTP\/3 stream 0 reset by server/
 
 
 
@@ -794,3 +845,83 @@ GET /t
 --- error_code: 302
 --- no_error_log
 [error]
+
+
+
+=== TEST 42: syntax error in header_filter_by_lua_block
+--- config
+    location /lua {
+
+        header_filter_by_lua_block {
+            'for end';
+        }
+        content_by_lua_block {
+            ngx.say("Hello world")
+        }
+    }
+--- request
+GET /lua
+--- ignore_response
+--- error_log
+failed to load inlined Lua code: header_filter_by_lua(nginx.conf:41):2: unexpected symbol near ''for end''
+--- no_error_log
+no_such_error
+--- curl_error eval
+qr/curl: \(56\) Failure when receiving data from the peer/
+
+
+
+=== TEST 43: syntax error in second content_by_lua_block
+--- config
+    location /foo {
+        header_filter_by_lua_block {
+            'for end';
+        }
+        content_by_lua_block {
+            ngx.say("Hello world")
+        }
+    }
+
+    location /lua {
+        header_filter_by_lua_block {
+            'for end';
+        }
+        content_by_lua_block {
+            ngx.say("Hello world")
+        }
+    }
+--- request
+GET /lua
+--- ignore_response
+--- error_log
+failed to load inlined Lua code: header_filter_by_lua(nginx.conf:49):2: unexpected symbol near ''for end''
+--- no_error_log
+no_such_error
+--- curl_error eval
+qr/curl: \(56\) Failure when receiving data from the peer/
+
+
+
+=== TEST 44: syntax error in /tmp/12345678901234567890123456789012345.conf
+--- config
+    location /lua {
+        content_by_lua_block {
+            ngx.say("Hello world")
+        }
+
+        include /tmp/12345678901234567890123456789012345.conf;
+    }
+--- user_files
+>>> /tmp/12345678901234567890123456789012345.conf
+    header_filter_by_lua_block {
+        'for end';
+    }
+--- request
+GET /lua
+--- ignore_response
+--- error_log
+failed to load inlined Lua code: header_filter_by_lua(...901234567890123456789012345.conf:1):2: unexpected symbol near ''for end''
+--- no_error_log
+[alert]
+--- curl_error eval
+qr/curl: \(56\) Failure when receiving data from the peer/
