@@ -3,7 +3,7 @@
 use Test::Nginx::Socket::Lua;
 
 #worker_connections(1014);
-#master_on();
+master_on();
 workers(5);
 #log_level('warn');
 
@@ -55,7 +55,7 @@ workers: 5
 
 === TEST 3: init_by_lua + module (github #681)
 --- http_config
-    lua_package_path "t/servroot/html/?.lua;;";
+    lua_package_path "$TEST_NGINX_SERVER_ROOT/html/?.lua;;";
 
     init_by_lua_block {
         local blah = require "file"

@@ -19,7 +19,13 @@ our $StapScript = $t::StapThread::StapScript;
 
 repeat_each(2);
 
-plan tests => repeat_each() * (blocks() * 4 + 15);
+if (defined $ENV{TEST_NGINX_USE_HTTP3}) {
+    plan(skip_all => "HTTP3 does not support on_abort");
+} elsif (defined $ENV{TEST_NGINX_USE_HTTP2}) {
+    plan(skip_all => "HTTP2 does not support on_abort");
+} else {
+    plan tests => repeat_each() * (blocks() * 4 + 15);
+}
 
 $ENV{TEST_NGINX_RESOLVER} ||= '8.8.8.8';
 $ENV{TEST_NGINX_MEMCACHED_PORT} ||= '11211';
@@ -417,7 +423,7 @@ main handler done
 
 
 
-=== TEST 9: regsiter on_abort callback but no client abortion
+=== TEST 9: register on_abort callback but no client abortion
 --- config
     location /t {
         lua_check_client_abort on;
@@ -558,7 +564,7 @@ on abort called
 
 
 
-=== TEST 12: regsiter on_abort callback but no client abortion (uthread)
+=== TEST 12: register on_abort callback but no client abortion (uthread)
 --- config
     location /t {
         lua_check_client_abort on;
@@ -603,7 +609,7 @@ main handler done
 
 
 
-=== TEST 13: regsiter on_abort callback multiple times
+=== TEST 13: register on_abort callback multiple times
 --- config
     location /t {
         lua_check_client_abort on;

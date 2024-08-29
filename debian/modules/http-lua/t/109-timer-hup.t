@@ -6,6 +6,10 @@ BEGIN {
     if ($ENV{TEST_NGINX_CHECK_LEAK}) {
         $SkipReason = "unavailable for the hup tests";
 
+    } elsif (defined $ENV{TEST_NGINX_USE_HTTP3}) {
+        #os.execute("kill -HUP " .. pid)
+        $SkipReason = "send HUP relaod signal by self make two workers with same id";
+
     } else {
         $ENV{TEST_NGINX_USE_HUP} = 1;
         undef $ENV{TEST_NGINX_USE_STAP};
@@ -46,7 +50,7 @@ __DATA__
 --- config
     location /t {
         content_by_lua '
-            local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+            local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
             if not f then
                 ngx.say("failed to open nginx.pid: ", err)
                 return
@@ -99,7 +103,7 @@ timer prematurely expired: true
 --- config
     location /t {
         content_by_lua '
-            local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+            local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
             if not f then
                 ngx.say("failed to open nginx.pid: ", err)
                 return
@@ -163,7 +167,7 @@ timer prematurely expired: true
 --- config
     location /t {
         content_by_lua '
-            local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+            local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
             if not f then
                 ngx.say("failed to open nginx.pid: ", err)
                 return
@@ -219,7 +223,7 @@ failed to register a new timer after reload: process exiting, context: ngx.timer
 --- config
     location /t {
         content_by_lua '
-            local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+            local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
             if not f then
                 ngx.say("failed to open nginx.pid: ", err)
                 return
@@ -284,7 +288,7 @@ g: exiting=true
 --- config
     location /t {
         content_by_lua '
-            local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+            local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
             if not f then
                 ngx.say("failed to open nginx.pid: ", err)
                 return
@@ -336,7 +340,7 @@ lua found 100 pending timers
     lua_shared_dict test_dict 1m;
 
     server {
-        listen 12355;
+        listen $TEST_NGINX_RAND_PORT_1;
         location = /foo {
             echo 'foo';
         }
@@ -350,7 +354,7 @@ lua found 100 pending timers
 
             -- Connect the socket
             local sock = ngx.socket.tcp()
-            local ok,err = sock:connect("127.0.0.1", 12355)
+            local ok,err = sock:connect("127.0.0.1", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.log(ngx.ERR, err)
             end
@@ -363,7 +367,7 @@ lua found 100 pending timers
                 local line, err = sock:receive("*l")
             until not line or string.find(line, "^%s*$")
 
-            function foo()
+            local function foo()
                 repeat
                     -- Get and read chunk
                     local line, err = sock:receive("*l")
@@ -379,7 +383,7 @@ lua found 100 pending timers
                 until len == 0
             end
 
-            co = coroutine.create(foo)
+            local co = coroutine.create(foo)
             repeat
                 local chunk = select(2,coroutine.resume(co))
             until chunk == nil
@@ -399,7 +403,7 @@ lua found 100 pending timers
                 end
                 local ok, err = ngx.timer.at(1, background_thread)
 
-                local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+                local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
                 if not f then
                     ngx.say("failed to open nginx.pid: ", err)
                     return
@@ -453,7 +457,7 @@ lua found 1 pending timers
                 end
 
                 if kill then
-                    local f, err = io.open("t/servroot/logs/nginx.pid", "r")
+                    local f, err = io.open("$TEST_NGINX_SERVER_ROOT/logs/nginx.pid", "r")
                     if not f then
                         ngx.log(ngx.ERR, "failed to open nginx.pid: ", err)
                         return
