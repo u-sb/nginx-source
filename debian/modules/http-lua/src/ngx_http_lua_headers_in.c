@@ -56,13 +56,10 @@ static ngx_http_lua_set_header_t  ngx_http_lua_set_handlers[] = {
                  offsetof(ngx_http_headers_in_t, if_modified_since),
                  ngx_http_set_builtin_header },
 
-#if defined(nginx_version) && nginx_version >= 9002
     { ngx_string("If-Unmodified-Since"),
                  offsetof(ngx_http_headers_in_t, if_unmodified_since),
                  ngx_http_set_builtin_header },
-#endif
 
-#if defined(nginx_version) && nginx_version >= 1003003
     { ngx_string("If-Match"),
                  offsetof(ngx_http_headers_in_t, if_match),
                  ngx_http_set_builtin_header },
@@ -70,7 +67,6 @@ static ngx_http_lua_set_header_t  ngx_http_lua_set_handlers[] = {
     { ngx_string("If-None-Match"),
                  offsetof(ngx_http_headers_in_t, if_none_match),
                  ngx_http_set_builtin_header },
-#endif
 
     { ngx_string("User-Agent"),
                  offsetof(ngx_http_headers_in_t, user_agent),
@@ -104,11 +100,9 @@ static ngx_http_lua_set_header_t  ngx_http_lua_set_handlers[] = {
                  offsetof(ngx_http_headers_in_t, expect),
                  ngx_http_set_builtin_header },
 
-#if defined(nginx_version) && nginx_version >= 1003013
     { ngx_string("Upgrade"),
                  offsetof(ngx_http_headers_in_t, upgrade),
                  ngx_http_set_builtin_header },
-#endif
 
 #if (NGX_HTTP_GZIP)
     { ngx_string("Accept-Encoding"),
@@ -286,6 +280,9 @@ new_header:
 
     h->key = hv->key;
     h->value = *value;
+#if defined(nginx_version) && nginx_version >= 1023000
+    h->next = NULL;
+#endif
 
     h->lowcase_key = ngx_pnalloc(r->pool, h->key.len);
     if (h->lowcase_key == NULL) {
@@ -352,7 +349,7 @@ ngx_http_lua_validate_host(ngx_str_t *host, ngx_pool_t *pool, ngx_uint_t alloc)
     enum {
         sw_usual = 0,
         sw_literal,
-        sw_rest
+        sw_rest,
     } state;
 
     dot_pos = host->len;
@@ -371,6 +368,7 @@ ngx_http_lua_validate_host(ngx_str_t *host, ngx_pool_t *pool, ngx_uint_t alloc)
             if (dot_pos == i - 1) {
                 return NGX_DECLINED;
             }
+
             dot_pos = i;
             break;
 
@@ -438,9 +436,13 @@ static ngx_int_t
 ngx_http_set_host_header(ngx_http_request_t *r, ngx_http_lua_header_val_t *hv,
     ngx_str_t *value)
 {
-    ngx_str_t host;
+    ngx_str_t                    host;
+    ngx_http_lua_main_conf_t    *lmcf;
+    ngx_http_variable_value_t   *var;
 
     dd("server new value len: %d", (int) value->len);
+
+    lmcf = ngx_http_get_module_main_conf(r, ngx_http_lua_module);
 
     if (value->len) {
         host= *value;
@@ -454,6 +456,10 @@ ngx_http_set_host_header(ngx_http_request_t *r, ngx_http_lua_header_val_t *hv,
     } else {
         r->headers_in.server = *value;
     }
+
+    var = &r->variables[lmcf->host_var_index];
+    var->valid = 0;
+    var->not_found = 0;
 
     return ngx_http_set_builtin_header(r, hv, value);
 }
@@ -566,7 +572,7 @@ ngx_http_set_content_length_header(ngx_http_request_t *r,
         return ngx_http_clear_content_length_header(r, hv, value);
     }
 
-    len = ngx_atosz(value->data, value->len);
+    len = ngx_atoof(value->data, value->len);
     if (len == NGX_ERROR) {
         return NGX_ERROR;
     }
@@ -585,24 +591,21 @@ ngx_http_set_builtin_multi_header(ngx_http_request_t *r,
 {
 #if defined(nginx_version) && nginx_version >= 1023000
     ngx_table_elt_t  **headers, **ph, *h;
-    int                nelts;
-
-    if (r->headers_out.status == 400 || r->headers_in.headers.last == NULL) {
-        /* must be a 400 Bad Request */
-        return NGX_OK;
-    }
 
     headers = (ngx_table_elt_t **) ((char *) &r->headers_in + hv->offset);
 
-    if (*headers) {
-        nelts = 0;
+    if (!hv->no_override && *headers != NULL) {
+#if defined(DDEBUG) && (DDEBUG)
+        int  nelts = 0;
+
         for (h = *headers; h; h = h->next) {
             nelts++;
         }
 
-        *headers = NULL;
-
         dd("clear multi-value headers: %d", nelts);
+#endif
+
+        *headers = NULL;
     }
 
     if (ngx_http_set_header_helper(r, hv, value, &h) == NGX_ERROR) {
@@ -629,11 +632,6 @@ ngx_http_set_builtin_multi_header(ngx_http_request_t *r,
 #else
     ngx_array_t       *headers;
     ngx_table_elt_t  **v, *h;
-
-    if (r->headers_out.status == 400 || r->headers_in.headers.last == NULL) {
-        /* must be a 400 Bad Request */
-        return NGX_OK;
-    }
 
     headers = (ngx_array_t *) ((char *) &r->headers_in + hv->offset);
 
@@ -707,12 +705,28 @@ ngx_http_lua_set_input_header(ngx_http_request_t *r, ngx_str_t key,
 {
     ngx_http_lua_header_val_t         hv;
     ngx_http_lua_set_header_t        *handlers = ngx_http_lua_set_handlers;
-
+    ngx_int_t                         rc;
     ngx_uint_t                        i;
 
     dd("set header value: %.*s", (int) value.len, value.data);
 
-    hv.hash = ngx_hash_key_lc(key.data, key.len);
+    rc = ngx_http_lua_copy_escaped_header(r, &key, 1);
+    if (rc != NGX_OK) {
+        return NGX_ERROR;
+    }
+
+    rc = ngx_http_lua_copy_escaped_header(r, &value, 0);
+    if (rc != NGX_OK) {
+        return NGX_ERROR;
+    }
+
+    if (value.len > 0) {
+        hv.hash = ngx_hash_key_lc(key.data, key.len);
+
+    } else {
+        hv.hash = 0;
+    }
+
     hv.key = key;
 
     hv.offset = 0;
@@ -798,6 +812,7 @@ ngx_http_lua_rm_header_helper(ngx_list_t *l, ngx_list_part_t *cur,
                         if (part->next == NULL) {
                             return NGX_ERROR;
                         }
+
                         part = part->next;
                     }
 
@@ -842,6 +857,7 @@ ngx_http_lua_rm_header_helper(ngx_list_t *l, ngx_list_part_t *cur,
                     if (part->next == NULL) {
                         return NGX_ERROR;
                     }
+
                     part = part->next;
                 }
 
