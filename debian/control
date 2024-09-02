@@ -15,7 +15,7 @@ Build-Depends: debhelper (>= 10),
                libmaxminddb-dev,
                libmhash-dev,
                libpam0g-dev,
-               libpcre3-dev,
+               libpcre2-dev,
                libperl-dev,
                libssl-dev,
                libxslt1-dev,
@@ -347,6 +347,7 @@ Description: PAM authentication module for Nginx
 Package: libnginx-mod-http-lua
 Architecture: any
 Depends: libnginx-mod-http-ndk (= ${binary:Version}),
+         lua-resty-core,
          ${misc:Depends},
          ${shlibs:Depends},
 Recommends: nginx,
