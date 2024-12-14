@@ -1,3 +1,18 @@
+nginx (1.27.3-1) unstable; urgency=medium
+
+  * New upstream version
+  * Fix some issues in DAV extention
+
+  [ Miao Wang ]
+  * dh_nginx: support auto generating module config files
+  * adding a new nginx-dev package including necessary headers and debhelper
+    scripts to build and package a 3rd party module.
+  * d/p/0002-Make-sure-signature-stays-the-same-in-all-nginx-buil.patch
+    removed, because feature already implemented with --with-compat configure
+    option since 1.11.5
+
+ -- Xinyue Lu <i@7086.in>  Sat, 14 Dec 2024 00:00:00 -0700
+
 nginx (1.27.2-1) unstable; urgency=medium
 
   * New upstream version
