@@ -125,12 +125,13 @@ ngx_quic_keys_set_initial_secret(ngx_quic_keys_t *keys, ngx_str_t *secret,
     ngx_quic_secret_t   *client, *server;
     ngx_quic_ciphers_t   ciphers;
 
-    static const uint8_t salt[20] =
-        "\x38\x76\x2c\xf7\xf5\x59\x34\xb3\x4d\x17"
-        "\x9a\xe6\xa4\xc8\x0c\xad\xcc\xbb\x7f\x0a";
+    static const uint8_t salt[20] = {
+        0x38, 0x76, 0x2c, 0xf7, 0xf5, 0x59, 0x34, 0xb3, 0x4d, 0x17,
+        0x9a, 0xe6, 0xa4, 0xc8, 0x0c, 0xad, 0xcc, 0xbb, 0x7f, 0x0a
+    };
 
-    client = &keys->secrets[ssl_encryption_initial].client;
-    server = &keys->secrets[ssl_encryption_initial].server;
+    client = &keys->secrets[NGX_QUIC_ENCRYPTION_INITIAL].client;
+    server = &keys->secrets[NGX_QUIC_ENCRYPTION_INITIAL].server;
 
     /*
      * RFC 9001, section 5.  Packet Protection
@@ -655,8 +656,8 @@ ngx_quic_crypto_hp_cleanup(ngx_quic_secret_t *s)
 
 ngx_int_t
 ngx_quic_keys_set_encryption_secret(ngx_log_t *log, ngx_uint_t is_write,
-    ngx_quic_keys_t *keys, enum ssl_encryption_level_t level,
-    const SSL_CIPHER *cipher, const uint8_t *secret, size_t secret_len)
+    ngx_quic_keys_t *keys, ngx_uint_t level, const SSL_CIPHER *cipher,
+    const uint8_t *secret, size_t secret_len)
 {
     ngx_int_t            key_len;
     ngx_str_t            secret_str;
@@ -721,8 +722,8 @@ ngx_quic_keys_set_encryption_secret(ngx_log_t *log, ngx_uint_t is_write,
 
 
 ngx_uint_t
-ngx_quic_keys_available(ngx_quic_keys_t *keys,
-    enum ssl_encryption_level_t level, ngx_uint_t is_write)
+ngx_quic_keys_available(ngx_quic_keys_t *keys, ngx_uint_t level,
+    ngx_uint_t is_write)
 {
     if (is_write == 0) {
         return keys->secrets[level].client.ctx != NULL;
@@ -733,8 +734,7 @@ ngx_quic_keys_available(ngx_quic_keys_t *keys,
 
 
 void
-ngx_quic_keys_discard(ngx_quic_keys_t *keys,
-    enum ssl_encryption_level_t level)
+ngx_quic_keys_discard(ngx_quic_keys_t *keys, ngx_uint_t level)
 {
     ngx_quic_secret_t  *client, *server;
 
@@ -764,7 +764,7 @@ ngx_quic_keys_switch(ngx_connection_t *c, ngx_quic_keys_t *keys)
 {
     ngx_quic_secrets_t  *current, *next, tmp;
 
-    current = &keys->secrets[ssl_encryption_application];
+    current = &keys->secrets[NGX_QUIC_ENCRYPTION_APPLICATION];
     next = &keys->next_key;
 
     ngx_quic_crypto_cleanup(&current->client);
@@ -793,7 +793,7 @@ ngx_quic_keys_update(ngx_event_t *ev)
     qc = ngx_quic_get_connection(c);
     keys = qc->keys;
 
-    current = &keys->secrets[ssl_encryption_application];
+    current = &keys->secrets[NGX_QUIC_ENCRYPTION_APPLICATION];
     next = &keys->next_key;
 
     ngx_log_debug0(NGX_LOG_DEBUG_EVENT, c->log, 0, "quic key update");
@@ -958,8 +958,9 @@ ngx_quic_create_retry_packet(ngx_quic_header_t *pkt, ngx_str_t *res)
     /* 5.8.  Retry Packet Integrity */
     static ngx_quic_md_t  key = ngx_quic_md(
         "\xbe\x0c\x69\x0b\x9f\x66\x57\x5a\x1d\x76\x6b\x54\xe3\x68\xc8\x4e");
-    static const u_char   nonce[NGX_QUIC_IV_LEN] =
-        "\x46\x15\x99\xd3\x5d\x63\x2b\xf2\x23\x98\x25\xbb";
+    static const u_char   nonce[NGX_QUIC_IV_LEN] = {
+        0x46, 0x15, 0x99, 0xd3, 0x5d, 0x63, 0x2b, 0xf2, 0x23, 0x98, 0x25, 0xbb
+    };
     static ngx_str_t      in = ngx_string("");
 
     ad.data = res->data;
