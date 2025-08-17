@@ -211,7 +211,8 @@ struct full_subscriber_s {
   unsigned                awaiting_destruction:1;
 };// full_subscriber_t
 
-static void empty_handler() { }
+static void empty_handler1(struct subscriber_s * sub, void * d) { }
+static void empty_handler2(void * d) { }
 
 static ngx_int_t websocket_send_frame(full_subscriber_t *fsub, const u_char opcode, off_t len, ngx_chain_t *chain);
 static void set_buf_to_str(ngx_buf_t *buf, const ngx_str_t *str);
@@ -277,7 +278,7 @@ static ngx_int_t websocket_finalize_request(full_subscriber_t *fsub) {
   ngx_http_request_t *r = sub->request;
   
   if(fsub->cln) {
-    fsub->cln->handler = (ngx_http_cleanup_pt )empty_handler;
+    fsub->cln->handler = (ngx_http_cleanup_pt )empty_handler2;
   }
   
   if(sub->cf->unsubscribe_request_url && sub->enqueued) {
@@ -740,7 +741,7 @@ subscriber_t *websocket_subscriber_create(ngx_http_request_t *r, nchan_msg_id_t 
   
   ngx_memzero(&fsub->deflate, sizeof(fsub->deflate));
   
-  fsub->dequeue_handler = empty_handler;
+  fsub->dequeue_handler = empty_handler1;
   fsub->dequeue_handler_data = NULL;
   fsub->awaiting_destruction = 0;
   
