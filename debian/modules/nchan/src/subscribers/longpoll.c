@@ -16,7 +16,8 @@ ngx_int_t memstore_slot(void);
 
 static const subscriber_t new_longpoll_sub;
 
-static void empty_handler() { }
+static void empty_handler1(struct subscriber_s * subscriber, void * v) { }
+static void empty_handler2(void * v) { }
 
 static void sudden_abort_handler(subscriber_t *sub) {
   if(sub->request && sub->status != DEAD) {
@@ -55,7 +56,7 @@ subscriber_t *longpoll_subscriber_create(ngx_http_request_t *r, nchan_msg_id_t *
   
   nchan_subscriber_init_timeout_timer(&fsub->sub, &fsub->data.timeout_ev);
   
-  fsub->data.dequeue_handler = empty_handler;
+  fsub->data.dequeue_handler = empty_handler1;
   fsub->data.dequeue_handler_data = NULL;
   fsub->data.already_responded = 0;
   fsub->data.awaiting_destruction = 0;
@@ -275,7 +276,7 @@ static ngx_int_t longpoll_respond_message(subscriber_t *self, nchan_msg_t *msg) 
   }
   if(!cf->longpoll_multimsg) {
     //disable abort handler
-    fsub->data.cln->handler = empty_handler;
+    fsub->data.cln->handler = empty_handler2;
     
     assert(fsub->data.already_responded != 1);
     fsub->data.already_responded = 1;
@@ -323,7 +324,7 @@ static ngx_int_t longpoll_multipart_respond(full_subscriber_t *fsub) {
   nchan_longpoll_multimsg_t *first, *cur;
   
   //disable abort handler
-  fsub->data.cln->handler = empty_handler;
+  fsub->data.cln->handler = empty_handler2;
   
   first = fsub->data.multimsg_first;
   
@@ -436,7 +437,7 @@ static ngx_int_t longpoll_respond_status(subscriber_t *self, ngx_int_t status_co
   nchan_set_msgid_http_response_headers(r, NULL, &self->last_msgid);
   
   //disable abort handler
-  fsub->data.cln->handler = empty_handler;
+  fsub->data.cln->handler = empty_handler2;
   
   nchan_respond_status(r, status_code, status_line, status_body, 0);
 
@@ -449,7 +450,7 @@ ngx_int_t subscriber_respond_unqueued_status(full_subscriber_t *fsub, ngx_int_t 
   nchan_loc_conf_t       *cf = fsub->sub.cf;
   nchan_request_ctx_t    *ctx;
   
-  fsub->data.cln->handler = (ngx_http_cleanup_pt )empty_handler;
+  fsub->data.cln->handler = (ngx_http_cleanup_pt )empty_handler2;
   fsub->data.finalize_request = 0;
   fsub->sub.status = DEAD;
   fsub->sub.fn->dequeue(&fsub->sub);
@@ -462,7 +463,7 @@ ngx_int_t subscriber_respond_unqueued_status(full_subscriber_t *fsub, ngx_int_t 
 
 void subscriber_maybe_dequeue_after_status_response(full_subscriber_t *fsub, ngx_int_t status_code) {
   if((status_code >=400 && status_code < 600) || status_code == NGX_HTTP_NOT_MODIFIED) {
-    fsub->data.cln->handler = (ngx_http_cleanup_pt )empty_handler;
+    fsub->data.cln->handler = (ngx_http_cleanup_pt )empty_handler2;
     fsub->sub.request->keepalive=0;
     fsub->data.finalize_request=1;
     fsub->sub.request->headers_out.status = status_code;
