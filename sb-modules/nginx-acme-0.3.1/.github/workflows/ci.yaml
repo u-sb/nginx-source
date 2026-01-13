@@ -1,0 +1,180 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  CARGO_TERM_COLOR: 'always'
+  RUST_BACKTRACE: '1'
+  AWSLC_SOURCE_DIR: ${{ github.workspace }}/aws-lc
+  BORINGSSL_SOURCE_DIR: ${{ github.workspace }}/boringssl
+  NGINX_SOURCE_DIR: nginx
+
+jobs:
+  rust-version:
+    name: Minimal supported Rust version
+    outputs:
+      version: ${{ steps.read_version.outputs.msrv }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - id: read_version
+        run: |
+          awk -F '=' \
+            '/^rust-version[[:space:]]*=/ { gsub(/([" ]|#.*)/,"",$2); print ("msrv=" $2) }' \
+            Cargo.toml \
+          | tee -a "$GITHUB_OUTPUT"
+
+  unix:
+    needs: rust-version
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu
+        rust-version:
+          - stable
+        nginx-ref:
+          - master
+          - stable-1.28
+        build:
+          - debug
+          - debug-static
+          - release
+          - aws-lc
+          - aws-lc-static
+          - boringssl
+          - boringssl-static
+
+        exclude: # an excluded configuration only has to be a partial match
+          - nginx-ref: stable-1.28 # AWS-LC is not supported in stable-1.28
+            build: aws-lc
+          - nginx-ref: stable-1.28 # AWS-LC is not supported in stable-1.28
+            build: aws-lc-static
+
+        include:
+          # minimal supported nginx version
+          - runner: ubuntu
+            rust-version: stable
+            nginx-ref: stable-1.22
+            build: debug
+
+          # minimal supported Rust version
+          - runner: ubuntu
+            rust-version: ${{ needs.rust-version.outputs.version }}
+            nginx-ref: stable-1.28
+            build: debug
+
+          - runner: macos
+            rust-version: stable
+            nginx-ref: stable-1.28
+            build: debug
+
+    env:
+      testTarget: >-
+        ${{ (matrix.nginx-ref == 'stable-1.28' && matrix.build == 'debug')
+          && 'full-test'
+          || 'test'
+        }}
+
+    runs-on: ${{ matrix.runner }}-latest
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ matrix.nginx-ref }}
+          repository: 'nginx/nginx'
+          path: 'nginx'
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: 'nginx/nginx-tests'
+          path: 'nginx/tests'
+
+      - uses: oprypin/find-latest-tag@dd2729fe78b0bb55523ae2b2a310c6773a652bd1 # v1.1.2
+        id: aws-lc-latest
+        if: startsWith(matrix.build, 'aws-lc')
+        with:
+          repository: 'aws/aws-lc'
+
+      - uses: oprypin/find-latest-tag@dd2729fe78b0bb55523ae2b2a310c6773a652bd1 # v1.1.2
+        id: boringssl-latest
+        if: startsWith(matrix.build, 'boringssl')
+        with:
+          repository: 'google/boringssl'
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        if: startsWith(matrix.build, 'aws-lc')
+        with:
+          ref: ${{ steps.aws-lc-latest.outputs.tag }}
+          repository: 'aws/aws-lc'
+          path: ${{ env.AWSLC_SOURCE_DIR }}
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        if: startsWith(matrix.build, 'boringssl')
+        with:
+          ref: ${{ steps.boringssl-latest.outputs.tag }}
+          repository: 'google/boringssl'
+          path: ${{ env.BORINGSSL_SOURCE_DIR }}
+
+      - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9
+        with:
+          toolchain: ${{ matrix.rust-version }}
+          components: clippy, rustfmt
+
+      - uses: perl-actions/install-with-cpm@8b1a9840b26cc3885ae2889749a48629be2501b0 # v1.9
+        with:
+          install: |
+            IO::Socket::INET6
+            IO::Socket::SSL
+            TimeDate
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            bin/pebble
+            nginx/objs/**/CACHEDIR.TAG
+            nginx/objs/**/ngx-debug
+            nginx/objs/**/ngx-release
+            target/
+          key: ${{ runner.os }}-nginx-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-nginx-
+
+      - name: download pebble
+        run: |
+          TEST_NGINX_PEBBLE_BINARY=$(perl build/get-pebble.pl)
+          echo TEST_NGINX_PEBBLE_BINARY="$TEST_NGINX_PEBBLE_BINARY" >> "$GITHUB_ENV"
+
+      - name: build
+        id: build
+        run: make BUILD=${{ matrix.build }} -j $(nproc) build
+
+      - name: check
+        # always run if build succeeds
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: make BUILD=${{ matrix.build }} check
+
+      - name: run tests
+        # always run if build succeeds
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: make BUILD=${{ matrix.build }} TEST_PREREQ= ${{ env.testTarget }}
+
+      - name: run unittests
+        # unittests cannot link with Rust >= 1.89, so we limit execution to MSRV
+        if: >-
+          ${{ !cancelled() && steps.build.outcome == 'success' &&
+              matrix.rust-version == needs.rust-version.outputs.version
+          }}
+        run: make BUILD=${{ matrix.build }} unittest

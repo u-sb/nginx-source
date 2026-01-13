@@ -1,0 +1,92 @@
+name: sanitizers
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  CARGO_TERM_COLOR: 'always'
+  RUST_BACKTRACE: '1'
+  NGINX_SOURCE_DIR: nginx
+  BUILDREQUIRES: >-
+    openssl-devel pcre2-devel zlib-devel
+    cargo rust-src rustfmt
+    clang compiler-rt llvm
+    git-core
+    make openssl patch which
+    perl-Digest-SHA
+    perl-File-Copy
+    perl-FindBin
+    perl-IO-Socket-INET6
+    perl-IO-Socket-SSL
+    perl-Test-Harness
+    perl-Test-Simple
+    perl-TimeDate
+    perl-lib
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: ghcr.io/almalinux/almalinux:10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        nginx-ref:
+          # master
+          - stable-1.28
+
+    steps:
+      - name: Install dependencies
+        run:  dnf install -y ${BUILDREQUIRES}
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ matrix.nginx-ref }}
+          repository: 'nginx/nginx'
+          path: 'nginx'
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: 'nginx/nginx-tests'
+          path: 'nginx/tests'
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            bin/pebble
+            nginx/objs/**/CACHEDIR.TAG
+            nginx/objs/**/ngx-debug
+            nginx/objs/**/ngx-release
+          key: ${{ runner.os }}-cargo-asan-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-asan-
+
+      - name: download pebble
+        run: |
+          TEST_NGINX_PEBBLE_BINARY=$(perl build/get-pebble.pl)
+          echo TEST_NGINX_PEBBLE_BINARY="$TEST_NGINX_PEBBLE_BINARY" >> "$GITHUB_ENV"
+
+      - name: Configure and build nginx
+        run: |
+          make -j$(nproc) BUILD=sanitize build
+
+      - name: Run tests
+        env:
+          # `container` job steps are running as root, and thus all the files
+          # created by the test scripts are owned by root.
+          # But the worker processes are spawned as "nobody" by default,
+          # resulting in permission errors.
+          TEST_NGINX_GLOBALS: >-
+              user root;
+        run: |
+          make -j$(nproc) BUILD=sanitize TEST_PREREQ= test
