@@ -1,0 +1,16 @@
+diff a/src/http/ngx_http_special_response.c b/src/http/ngx_http_special_response.c	(rejected hunks)
+@@ -153,6 +153,14 @@ static char ngx_http_error_406_page[] =
+ ;
+ 
+ 
++static char ngx_http_error_407_page[] =
++"<html>" CRLF
++"<head><title>407 Proxy Authentication Required</title></head>" CRLF
++"<body>" CRLF
++"<center><h1>407 Proxy Authentication Required</h1></center>" CRLF
++;
++
++
+ static char ngx_http_error_408_page[] =
+ "<html>" CRLF
+ "<head><title>408 Request Time-out</title></head>" CRLF
