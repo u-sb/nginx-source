@@ -1,0 +1,175 @@
+// Copyright (c) F5, Inc.
+//
+// This source code is licensed under the Apache License, Version 2.0 license found in the
+// LICENSE file in the root directory of this source tree.
+
+use core::ops::{Deref, DerefMut};
+use core::ptr::NonNull;
+use std::io::{self, Read};
+
+use nginx_sys::{ngx_conf_full_name, ngx_conf_t, ngx_log_t, ngx_pool_t, ngx_str_t, ngx_uint_t};
+use ngx::allocator::{AllocError, Allocator, Box};
+use ngx::core::{Pool, Status};
+
+use crate::conf::ext::NgxConfExt;
+
+pub mod future;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Either<L, R> {
+    Left(L),
+    Right(R),
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum NgxProcess {
+    Single,
+    Master,
+    Signaller,
+    Worker(ngx_uint_t),
+    Helper,
+}
+
+pub fn ngx_process() -> NgxProcess {
+    let process = unsafe { nginx_sys::ngx_process } as u32;
+    match process {
+        nginx_sys::NGX_PROCESS_SINGLE => NgxProcess::Single,
+        nginx_sys::NGX_PROCESS_MASTER => NgxProcess::Master,
+        nginx_sys::NGX_PROCESS_SIGNALLER => NgxProcess::Signaller,
+        nginx_sys::NGX_PROCESS_WORKER => NgxProcess::Worker(unsafe { nginx_sys::ngx_worker }),
+        #[cfg(not(windows))]
+        nginx_sys::NGX_PROCESS_HELPER => NgxProcess::Helper,
+        _ => unreachable!("unknown process type {}", process),
+    }
+}
+
+pub fn read_to_ngx_str(cf: &ngx_conf_t, path: &ngx_str_t) -> Result<ngx_str_t, io::Error> {
+    let mut path = *path;
+    if !Status(unsafe { ngx_conf_full_name(cf.cycle, &mut path, 1) }).is_ok() {
+        return Err(io::ErrorKind::OutOfMemory.into());
+    };
+
+    let path = path.to_str().map_err(io::Error::other)?;
+    let mut file = std::fs::File::open(path)?;
+
+    let buf = match file.metadata().map(|x| x.len() as usize) {
+        Ok(len) => {
+            let mut buf = ngx_str_t { data: cf.pool().alloc_unaligned(len).cast(), len };
+            if buf.data.is_null() {
+                return Err(io::ErrorKind::OutOfMemory.into());
+            }
+
+            file.read_exact(buf.as_bytes_mut())?;
+            buf
+        }
+        _ => {
+            let mut buf = std::vec::Vec::new();
+            file.read_to_end(&mut buf)?;
+
+            unsafe { ngx_str_t::from_bytes(cf.pool, &buf) }.ok_or(io::ErrorKind::OutOfMemory)?
+        }
+    };
+
+    Ok(buf)
+}
+
+pub fn ngx_str_trim(val: &mut ngx_str_t) {
+    let b = val.as_bytes();
+    let start = b.iter().take_while(|x| x.is_ascii_whitespace()).count();
+    let end = b.iter().rev().take_while(|x| x.is_ascii_whitespace()).count();
+
+    val.len -= start + end;
+    val.data = unsafe { val.data.add(start) };
+}
+
+pub unsafe fn copy_bytes_with_nul(
+    pool: &Pool,
+    src: impl AsRef<[u8]>,
+) -> Result<ngx_str_t, AllocError> {
+    let src = src.as_ref();
+
+    let p: *mut u8 = pool.alloc_unaligned(src.len() + 1).cast();
+    if p.is_null() {
+        return Err(AllocError);
+    }
+
+    p.copy_from_nonoverlapping(src.as_ptr(), src.len());
+    p.add(src.len()).write(b'\0');
+
+    Ok(ngx_str_t { data: p, len: src.len() })
+}
+
+/// Clones unsized string `s` in the provided allocator.
+///
+/// This helper addresses a limitation in the standard library (and allocator-api2): currently,
+/// there's no interface to fallibly copy unsized boxed objects.
+pub fn new_boxed_str<A>(s: &str, alloc: A) -> Result<Box<str, A>, AllocError>
+where
+    A: Allocator,
+{
+    let mut values = Box::<[u8], A>::try_new_uninit_slice_in(s.len(), alloc)?;
+    unsafe {
+        core::ptr::copy_nonoverlapping(s.as_ptr(), values.as_mut_ptr().cast(), s.len());
+        let (raw, alloc) = Box::into_raw_with_allocator(values.assume_init());
+        Ok(Box::from_raw_in(raw as *mut str, alloc))
+    }
+}
+
+pub struct OwnedPool(Pool);
+impl OwnedPool {
+    pub fn new(size: usize, log: NonNull<ngx_log_t>) -> Result<Self, AllocError> {
+        let pool = unsafe { nginx_sys::ngx_create_pool(size, log.as_ptr()) };
+        if pool.is_null() {
+            return Err(AllocError);
+        }
+        Ok(Self(unsafe { Pool::from_ngx_pool(pool) }))
+    }
+
+    pub fn with_default_size(log: NonNull<ngx_log_t>) -> Result<Self, AllocError> {
+        Self::new(nginx_sys::NGX_DEFAULT_POOL_SIZE as usize, log)
+    }
+}
+
+impl AsRef<ngx_pool_t> for OwnedPool {
+    fn as_ref(&self) -> &ngx_pool_t {
+        self.0.as_ref()
+    }
+}
+
+impl AsMut<ngx_pool_t> for OwnedPool {
+    fn as_mut(&mut self) -> &mut ngx_pool_t {
+        self.0.as_mut()
+    }
+}
+
+impl AsRef<Pool> for OwnedPool {
+    fn as_ref(&self) -> &Pool {
+        &self.0
+    }
+}
+
+impl AsMut<Pool> for OwnedPool {
+    fn as_mut(&mut self) -> &mut Pool {
+        &mut self.0
+    }
+}
+
+impl Deref for OwnedPool {
+    type Target = Pool;
+
+    fn deref(&self) -> &Self::Target {
+        self.as_ref()
+    }
+}
+
+impl DerefMut for OwnedPool {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.as_mut()
+    }
+}
+
+impl Drop for OwnedPool {
+    fn drop(&mut self) {
+        unsafe { nginx_sys::ngx_destroy_pool(self.0.as_mut()) };
+    }
+}
