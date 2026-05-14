@@ -1,8 +1,0 @@
-edition = "2021"
-max_width = 100
-
-# unstable options:
-# comment_width = 100
-# group_imports = "StdExternalCrate"
-# format_strings = true
-# wrap_comments = true
