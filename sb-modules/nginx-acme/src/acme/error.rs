@@ -1,0 +1,187 @@
+// Copyright (c) F5, Inc.
+//
+// This source code is licensed under the Apache License, Version 2.0 license found in the
+// LICENSE file in the root directory of this source tree.
+
+use core::error::Error as StdError;
+use core::time::Duration;
+
+use ngx::allocator::{unsize_box, Box};
+use thiserror::Error;
+
+use super::resource::{AccountStatus, Problem};
+use super::solvers::SolverError;
+use crate::net::http::HttpClientError;
+
+#[derive(Debug, Error)]
+pub enum NewAccountError {
+    #[error("directory update failed ({0})")]
+    Directory(RequestError),
+
+    #[error("external account key required")]
+    ExternalAccount,
+
+    #[error(transparent)]
+    Protocol(#[from] Problem),
+
+    #[error("account request failed ({0})")]
+    Request(RequestError),
+
+    #[error("unexpected account status {0:?}")]
+    Status(AccountStatus),
+
+    #[error("no account URL in response")]
+    Url,
+}
+
+impl From<RequestError> for NewAccountError {
+    fn from(value: RequestError) -> Self {
+        match value {
+            RequestError::Protocol(problem) => Self::Protocol(problem),
+            _ => Self::Request(value),
+        }
+    }
+}
+
+impl NewAccountError {
+    pub fn is_invalid(&self) -> bool {
+        match self {
+            Self::ExternalAccount => true,
+            Self::Protocol(err) => err.is_bad_account(),
+            Self::Status(_) => true,
+            _ => false,
+        }
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum NewCertificateError {
+    #[error("unexpected authorization status {0:?}")]
+    AuthorizationStatus(super::resource::AuthorizationStatus),
+
+    #[error("unexpected challenge status {0:?}")]
+    ChallengeStatus(super::resource::ChallengeStatus),
+
+    #[error("csr generation failed ({0})")]
+    Csr(openssl::error::ErrorStack),
+
+    #[error("PEM_read_bio_X509() failed: {0}")]
+    InvalidCertificate(openssl::error::ErrorStack),
+
+    #[error("no certificate in the completed order")]
+    MissingCertificate,
+
+    #[error("no supported challenges")]
+    NoSupportedChallenges,
+
+    #[error("unexpected order status {0:?}")]
+    OrderStatus(super::resource::OrderStatus),
+
+    #[error("invalid or missing order URL")]
+    OrderUrl,
+
+    #[error(transparent)]
+    PrivateKey(#[from] crate::conf::pkey::PKeyGenError),
+
+    #[error(transparent)]
+    Protocol(#[from] Problem),
+
+    #[error(transparent)]
+    Request(RequestError),
+
+    #[error(transparent)]
+    Solver(#[from] SolverError),
+}
+
+impl From<RequestError> for NewCertificateError {
+    fn from(value: RequestError) -> Self {
+        match value {
+            RequestError::Protocol(problem) => Self::Protocol(problem),
+            _ => Self::Request(value),
+        }
+    }
+}
+
+impl NewCertificateError {
+    pub fn is_invalid(&self) -> bool {
+        match self {
+            Self::Protocol(err) => err.is_bad_order(),
+            _ => false,
+        }
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum RenewalInfoError {
+    #[error("invalid renewal info URI")]
+    InvalidUri,
+
+    #[error("invalid renewal window")]
+    InvalidWindow,
+
+    #[error("renewal information request failed: {0}")]
+    Request(#[from] RequestError),
+
+    #[error("renewal information is not supported")]
+    Unsupported,
+}
+
+#[derive(Debug, Error)]
+pub enum RedirectError {
+    #[error("invalid redirect URI")]
+    InvalidRedirectUri,
+
+    #[error("missing redirect URI")]
+    MissingRedirectUri,
+
+    #[error("too many redirects")]
+    TooManyRedirects,
+}
+
+#[derive(Debug, Error)]
+pub enum RequestError {
+    #[error(transparent)]
+    Client(Box<dyn StdError + Send + Sync>),
+
+    #[error("cannot deserialize problem document ({0})")]
+    ErrorFormat(#[from] serde_json::Error),
+
+    #[error("cannot build request ({0})")]
+    Http(#[from] http::Error),
+
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
+
+    #[error("cannot obtain replay nonce")]
+    Nonce,
+
+    #[error(transparent)]
+    Protocol(#[from] Problem),
+
+    #[error("rate limit exceeded, next attempt in {0:?}")]
+    RateLimited(Duration),
+
+    #[error("redirect failed: {0}")]
+    Redirect(#[from] RedirectError),
+
+    #[error("cannot serialize request ({0})")]
+    RequestFormat(serde_json::Error),
+
+    #[error("cannot deserialize response ({0})")]
+    ResponseFormat(serde_json::Error),
+
+    #[error("cannot sign request body ({0})")]
+    Sign(#[from] crate::jws::Error),
+
+    #[error("unexpected status code {0} in response")]
+    Status(http::StatusCode),
+}
+
+impl From<HttpClientError> for RequestError {
+    fn from(value: HttpClientError) -> Self {
+        match value {
+            HttpClientError::Io(err) => Self::Io(err),
+            _ => Self::Client(unsize_box!(Box::new(value))),
+        }
+    }
+}
