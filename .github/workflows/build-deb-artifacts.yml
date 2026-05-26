@@ -1,0 +1,79 @@
+name: Build deb artifacts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  select-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      include: ${{ steps.select.outputs.include }}
+    steps:
+    - uses: actions/checkout@v6
+
+    - id: select
+      run: ruby .github/scripts/select-build-matrix.rb >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: select-matrix
+    name: ${{ matrix.artifact }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.select-matrix.outputs.include) }}
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Prepare build environment
+      run: |
+        set -eux
+        if ! command -v podman >/dev/null 2>&1
+        then
+          sudo apt-get update
+          sudo apt-get install -y podman
+        fi
+        uname -a
+        podman --version
+        df -h
+
+    - name: Build packages
+      env:
+        ARTIFACT_DIR: artifacts/${{ matrix.artifact }}
+        IMAGE_TAG: nginx-sb:${{ matrix.artifact }}
+      run: |
+        set -euxo pipefail
+
+        podman build \
+          --pull=always \
+          --network host \
+          --format docker \
+          --build-arg os="${{ matrix.codename }}" \
+          --build-arg osver="${{ matrix.osver }}" \
+          --build-arg version_schema="${{ matrix.version_schema }}" \
+          --build-arg ISA_LEVEL="${{ matrix.isa }}" \
+          --file .github/docker/deb-build.Dockerfile \
+          --tag "${IMAGE_TAG}" \
+          .
+
+        mkdir -p "${ARTIFACT_DIR}"
+        cid="$(podman create "${IMAGE_TAG}" true)"
+        trap 'podman rm -f "${cid}"' EXIT
+        podman cp "${cid}:/build/." "${ARTIFACT_DIR}"
+        find "${ARTIFACT_DIR}" -type f -name '*.deb' -print
+        test -n "$(find "${ARTIFACT_DIR}" -maxdepth 1 -type f -name '*.deb' -print -quit)"
+
+    - name: Upload packages
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ matrix.artifact }}
+        path: artifacts/${{ matrix.artifact }}/*.deb
+        compression-level: 0
+        if-no-files-found: error
