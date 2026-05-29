@@ -26,7 +26,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
 
 WORKDIR /build
 
-RUN git ls-remote --tags https://github.com/openssl/openssl.git | grep -o 'openssl-3.6.[[:digit:]]\+$' | tail -1 > openssl_tag.txt && \
+RUN git ls-remote --tags https://github.com/openssl/openssl.git | grep -o 'openssl-4.0.[[:digit:]]\+$' | tail -1 > openssl_tag.txt && \
     sed 's/[OopensSLl._-]//g' openssl_tag.txt > openssl_ver.txt && \
     git ls-remote --tags https://github.com/facebook/zstd.git | grep -o 'v1.5.[[:digit:]]\+$' | tail -1 > zstd_tag.txt && \
     git clone https://github.com/openssl/openssl.git openssl -b "$(cat openssl_tag.txt)" --depth 1 && cat openssl_tag.txt && \

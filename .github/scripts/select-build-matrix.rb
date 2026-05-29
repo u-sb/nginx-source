@@ -4,6 +4,10 @@
 require "json"
 
 TARGETS = {
+  "feature/openssl-4-test" => [
+    { distro: "debian", codename: "bookworm", osver: "12", version_schema: "new", variants: [] },
+    { distro: "ubuntu", codename: "noble",    osver: "",   version_schema: "new", variants: [] },
+  ],
   "master" => [
     # Debian 11 Bullseye    2021 - 2026-06 [EOF]
     { distro: "debian", codename: "bullseye", osver: "11", version_schema: "",    variants: [] },
