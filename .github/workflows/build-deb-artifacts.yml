@@ -1,0 +1,76 @@
+name: Build deb artifacts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  select-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      include: ${{ steps.select.outputs.include }}
+    steps:
+    - uses: actions/checkout@v6
+
+    - id: select
+      run: ruby .github/scripts/select-build-matrix.rb >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: select-matrix
+    name: ${{ matrix.artifact }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.select-matrix.outputs.include) }}
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Prepare build environment
+      run: |
+        set -eux
+        if ! docker buildx version >/dev/null 2>&1
+        then
+          sudo apt-get update
+          sudo apt-get install -y docker-buildx-plugin
+        fi
+        uname -a
+        docker version
+        docker buildx version
+        df -h
+
+    - name: Build packages
+      env:
+        ARTIFACT_DIR: artifacts/${{ matrix.artifact }}
+      run: |
+        set -euxo pipefail
+
+        mkdir -p "${ARTIFACT_DIR}"
+
+        docker buildx build \
+          --pull \
+          --network host \
+          --output "type=local,dest=${ARTIFACT_DIR}" \
+          --build-arg os="${{ matrix.codename }}" \
+          --build-arg osver="${{ matrix.osver }}" \
+          --build-arg version_schema="${{ matrix.version_schema }}" \
+          --build-arg ISA_LEVEL="${{ matrix.isa }}" \
+          --file .github/docker/deb-build.Dockerfile \
+          .
+
+        find "${ARTIFACT_DIR}" -type f -name '*.deb' -print
+        test -n "$(find "${ARTIFACT_DIR}" -maxdepth 1 -type f -name '*.deb' -print -quit)"
+
+    - name: Upload packages
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ matrix.artifact }}
+        path: artifacts/${{ matrix.artifact }}/*.deb
+        compression-level: 0
+        if-no-files-found: error
