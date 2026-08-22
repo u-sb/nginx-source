@@ -7,20 +7,17 @@ TARGETS = {
   "master" => [
     # Debian 12 Bookworm    2023 - 2028-06
     { distro: "debian", codename: "bookworm", osver: "12", version_schema: "new", variants: [] },
+    # Debian 13 Trixie      2025 - 2030-06
+    { distro: "debian", codename: "trixie",   osver: "13", version_schema: "new", variants: %w[amd64-v3] },
+    # Debian 14 Forky
+    { distro: "debian", codename: "forky",    osver: "14", version_schema: "new", variants: [] },
 
     # Ubuntu 22.04 Jammy    2022 - 2027-06
     { distro: "ubuntu", codename: "jammy",    osver: "",   version_schema: "",    variants: [] },
     # Ubuntu 24.04 Noble    2024 - 2029-06
     { distro: "ubuntu", codename: "noble",    osver: "",   version_schema: "new", variants: %w[amd64-v3] },
     # Ubuntu 25.10 Questing 2025 - 2026-12
-    { distro: "ubuntu", codename: "questing", osver: "",   version_schema: "new", variants: [] }
-  ],
-  "master-pcre2" => [
-    # Debian 13 Trixie      2025 - 2030-06
-    { distro: "debian", codename: "trixie",   osver: "13", version_schema: "new", variants: %w[amd64-v3] },
-    # Debian 14 Forky
-    { distro: "debian", codename: "forky",    osver: "14", version_schema: "new", variants: [] },
-
+    { distro: "ubuntu", codename: "questing", osver: "",   version_schema: "new", variants: [] },
     # Ubuntu 26.04 Resolute 2026 - 2031-06
     { distro: "ubuntu", codename: "resolute", osver: "",   version_schema: "new", variants: %w[amd64-v3] },
     # Ubuntu 26.10 Stonking 2026 - 2027-12
