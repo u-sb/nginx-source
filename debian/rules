@@ -31,6 +31,7 @@ DYN_MODS := \
 	stream-geoip2
 
 MODULESDIR = $(CURDIR)/debian/modules
+MODULES_DIR = $(CURDIR)/modules
 BASEDIR = $(CURDIR)
 $(foreach flavour,$(FLAVOURS) src,$(eval BUILDDIR_$(flavour) = $(CURDIR)/debian/build-$(flavour)))
 
@@ -136,7 +137,7 @@ extras_configure_flags := \
 			--add-dynamic-module=$(MODULESDIR)/http-fancyindex \
 			--add-dynamic-module=$(MODULESDIR)/http-geoip2 \
 			--add-dynamic-module=$(MODULESDIR)/nchan \
-			--add-dynamic-module=$(MODULESDIR)/http-lua \
+			--add-dynamic-module=$(MODULES_DIR)/http-lua \
 			--add-dynamic-module=$(MODULESDIR)/rtmp \
 			--add-dynamic-module=$(MODULESDIR)/http-uploadprogress \
 			--add-dynamic-module=$(MODULESDIR)/http-upstream-fair \

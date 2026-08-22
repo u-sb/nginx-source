@@ -370,6 +370,7 @@ Description: PAM authentication module for Nginx
 Package: libnginx-mod-http-lua
 Architecture: any
 Depends: libnginx-mod-http-ndk (= ${binary:Version}),
+         lua-resty-core,
          ${misc:Depends},
          ${shlibs:Depends},
 Recommends: nginx,
