@@ -55,16 +55,16 @@ Files: debian/modules/http-geoip2/*
 Copyright: 2014, Lee Valentine <lee@leev.net>
 License: BSD-2-clause
 
-Files: debian/modules/http-ndk/*
+Files: modules/http-ndk/*
 Copyright: 2010-2018, Marcus Clyne
 License: BSD-3-clause
 
-Files: debian/modules/http-ndk/src/hash/md5.h
-       debian/modules/http-ndk/src/hash/sha.h
+Files: modules/http-ndk/src/hash/md5.h
+       modules/http-ndk/src/hash/sha.h
 Copyright: 1995-1998, Eric Young <eay@cryptsoft.com>
 License: BSD-4-clause
 
-Files: debian/modules/http-ndk/src/hash/murmurhash2.c
+Files: modules/http-ndk/src/hash/murmurhash2.c
 Copyright: Austin Appleby
 License: BSD-3-clause
 
