@@ -72,8 +72,8 @@ Files: modules/http-auth-pam/*
 Copyright: 2008-2023, Sergio Talens Oliag
 License: BSD-2-clause
 
-Files: debian/modules/http-echo/*
-Copyright: 2009-2014, Yichun "agentzh" Zhang <agentzh@gmail.com>
+Files: modules/http-echo/*
+Copyright: 2009-2024, Yichun "agentzh" Zhang <agentzh@gmail.com>
 License: BSD-2-clause
 
 Files: modules/http-lua/*
