@@ -129,7 +129,7 @@ extras_configure_flags := \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--add-dynamic-module=$(MODULESDIR)/http-headers-more-filter \
-			--add-dynamic-module=$(MODULESDIR)/http-auth-pam \
+			--add-dynamic-module=$(MODULES_DIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULESDIR)/http-cache-purge \
 			--add-dynamic-module=$(MODULESDIR)/http-dav-ext \
 			--add-dynamic-module=$(MODULESDIR)/http-ndk \

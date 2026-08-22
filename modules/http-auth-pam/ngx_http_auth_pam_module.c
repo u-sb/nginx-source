@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Sergio Talens-Oliag <sto@mixinet.net>
+ * Copyright (C) 2008-2023 Sergio Talens-Oliag <sto@mixinet.net>
  *
  * Based on nginx's 'ngx_http_auth_basic_module.c' by Igor Sysoev and apache's
  * 'mod_auth_pam.c' by Ingo Luetkebolhe.
@@ -386,6 +386,9 @@ ngx_http_auth_pam_set_realm(ngx_http_request_t *r, ngx_str_t *realm)
     }
 
     r->headers_out.www_authenticate->hash = 1;
+#if nginx_version >= 1023000
+    r->headers_out.www_authenticate->next = NULL;
+#endif
     r->headers_out.www_authenticate->key.len = sizeof("WWW-Authenticate") - 1;
     r->headers_out.www_authenticate->key.data = (u_char *) "WWW-Authenticate";
     r->headers_out.www_authenticate->value = *realm;

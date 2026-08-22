@@ -1,3 +1,22 @@
+2023-06-20  sto@mixinet.net
+
+	* Version 1.5.5.
+	* Update previous patch to apply it only if the nginx version is 1.23.0 or
+	  higher to avoid compilation failures with older versions.
+
+2023-06-19  sto@mixinet.net
+
+	* Version 1.5.4.
+	* Set next WWW-Authenticate header to NULL to prevent segmentation faults
+	  (patch provided by tanshaoyi, see
+	  https://github.com/sto/ngx_http_auth_pam_module/pull/28).
+
+2021-08-23  sto@mixinet.net
+
+	* Version 1.5.3.
+	* Always load after ngx_http_access_module (patch provided by khimaros, see
+	  https://github.com/sto/ngx_http_auth_pam_module/pull/26)
+
 2020-06-23  sto@mixinet.net
 
 	* Version 1.5.2.
