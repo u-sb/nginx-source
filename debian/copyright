@@ -122,8 +122,8 @@ Files: debian/modules/http-dav-ext/*
 Copyright: 2012-2018, Roman Arutyunyan <arut@qip.ru>
 License: BSD-2-clause
 
-Files: debian/modules/http-fancyindex/*
-Copyright: 2007-2016, Adrian Perez <aperez@igalia.com>
+Files: modules/http-fancyindex/*
+Copyright: 2007-2022, Adrian Perez <aperez@igalia.com>
 License: BSD-2-clause
 
 Files: debian/modules/http-subs-filter/*
