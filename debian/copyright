@@ -45,8 +45,8 @@ Copyright: 2007-2009, Fabio Tranchitella <kobold@debian.org>
            2020,      Ondřej Nový <onovy@debian.org>
 License: BSD-2-clause
 
-Files: debian/modules/http-headers-more-filter/*
-Copyright: 2009-2017, Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, CloudFlare Inc.
+Files: modules/http-headers-more-filter/*
+Copyright: 2009-2024, Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, OpenResty Inc.
            2010-2013, Bernd Dorn
                       Igor Sysoev
 License: BSD-2-clause

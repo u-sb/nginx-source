@@ -36,7 +36,7 @@ Table of Contents
 Version
 =======
 
-This document describes headers-more-nginx-module [v0.33](https://github.com/openresty/headers-more-nginx-module/tags) released on 3 November 2017.
+This document describes headers-more-nginx-module [v0.34](https://github.com/openresty/headers-more-nginx-module/tags) released on 17 July 2022.
 
 Synopsis
 ========
@@ -104,7 +104,7 @@ For example,
 more_set_headers -t 'text/html text/plain' 'X-Foo: Bar';
 ```
 
-Never use other paramemters like `charset=utf-8` in the `-t` option values; they will not
+Never use other parameters like `charset=utf-8` in the `-t` option values; they will not
 work as you would expect.
 
 Input headers can be modified as well. For example
@@ -134,7 +134,7 @@ Directives
 
 more_set_headers
 ----------------
-**syntax:** *more_set_headers [-t &lt;content-type list&gt;]... [-s &lt;status-code list&gt;]... &lt;new-header&gt;...*
+**syntax:** *more_set_headers [-t &lt;content-type list&gt;]... [-s &lt;status-code list&gt;]... [-a] &lt;new-header&gt;...*
 
 **default:** *no*
 
@@ -143,6 +143,8 @@ more_set_headers
 **phase:** *output-header-filter*
 
 Replaces (if any) or adds (if not any) the specified output headers when the response status code matches the codes specified by the `-s` option *AND* the response content type matches the types specified by the `-t` option.
+
+If the "-a" option is specified, the specified output headers can be appended directly without clearing the old fields. The behavior of builtin headers such as "Content-Type", "Content-Length", "Server", etc. cannot be changed.
 
 If either `-s` or `-t` is not specified or has an empty list value, then no match is required. Therefore, the following directive set the `Server` output header to the custom value for *any* status code and *any* content type:
 
@@ -347,13 +349,13 @@ Installation
 ============
 
 Grab the nginx source code from [nginx.org](http://nginx.org/), for example,
-the version 1.13.6 (see [nginx compatibility](#compatibility)), and then build the source with this module:
+the version 1.17.8 (see [nginx compatibility](#compatibility)), and then build the source with this module:
 
 ```bash
 
- wget 'http://nginx.org/download/nginx-1.13.6.tar.gz'
- tar -xzvf nginx-1.13.6.tar.gz
- cd nginx-1.13.6/
+ wget 'http://nginx.org/download/nginx-1.17.8.tar.gz'
+ tar -xzvf nginx-1.17.8.tar.gz
+ cd nginx-1.17.8/
 
  # Here we assume you would install you nginx under /opt/nginx/.
  ./configure --prefix=/opt/nginx \
@@ -382,6 +384,12 @@ Compatibility
 
 The following versions of Nginx should work with this module:
 
+* **1.21.x**                      (last tested: 1.21.4)
+* **1.19.x**                      (last tested: 1.19.9)
+* **1.17.x**                      (last tested: 1.17.8)
+* **1.16.x**
+* **1.15.x**                      (last tested: 1.15.8)
+* **1.14.x**
 * **1.13.x**                      (last tested: 1.13.6)
 * **1.12.x**
 * **1.11.x**                      (last tested: 1.11.2)
@@ -513,26 +521,7 @@ Copyright (c) 2009-2017, Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>,
 
 Copyright (c) 2010-2013, Bernd Dorn.
 
-This module is licensed under the terms of the BSD license.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+The license text is available in the [LICENSE](LICENSE) file located in the root directory of the project.
 
 [Back to TOC](#table-of-contents)
 
