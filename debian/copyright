@@ -118,7 +118,7 @@ Copyright: 2009-2014, FRiCKLE <info@frickle.com>,
            2009-2014, Piotr Sikora <piotr.sikora@frickle.com>
 License: BSD-2-clause
 
-Files: debian/modules/http-dav-ext/*
+Files: modules/http-dav-ext/*
 Copyright: 2012-2018, Roman Arutyunyan <arut@qip.ru>
 License: BSD-2-clause
 
