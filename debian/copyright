@@ -90,21 +90,21 @@ Copyright: 2007, Grzegorz Nosek
                  Igor Sysoev
 License: BSD-2-clause
 
-Files: debian/modules/nchan/*
-Copyright: 2009-2016, Leo Ponomarev (slact)
+Files: modules/nchan/*
+Copyright: 2009-2024, Leo Ponomarev (slact)
            2014,      Wandenberg Peixoto
                       Alexander Lyalin
                       Rogério Carvalho Schneider <stockrt@gmail.com>
 License: Expat
 
-Files: debian/modules/nchan/src/store/redis/hiredis/*
+Files: modules/nchan/src/store/redis/hiredis/*
 Copyright: 2006-2014, Salvatore Sanfilippo <antirez@gmail.com>
            2010-2011, Pieter Noordhuis <pcnoordhuis@gmail.com>
            2015,      Matt Stancliff <matt@genges.com>
                       Jan-Erik Rediger <janerik.fnordig.com>
 License: BSD-3-clause
 
-Files: debian/modules/nchan/src/store/redis/cmp.*
+Files: modules/nchan/src/store/redis/cmp.*
 Copyright: 2017, Charles Gunyon
 License: Expat
 
