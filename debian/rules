@@ -30,7 +30,6 @@ DYN_MODS := \
 	stream-geoip \
 	stream-geoip2
 
-MODULESDIR = $(CURDIR)/debian/modules
 MODULES_DIR = $(CURDIR)/modules
 BASEDIR = $(CURDIR)
 $(foreach flavour,$(FLAVOURS) src,$(eval BUILDDIR_$(flavour) = $(CURDIR)/debian/build-$(flavour)))
@@ -44,9 +43,6 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	MAKEFLAGS += -j$(NUMJOBS)
 endif
-
-MODULESPATCHDIR = $(CURDIR)/debian/modules/patches
-modules_with_patches := $(notdir $(wildcard $(CURDIR)/debian/modules/patches/*))
 
 # PCRE configuration
 HAVE_PCRE1 := $(shell pkg-config --exists libpcre && echo yes)
@@ -124,10 +120,10 @@ core_configure_flags := \
 %:
 	dh $@ --without autoreconf
 
-override_dh_auto_configure: config_patch_modules $(foreach flavour,$(FLAVOURS),config.arch.$(flavour)) config.src
+override_dh_auto_configure: $(foreach flavour,$(FLAVOURS),config.arch.$(flavour)) config.src
 override_dh_auto_build:     $(foreach flavour,$(FLAVOURS),build.arch.$(flavour)) build.src
 override_dh_strip:          $(foreach flavour,$(FLAVOURS),strip.arch.$(flavour)) $(foreach mod,$(DYN_MODS),strip.mods.$(mod))
-override_dh_clean:          clean_patch_modules $(foreach flavour,$(FLAVOURS),clean.$(flavour)) clean.src
+override_dh_clean:          $(foreach flavour,$(FLAVOURS),clean.$(flavour)) clean.src
 	dh_clean
 
 override_dh_install:
@@ -160,17 +156,6 @@ strip.arch.%:
 strip.mods.%:
 	dh_strip --package=libnginx-mod-$(*) -O--automatic-dbgsym
 
-config_patch_modules: $(foreach mod,$(modules_with_patches),config.patch.$(mod))
-config.patch.%:
-	cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt push -a
-
-clean_patch_modules: $(foreach mod,$(modules_with_patches),clean.patch.$(mod))
-clean.patch.%:
-	if [ -s $(MODULESDIR)/$*/.pc/applied-patches ]; then \
-		cd $(MODULESDIR)/$* && QUILT_PATCHES=$(MODULESPATCHDIR)/$* quilt pop -q -a; \
-		rm -rf $(MODULESDIR)/$*/.pc; \
-	fi
-
 config.arch.%:
 	dh_testdir
 	mkdir -p $(BUILDDIR_$*)
@@ -188,5 +173,3 @@ config.src:
 
 clean.%:
 	rm -rf $(BUILDDIR_$*)
-
-.PHONY: config_patch_modules clean_patch_modules
