@@ -313,7 +313,7 @@ ngx_rust_make_module () {
 # always run cargo instead of trying to track the source modifications
 .PHONY: $ngx_rust_obj
 
-$ngx_rust_obj:
+$ngx_rust_obj: \$(CORE_DEPS) \$(HTTP_DEPS)
 	$NGX_CARGO rustc \\
 		--config $ngx_cargo_config \\
 		--crate-type staticlib \\
