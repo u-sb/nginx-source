@@ -10,6 +10,7 @@ Build-Depends: debhelper (>= 10),
                libgd-dev,
                libgeoip-dev,
                libhiredis-dev,
+               libjson-c-dev,
                liblua5.1-0-dev [!i386 !amd64 !kfreebsd-i386 !armel !armhf !powerpc !powerpcspe !mips !mipsel],
                libluajit-5.1-dev [i386 amd64 kfreebsd-i386 armel armhf powerpc powerpcspe mips mipsel],
                libmaxminddb-dev,
@@ -157,6 +158,7 @@ Depends: nginx-full (>= ${source:Version}),
          libnginx-mod-http-geoip (= ${binary:Version}),
          libnginx-mod-http-geoip2 (= ${binary:Version}),
          libnginx-mod-http-image-filter (= ${binary:Version}),
+         libnginx-mod-http-ipdb (= ${binary:Version}),
          libnginx-mod-http-lua (= ${binary:Version}),
          libnginx-mod-http-perl (= ${binary:Version}),
          libnginx-mod-http-uploadprogress (= ${binary:Version}),
@@ -472,3 +474,11 @@ Description: Zstandard compression module for Nginx
  .
  Zstandard is a fast lossless compression algorithm targeting real-time
  compression scenarios at zlib-level and better compression ratios.
+
+Package: libnginx-mod-http-ipdb
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Recommends: nginx,
+Description: IPDB IP database support for Nginx
+ The ngx_http_ipdb_module enables creating variables with values depending on
+ the client IP address using the IPIP.net IPDB database format.

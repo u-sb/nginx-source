@@ -79,6 +79,11 @@ Copyright: 2018-2023, Alex Zhang
            2026, SB Maintainers
 License: BSD-2-clause
 
+Files: modules/ipdb/*
+Copyright: 2018-2019, vislee
+           2018-2021, IPIP.net (ipipdotnet)
+License: GPL-2
+
 Files: modules/http-auth-pam/*
 Copyright: 2008-2023, Sergio Talens Oliag
 License: BSD-2-clause
@@ -245,5 +250,10 @@ License: Expat
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- IN THE SOFTWARE.
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+
+License: GPL-2
+ On Debian systems the full text of the GNU General Public
+ License can be found in the `/usr/share/common-licenses/GPL-2'
+ file.

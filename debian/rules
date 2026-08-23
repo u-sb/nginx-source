@@ -17,6 +17,7 @@ DYN_MODS := \
 	http-geoip2 \
 	http-headers-more-filter \
 	http-image-filter \
+	http-ipdb \
 	http-lua \
 	http-ndk \
 	http-perl \
@@ -110,6 +111,7 @@ core_configure_flags := \
 			--with-stream_ssl_preread_module \
 			--add-dynamic-module=$(MODULES_DIR)/brotli \
 			--add-dynamic-module=$(MODULES_DIR)/zstd \
+			--add-dynamic-module=$(MODULES_DIR)/ipdb \
 			--add-dynamic-module=$(MODULES_DIR)/http-headers-more-filter \
 			--add-dynamic-module=$(MODULES_DIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULES_DIR)/http-cache-purge \
