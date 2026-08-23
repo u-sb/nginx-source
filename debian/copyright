@@ -126,11 +126,11 @@ Files: modules/http-fancyindex/*
 Copyright: 2007-2022, Adrian Perez <aperez@igalia.com>
 License: BSD-2-clause
 
-Files: debian/modules/http-subs-filter/*
+Files: modules/http-subs-filter/*
 Copyright: 2014, Weibin Yao <yaoweibin@gmail.com>
 License: BSD-2-clause
 
-Files: debian/modules/http-subs-filter/test/*
+Files: modules/http-subs-filter/test/*
 Copyright: 2009-2011, Taobao Inc., Alibaba Group
                       Antoine BONAVITA "<antoine.bonavita@gmail.com>"
                       agentzh (章亦春) "<agentzh@gmail.com>"

@@ -141,7 +141,7 @@ extras_configure_flags := \
 			--add-dynamic-module=$(MODULESDIR)/rtmp \
 			--add-dynamic-module=$(MODULESDIR)/http-uploadprogress \
 			--add-dynamic-module=$(MODULESDIR)/http-upstream-fair \
-			--add-dynamic-module=$(MODULESDIR)/http-subs-filter
+			--add-dynamic-module=$(MODULES_DIR)/http-subs-filter
 
 %:
 	dh $@ --without autoreconf
