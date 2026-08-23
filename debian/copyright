@@ -108,8 +108,8 @@ Files: debian/modules/nchan/src/store/redis/cmp.*
 Copyright: 2017, Charles Gunyon
 License: Expat
 
-Files: debian/modules/http-uploadprogress/*
-Copyright: 2007, Brice Figureau
+Files: modules/http-uploadprogress/*
+Copyright: 2007-2024, Brice Figureau
            2002-2007, Igor Sysoev
 License: BSD-2-clause
 
