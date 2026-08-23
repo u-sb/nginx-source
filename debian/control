@@ -4,8 +4,10 @@ Priority: optional
 Maintainer: Debian Nginx Maintainers <pkg-nginx-maintainers@alioth-lists.debian.net>
 Uploaders: Christos Trochalakis <ctrochalakis@debian.org>,
            Ondřej Nový <onovy@debian.org>,
-Build-Depends: debhelper (>= 10),
+Build-Depends: cargo,
+               debhelper (>= 10),
                dpkg-dev (>= 1.15.5),
+               libclang-dev,
                libexpat-dev,
                libgd-dev,
                libgeoip-dev,
@@ -23,6 +25,7 @@ Build-Depends: debhelper (>= 10),
                libzstd-dev,
                po-debconf,
                quilt,
+               rustc,
                zlib1g-dev
 Standards-Version: 4.5.0
 Homepage: https://nginx.net
@@ -152,6 +155,7 @@ Package: nginx-extras
 Architecture: all
 Depends: nginx-full (>= ${source:Version}),
          nginx-full (<< ${source:Version}.1~),
+         libnginx-mod-http-acme (= ${binary:Version}),
          libnginx-mod-http-auth-pam (= ${binary:Version}),
          libnginx-mod-http-dav-ext (= ${binary:Version}),
          libnginx-mod-http-echo (= ${binary:Version}),
@@ -482,3 +486,12 @@ Recommends: nginx,
 Description: IPDB IP database support for Nginx
  The ngx_http_ipdb_module enables creating variables with values depending on
  the client IP address using the IPIP.net IPDB database format.
+
+Package: libnginx-mod-http-acme
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Recommends: nginx,
+Description: ACME protocol support for Nginx
+ The ngx_http_acme_module implements the Automatic Certificate Management
+ Environment (ACMEv2) protocol (RFC 8555) for automated SSL/TLS certificate
+ issuance and renewal within Nginx.

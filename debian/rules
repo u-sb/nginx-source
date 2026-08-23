@@ -7,6 +7,7 @@ debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
 FLAVOURS := core
 DYN_MODS := \
+	http-acme \
 	http-auth-pam \
 	http-brotli \
 	http-cache-purge \
@@ -112,6 +113,7 @@ core_configure_flags := \
 			--add-dynamic-module=$(MODULES_DIR)/brotli \
 			--add-dynamic-module=$(MODULES_DIR)/zstd \
 			--add-dynamic-module=$(MODULES_DIR)/ipdb \
+			--add-dynamic-module=$(MODULES_DIR)/acme \
 			--add-dynamic-module=$(MODULES_DIR)/http-headers-more-filter \
 			--add-dynamic-module=$(MODULES_DIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULES_DIR)/http-cache-purge \

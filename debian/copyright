@@ -84,6 +84,10 @@ Copyright: 2018-2019, vislee
            2018-2021, IPIP.net (ipipdotnet)
 License: GPL-2
 
+Files: modules/acme/*
+Copyright: 2025-2026, F5, Inc.
+License: Apache-2.0
+
 Files: modules/http-auth-pam/*
 Copyright: 2008-2023, Sergio Talens Oliag
 License: BSD-2-clause
@@ -256,4 +260,9 @@ License: Expat
 License: GPL-2
  On Debian systems the full text of the GNU General Public
  License can be found in the `/usr/share/common-licenses/GPL-2'
+ file.
+
+License: Apache-2.0
+ On Debian systems the full text of the Apache License, Version 2.0
+ can be found in the `/usr/share/common-licenses/Apache-2.0'
  file.
