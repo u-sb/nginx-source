@@ -1,0 +1,5 @@
+#!/usr/bin/perl -w
+
+print "mod debian/build-core/objs/ngx_http_brotli_filter_module.so\n";
+print "mod debian/build-core/objs/ngx_http_brotli_static_module.so\n";
+print "mod debian/libnginx-mod.conf/mod-http-brotli.conf\n";

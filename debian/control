@@ -32,6 +32,7 @@ Architecture: all
 Depends: nginx-core (>= ${source:Version}),
          nginx-core (<< ${source:Version}.1~),
          libnginx-mod-stream (= ${binary:Version}),
+         libnginx-mod-http-brotli (= ${binary:Version}),
          ${misc:Depends}
 Provides: httpd, httpd-cgi
 Description: small, powerful, scalable web/proxy server
@@ -447,6 +448,17 @@ Recommends: nginx,
 Description: RTMP support for Nginx
  The nginx RTMP module is a fully-featured streaming solution implemented in
  nginx.
+
+Package: libnginx-mod-http-brotli
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Recommends: nginx,
+Description: Brotli compression module for Nginx
+ The ngx_brotli module enables Brotli dynamic compression and static
+ pre-compression support for Nginx web server.
+ .
+ Brotli is a lossless data compression algorithm developed by Google, offering
+ higher compression ratio compared to Gzip at similar CPU usage.
  .
  It provides the following features:
   - Live streaming with RTMP, HLS and MPEG-DASH;
