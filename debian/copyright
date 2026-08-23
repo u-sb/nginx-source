@@ -51,8 +51,8 @@ Copyright: 2009-2024, Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, Op
                       Igor Sysoev
 License: BSD-2-clause
 
-Files: debian/modules/http-geoip2/*
-Copyright: 2014, Lee Valentine <lee@leev.net>
+Files: modules/http-geoip2/*
+Copyright: 2014-2024, Lee Valentine <lee@leev.net>
 License: BSD-2-clause
 
 Files: modules/http-ndk/*
