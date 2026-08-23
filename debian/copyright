@@ -113,9 +113,10 @@ Copyright: 2007-2024, Brice Figureau
            2002-2007, Igor Sysoev
 License: BSD-2-clause
 
-Files: debian/modules/http-cache-purge/*
+Files: modules/http-cache-purge/*
 Copyright: 2009-2014, FRiCKLE <info@frickle.com>,
            2009-2014, Piotr Sikora <piotr.sikora@frickle.com>
+           2015-2024, ngx_cache_purge contributors
 License: BSD-2-clause
 
 Files: modules/http-dav-ext/*
