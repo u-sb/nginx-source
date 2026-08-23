@@ -5,7 +5,7 @@ export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 debian_cflags:=$(shell dpkg-buildflags --get CFLAGS) -fPIC $(shell dpkg-buildflags --get CPPFLAGS)
 debian_ldflags:=$(shell dpkg-buildflags --get LDFLAGS) -fPIC
 
-FLAVOURS := core light extras
+FLAVOURS := core
 DYN_MODS := \
 	http-auth-pam \
 	http-cache-purge \
@@ -84,32 +84,10 @@ basic_configure_flags := \
 			--with-http_slice_module \
 			--with-threads
 
-common_configure_flags := \
+core_configure_flags := \
 			--with-cc-opt="$(debian_cflags)" \
 			--with-ld-opt="$(debian_ldflags)" \
-			$(basic_configure_flags)
-
-light_configure_flags := \
-			$(common_configure_flags) \
-			--with-http_gzip_static_module \
-			--without-http_browser_module \
-			--without-http_geo_module \
-			--without-http_limit_req_module \
-			--without-http_limit_conn_module \
-			--without-http_memcached_module \
-			--without-http_referer_module \
-			--without-http_split_clients_module \
-			--without-http_userid_module
-
-core_configure_flags := \
-			$(common_configure_flags) \
-			--with-http_addition_module \
-			--with-http_gunzip_module \
-			--with-http_gzip_static_module \
-			--with-http_sub_module \
-
-extras_configure_flags := \
-			$(common_configure_flags) \
+			$(basic_configure_flags) \
 			--with-http_addition_module \
 			--with-http_flv_module \
 			--with-http_geoip_module=dynamic \
