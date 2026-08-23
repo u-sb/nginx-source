@@ -34,6 +34,8 @@ DYN_MODS := \
 
 MODULES_DIR = $(CURDIR)/modules
 BASEDIR = $(CURDIR)
+export ZSTD_INC=$(CURDIR)/../zstd/lib
+export ZSTD_LIB=$(CURDIR)/../zstd/lib
 $(foreach flavour,$(FLAVOURS) src,$(eval BUILDDIR_$(flavour) = $(CURDIR)/debian/build-$(flavour)))
 
 DEB_BUILD_ARCH ?=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
