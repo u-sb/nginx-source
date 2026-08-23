@@ -72,6 +72,13 @@ Files: modules/brotli/*
 Copyright: 2015-2024, Google Inc.
 License: MIT
 
+Files: modules/zstd/*
+Copyright: 2018-2023, Alex Zhang
+           2026, Thijs Eilander <eilander@myguard.nl>
+           2026, GetPageSpeed LLC
+           2026, SB Maintainers
+License: BSD-2-clause
+
 Files: modules/http-auth-pam/*
 Copyright: 2008-2023, Sergio Talens Oliag
 License: BSD-2-clause

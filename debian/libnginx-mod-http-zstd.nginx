@@ -1,0 +1,5 @@
+#!/usr/bin/perl -w
+
+print "mod debian/build-core/objs/ngx_http_zstd_filter_module.so\n";
+print "mod debian/build-core/objs/ngx_http_zstd_static_module.so\n";
+print "mod debian/libnginx-mod.conf/mod-http-zstd.conf\n";

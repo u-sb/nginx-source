@@ -24,6 +24,7 @@ DYN_MODS := \
 	http-uploadprogress \
 	http-upstream-fair \
 	http-xslt-filter \
+	http-zstd \
 	mail \
 	nchan \
 	rtmp \
@@ -106,6 +107,7 @@ core_configure_flags := \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--add-dynamic-module=$(MODULES_DIR)/brotli \
+			--add-dynamic-module=$(MODULES_DIR)/zstd \
 			--add-dynamic-module=$(MODULES_DIR)/http-headers-more-filter \
 			--add-dynamic-module=$(MODULES_DIR)/http-auth-pam \
 			--add-dynamic-module=$(MODULES_DIR)/http-cache-purge \

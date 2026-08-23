@@ -19,6 +19,7 @@ Build-Depends: debhelper (>= 10),
                libperl-dev,
                libssl-dev,
                libxslt1-dev,
+               libzstd-dev,
                po-debconf,
                quilt,
                zlib1g-dev
@@ -33,6 +34,7 @@ Depends: nginx-core (>= ${source:Version}),
          nginx-core (<< ${source:Version}.1~),
          libnginx-mod-stream (= ${binary:Version}),
          libnginx-mod-http-brotli (= ${binary:Version}),
+         libnginx-mod-http-zstd (= ${binary:Version}),
          ${misc:Depends}
 Provides: httpd, httpd-cgi
 Description: small, powerful, scalable web/proxy server
@@ -459,10 +461,14 @@ Description: Brotli compression module for Nginx
  .
  Brotli is a lossless data compression algorithm developed by Google, offering
  higher compression ratio compared to Gzip at similar CPU usage.
+
+Package: libnginx-mod-http-zstd
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+Recommends: nginx,
+Description: Zstandard compression module for Nginx
+ The ngx_zstd module enables Zstandard (zstd) dynamic compression and static
+ pre-compression support for Nginx web server.
  .
- It provides the following features:
-  - Live streaming with RTMP, HLS and MPEG-DASH;
-  - RTMP Video on Demand from local or HTTP sources;
-  - Stream relay support via a push or pull model;
-  - Integrated stream recording;
-  - and more.
+ Zstandard is a fast lossless compression algorithm targeting real-time
+ compression scenarios at zlib-level and better compression ratios.
