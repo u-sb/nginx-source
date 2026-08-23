@@ -137,8 +137,8 @@ Copyright: 2009-2011, Taobao Inc., Alibaba Group
                       agentzh (章亦春) "<agentzh@gmail.com>"
 License: BSD-3-clause
 
-Files: debian/modules/rtmp/*
-Copyright: 2012-2014, Roman Arutyunyan
+Files: modules/rtmp/*
+Copyright: 2012-2024, Roman Arutyunyan
 License: BSD-2-clause
 
 License: BSD-2-clause
