@@ -85,7 +85,7 @@ Files: modules/http-lua/t/lib/CRC32.lua
 Copyright: 2007-2008, Neil Richardson (nrich@iinet.net.au)
 License: Expat
 
-Files: debian/modules/http-upstream-fair/*
+Files: modules/http-upstream-fair/*
 Copyright: 2007, Grzegorz Nosek
                  Igor Sysoev
 License: BSD-2-clause
