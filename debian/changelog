@@ -1,3 +1,9 @@
+nginx (1.31.4-1nwtf) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Xinyue Lu <i@7086.in>  Mon, 24 Aug 2026 00:00:00 -0700
+
 nginx (1.31.3-3nwtf) unstable; urgency=low
 
   * Dynamically manage brotli and zstd conf.d symlinks in postinst/prerm
