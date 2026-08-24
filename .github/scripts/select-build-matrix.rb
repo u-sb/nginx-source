@@ -5,19 +5,13 @@ require "json"
 
 TARGETS = {
   "master" => [
-    # Debian 11 Bullseye    2021 - 2026-06 [EOL]
-    { distro: "debian", codename: "bullseye", osver: "11", version_schema: "",    variants: [] },
     # Debian 12 Bookworm    2023 - 2028-06
     { distro: "debian", codename: "bookworm", osver: "12", version_schema: "new", variants: [] },
 
-    # Ubuntu 20.04 Focal    2020 - 2025-06 [EOL]
-    { distro: "ubuntu", codename: "focal",    osver: "",   version_schema: "",    variants: [] },
     # Ubuntu 22.04 Jammy    2022 - 2027-06
     { distro: "ubuntu", codename: "jammy",    osver: "",   version_schema: "",    variants: [] },
     # Ubuntu 24.04 Noble    2024 - 2029-06
     { distro: "ubuntu", codename: "noble",    osver: "",   version_schema: "new", variants: %w[amd64-v3] },
-    # Ubuntu 25.04 Plucky   2025 - 2026-06 [EOL]
-    { distro: "ubuntu", codename: "plucky",   osver: "",   version_schema: "new", variants: [] },
     # Ubuntu 25.10 Questing 2025 - 2026-12
     { distro: "ubuntu", codename: "questing", osver: "",   version_schema: "new", variants: [] }
   ],
