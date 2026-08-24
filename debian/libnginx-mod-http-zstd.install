@@ -1,1 +1,1 @@
-debian/conf/zstd.conf etc/nginx/conf.d/
+debian/conf/zstd.conf usr/share/nginx/conf-available/
