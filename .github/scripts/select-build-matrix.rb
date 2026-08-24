@@ -22,7 +22,9 @@ TARGETS = {
     { distro: "debian", codename: "forky",    osver: "14", version_schema: "new", variants: [] },
 
     # Ubuntu 26.04 Resolute 2026 - 2031-06
-    { distro: "ubuntu", codename: "resolute", osver: "",   version_schema: "new", variants: %w[amd64-v3] }
+    { distro: "ubuntu", codename: "resolute", osver: "",   version_schema: "new", variants: %w[amd64-v3] },
+    # Ubuntu 26.10 Stonking 2026 - 2027-12
+    { distro: "ubuntu", codename: "stonking", osver: "",   version_schema: "new", variants: [] }
   ]
 }.freeze
 
