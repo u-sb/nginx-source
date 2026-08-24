@@ -39,8 +39,10 @@ RUN case "${ISA_LEVEL}" in \
     esac && \
     echo "STRIP CFLAGS -flto=auto" >> /etc/dpkg/buildflags.conf && \
     echo "STRIP LDFLAGS -flto=auto" >> /etc/dpkg/buildflags.conf && \
-    echo "APPEND CFLAGS $ARCH_FLAG" >> /etc/dpkg/buildflags.conf && \
-    echo "APPEND LDFLAGS $ARCH_FLAG" >> /etc/dpkg/buildflags.conf && \
+    if [ -n "$ARCH_FLAG" ]; then \
+        echo "APPEND CFLAGS $ARCH_FLAG" >> /etc/dpkg/buildflags.conf && \
+        echo "APPEND LDFLAGS $ARCH_FLAG" >> /etc/dpkg/buildflags.conf; \
+    fi && \
     echo "export CFLAGS=\"\$CFLAGS $ARCH_FLAG\"" >> /etc/environment && \
     echo 'make -j'$(nproc)' "$@"' > /bin/make1 && \
     chmod +x /bin/make1
