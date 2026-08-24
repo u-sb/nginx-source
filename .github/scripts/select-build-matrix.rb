@@ -3,27 +3,32 @@
 
 require "json"
 
-TARGETS = {
-  "master" => [
-    # Debian 12 Bookworm    2023 - 2028-06
-    { distro: "debian", codename: "bookworm", osver: "12", version_schema: "new", variants: [] },
-    # Debian 13 Trixie      2025 - 2030-06
-    { distro: "debian", codename: "trixie",   osver: "13", version_schema: "new", variants: %w[amd64-v3] },
-    # Debian 14 Forky
-    { distro: "debian", codename: "forky",    osver: "14", version_schema: "new", variants: [] },
+TARGETS = [
+  # Debian 12 Bookworm    2023 - 2028-06
+  { distro: "debian", codename: "bookworm", osver: "12", version_schema: "new", variants: [] },
+  # Debian 13 Trixie      2025 - 2030-06
+  { distro: "debian", codename: "trixie",   osver: "13", version_schema: "new", variants: %w[amd64-v3] },
+  # Debian 14 Forky
+  { distro: "debian", codename: "forky",    osver: "14", version_schema: "new", variants: [] },
 
-    # Ubuntu 22.04 Jammy    2022 - 2027-06
-    { distro: "ubuntu", codename: "jammy",    osver: "",   version_schema: "",    variants: [] },
-    # Ubuntu 24.04 Noble    2024 - 2029-06
-    { distro: "ubuntu", codename: "noble",    osver: "",   version_schema: "new", variants: %w[amd64-v3] },
-    # Ubuntu 25.10 Questing 2025 - 2026-12
-    { distro: "ubuntu", codename: "questing", osver: "",   version_schema: "new", variants: [] },
-    # Ubuntu 26.04 Resolute 2026 - 2031-06
-    { distro: "ubuntu", codename: "resolute", osver: "",   version_schema: "new", variants: %w[amd64-v3] },
-    # Ubuntu 26.10 Stonking 2026 - 2027-12
-    { distro: "ubuntu", codename: "stonking", osver: "",   version_schema: "new", variants: [] }
-  ]
-}.freeze
+  # Ubuntu 22.04 Jammy    2022 - 2027-06
+  { distro: "ubuntu", codename: "jammy",    osver: "",   version_schema: "",    variants: [] },
+  # Ubuntu 24.04 Noble    2024 - 2029-06
+  { distro: "ubuntu", codename: "noble",    osver: "",   version_schema: "new", variants: %w[amd64-v3] },
+  # Ubuntu 25.10 Questing 2025 - 2026-12
+  { distro: "ubuntu", codename: "questing", osver: "",   version_schema: "new", variants: [] },
+  # Ubuntu 26.04 Resolute 2026 - 2031-06
+  { distro: "ubuntu", codename: "resolute", osver: "",   version_schema: "new", variants: %w[amd64-v3] },
+  # Ubuntu 26.10 Stonking 2026 - 2027-12
+  { distro: "ubuntu", codename: "stonking", osver: "",   version_schema: "new", variants: [] }
+].freeze
+
+SMOKE_TARGETS = [
+  { distro: "debian", codename: "bookworm", osver: "12", version_schema: "new", variant: "arm64" },
+  { distro: "debian", codename: "trixie",   osver: "13", version_schema: "new", variant: "amd64-v3" },
+  { distro: "ubuntu", codename: "jammy",    osver: "",   version_schema: "",    variant: "amd64-v1" },
+  { distro: "ubuntu", codename: "resolute", osver: "",   version_schema: "new", variant: "amd64-v3" }
+].freeze
 
 COMMON_VARIANTS = %w[arm64 amd64-v1]
 
@@ -57,22 +62,32 @@ branch = ENV.fetch("GITHUB_REF_NAME") do
   exit 2
 end
 
-targets = TARGETS.fetch(branch) do
-  warn "unsupported branch for deb artifact build: #{branch}"
-  exit 2
-end
-
-include = targets.flat_map do |target|
-  (COMMON_VARIANTS + target.fetch(:variants)).map do |variant|
+include = if branch.start_with?("dev")
+  SMOKE_TARGETS.map do |t|
+    variant = t.fetch(:variant)
     {
-      distro: target.fetch(:distro),
-      codename: target.fetch(:codename),
-      osver: target.fetch(:osver),
-      version_schema: target.fetch(:version_schema),
-      artifact: artifact_name(target.fetch(:codename), variant),
+      distro: t.fetch(:distro),
+      codename: t.fetch(:codename),
+      osver: t.fetch(:osver),
+      version_schema: t.fetch(:version_schema),
+      artifact: artifact_name(t.fetch(:codename), variant),
       runner: RUNNERS.fetch(variant),
       isa: ISA_LEVELS.fetch(variant)
     }
+  end
+else
+  TARGETS.flat_map do |target|
+    (COMMON_VARIANTS + target.fetch(:variants)).map do |variant|
+      {
+        distro: target.fetch(:distro),
+        codename: target.fetch(:codename),
+        osver: target.fetch(:osver),
+        version_schema: target.fetch(:version_schema),
+        artifact: artifact_name(target.fetch(:codename), variant),
+        runner: RUNNERS.fetch(variant),
+        isa: ISA_LEVELS.fetch(variant)
+      }
+    end
   end
 end
 
