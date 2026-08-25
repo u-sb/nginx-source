@@ -56,6 +56,17 @@ case "$1" in
       cp /usr/share/nginx/html/index.html /var/www/html/index.nginx-debian.html
     fi
 
+    # Clean up obsolete symlinks from historical conf-available paths
+    for f in brotli.conf zstd.conf; do
+      link="/etc/nginx/conf.d/$f"
+      if [ -L "$link" ]; then
+        target=$(readlink "$link" || true)
+        if [ ! -e "$link" ] || [ "$target" = "/usr/share/nginx/conf-available/$f" ]; then
+          rm -f "$link"
+        fi
+      fi
+    done
+
     ;;
 
   abort-upgrade|abort-remove|abort-deconfigure)

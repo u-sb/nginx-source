@@ -1,3 +1,9 @@
+nginx (1.31.4-3nwtf) unstable; urgency=high
+
+  * Clean up obsolete conf-available symlinks in conf.d
+
+ -- Xinyue Lu <i@7086.in>  Mon, 24 Aug 2026 00:00:00 -0700
+
 nginx (1.31.4-2nwtf) unstable; urgency=low
 
   * Install brotli and zstd configs as snippets to avoid duplicate directive conflicts
