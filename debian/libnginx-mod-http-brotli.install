@@ -1,1 +1,1 @@
-debian/conf/brotli.conf usr/share/nginx/conf-available/
+debian/conf/brotli.conf etc/nginx/snippets/
