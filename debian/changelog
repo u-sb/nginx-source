@@ -1,3 +1,9 @@
+nginx (1.31.5-1nwtf) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Xinyue Lu <i@7086.in>  Wed, 02 Sep 2026 00:00:00 -0700
+
 nginx (1.31.4-3nwtf) unstable; urgency=high
 
   * Clean up obsolete conf-available symlinks in conf.d
