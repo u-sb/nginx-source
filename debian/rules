@@ -98,6 +98,7 @@ core_configure_flags := \
 			--with-http_gunzip_module \
 			--with-http_gzip_static_module \
 			--with-http_image_filter_module=dynamic \
+			--with-http_json_module \
 			--with-http_mp4_module \
 			--with-http_perl_module=dynamic \
 			--with-http_random_index_module \
