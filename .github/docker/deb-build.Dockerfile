@@ -3,8 +3,11 @@ FROM docker.io/library/buildpack-deps:$os
 
 ARG ISA_LEVEL=v1
 ARG os
+ARG distro
 ARG osver
+# Per-release packaging revision; independent of CI run numbers.
 ARG rev=1
+# Controls the Debian version epoch independently of the OS version.
 ARG version_schema
 
 SHELL ["/bin/bash", "-c"]
@@ -59,15 +62,25 @@ COPY . /build/nginx
 
 WORKDIR /build/nginx
 
-RUN if { [ -n "$osver" ] && [ "$osver" -ge 12 ]; } || [ "$version_schema" = "new" ]; then sed -i '1 s/(/(2:/' debian/changelog; fi && \
+RUN case "$distro" in \
+        debian) [[ "$osver" =~ ^[1-9][0-9]*$ ]] && DISTRO_SUFFIX="deb$osver" ;; \
+        ubuntu) [[ "$osver" =~ ^[0-9]{2}\.[0-9]{2}$ ]] && DISTRO_SUFFIX="ubuntu$osver" ;; \
+        *) echo "Unsupported distro: $distro" >&2; exit 1 ;; \
+    esac && \
+    [[ "$rev" =~ ^[1-9][0-9]*$ ]] && \
+    case "$ISA_LEVEL" in \
+        v1) ISA_SUFFIX="" ;; \
+        v2|v3) ISA_SUFFIX="+$ISA_LEVEL" ;; \
+        *) echo "Unsupported ISA_LEVEL: $ISA_LEVEL" >&2; exit 1 ;; \
+    esac && \
+    if [ "$version_schema" = "new" ]; then sed -i '1 s/(/(2:/' debian/changelog; fi && \
+    BASE_VERSION="$(dpkg-parsechangelog -SVersion)" && \
     BASE_CHANGELOG_DATE="$(dpkg-parsechangelog -SDate)" && \
     BASE_CHANGELOG_EPOCH="$(date -u -d "$BASE_CHANGELOG_DATE" +%s)" && \
     export SOURCE_DATE_EPOCH="$((BASE_CHANGELOG_EPOCH + 1))" && \
     BUILD_DATE="$(date -u -R -d "@$SOURCE_DATE_EPOCH")" && \
-    ISA_SUFFIX=$([ "$ISA_LEVEL" = "v1" ] && echo "" || echo "+$ISA_LEVEL.") && \
-    BUILD_SUFFIX="+$(cat ../openssl_ver.txt)+$osver$os$ISA_SUFFIX" && \
-    dch --distribution "$os" -l "$BUILD_SUFFIX" "Build on $os" -m && \
-    for ((i=1; i<rev; i++)); do dch --distribution "$os" -l "$BUILD_SUFFIX" "Rebuild" -m; done && \
+    BUILD_VERSION="${BASE_VERSION}+$(cat ../openssl_ver.txt)+${DISTRO_SUFFIX}u${rev}${ISA_SUFFIX}" && \
+    dch --distribution "$os" --newversion "$BUILD_VERSION" "Build on $os" -m && \
     sed -i "0,/^ -- /s|^\\( -- .*\\)  .*|\\1  $BUILD_DATE|" debian/changelog && \
     test "$(dpkg-parsechangelog -SDate)" = "$BUILD_DATE" && \
     sed -i '68s/\\\\/build_inst_sw \\/' /build/nginx/auto/lib/openssl/make && \

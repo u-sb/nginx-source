@@ -62,6 +62,7 @@ jobs:
           --network host \
           --output "type=local,dest=${ARTIFACT_DIR}" \
           --build-arg os="${{ matrix.codename }}" \
+          --build-arg distro="${{ matrix.distro }}" \
           --build-arg osver="${{ matrix.osver }}" \
           --build-arg version_schema="${{ matrix.version_schema }}" \
           --build-arg ISA_LEVEL="${{ matrix.isa }}" \
