@@ -233,30 +233,47 @@ static int nodeset_cluster_node_index_keyslot_ranges(redis_node_t *node) {
 
 char *node_dbg_sprint(redis_node_t *node, char *buf, size_t maxlen) {
   char           slotsline[256];
-  char          *slots;
-  slots = (char *)ngx_sprintf((u_char *)slotsline, "(%d)", node->cluster.slot_range.n);
+  u_char        *slots, *slots_end;
+
+  if(maxlen == 0) {
+    return buf;
+  }
+
+  slots_end = (u_char *)slotsline + sizeof(slotsline) - 1;
+  slots = ngx_snprintf((u_char *)slotsline, slots_end - (u_char *)slotsline,
+                       "(%uz)", node->cluster.slot_range.n);
   if(node->cluster.slot_range.n) {
-    unsigned i;
-    for(i=0; i<node->cluster.slot_range.n; i++) {
-      slots+= sprintf(slots, "%d-%d,", node->cluster.slot_range.range[i].min, node->cluster.slot_range.range[i].max);
+    size_t i;
+    for(i=0; i<node->cluster.slot_range.n && slots < slots_end; i++) {
+      slots = ngx_snprintf(slots, slots_end - slots, "%d-%d,",
+                           node->cluster.slot_range.range[i].min,
+                           node->cluster.slot_range.range[i].max);
     }
-    slots--;
-    
-    sprintf(slots, " idx:%d", node->cluster.slot_range.indexed);
+    if(slots < slots_end) {
+      if(slots[-1] == ',') {
+        slots--;
+      }
+      slots = ngx_snprintf(slots, slots_end - slots, " idx:%d",
+                           node->cluster.slot_range.indexed);
+    }
   }
   else {
-    sprintf(slots, "-");
+    slots = ngx_snprintf(slots, slots_end - slots, "-");
   }
+  *slots = '\0';
   
   char masterstr[256];
-  ngx_sprintf((u_char *)masterstr, "%s%Z", node->peers.master ? node_nickname_cstr(node->peers.master) : "-");
+  ngx_snprintf((u_char *)masterstr, sizeof(masterstr) - 1, "%s%Z",
+               node->peers.master ? node_nickname_cstr(node->peers.master) : "-");
+  masterstr[sizeof(masterstr) - 1] = '\0';
   
   if(node->cluster.enabled) {
-    ngx_snprintf((u_char *)buf, maxlen, "%p %s <%s> (cluster) r:%s id:%V m:[%V]%s s:[%s]%Z", node, node_nickname_cstr(node), node_state_cstr(node->state), node_role_cstr(node->role), &node->cluster.id, &node->cluster.master_id, masterstr, slotsline);
+    ngx_snprintf((u_char *)buf, maxlen - 1, "%p %s <%s> (cluster) r:%s id:%V m:[%V]%s s:[%s]%Z", node, node_nickname_cstr(node), node_state_cstr(node->state), node_role_cstr(node->role), &node->cluster.id, &node->cluster.master_id, masterstr, slotsline);
   }
   else {
-    ngx_snprintf((u_char *)buf, maxlen, "%p %s <%s> %s %V%Z", node, node_nickname_cstr(node), node_state_cstr(node->state), node_role_cstr(node->role), &node->run_id);
+    ngx_snprintf((u_char *)buf, maxlen - 1, "%p %s <%s> %s %V%Z", node, node_nickname_cstr(node), node_state_cstr(node->state), node_role_cstr(node->role), &node->run_id);
   }
+  buf[maxlen - 1] = '\0';
   return buf;
 }
 
