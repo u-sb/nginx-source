@@ -2124,20 +2124,25 @@ static nchan_redis_ip_range_t *node_ip_blacklisted(redis_nodeset_t *ns, redis_co
     return NULL;
   }
   for(cur = res; cur != NULL; cur = cur->ai_next) {
-    int fam = cur->ai_family;
-    union {
-      struct in_addr  ipv4;
+    int has_ipv4 = 0;
+    struct in_addr ipv4;
 #ifdef AF_INET6
-      struct in6_addr ipv6;
+    int has_ipv6 = 0;
+    struct in6_addr ipv6;
 #endif
-    } addr;
 
-    if(fam == AF_INET) {
-      addr.ipv4 = ((struct sockaddr_in *)cur->ai_addr)->sin_addr;
+    if(cur->ai_family == AF_INET) {
+      ipv4 = ((struct sockaddr_in *)cur->ai_addr)->sin_addr;
+      has_ipv4 = 1;
     }
 #ifdef AF_INET6
-    else if(fam == AF_INET6) {
-      addr.ipv6 = ((struct sockaddr_in6 *)cur->ai_addr)->sin6_addr;
+    else if(cur->ai_family == AF_INET6) {
+      ipv6 = ((struct sockaddr_in6 *)cur->ai_addr)->sin6_addr;
+      has_ipv6 = 1;
+      if(IN6_IS_ADDR_V4MAPPED(&ipv6)) {
+        ngx_memcpy(&ipv4, &ipv6.s6_addr[12], sizeof(ipv4));
+        has_ipv4 = 1;
+      }
     }
 #endif
     else {
@@ -2147,19 +2152,16 @@ static nchan_redis_ip_range_t *node_ip_blacklisted(redis_nodeset_t *ns, redis_co
     int i;
     for(i=0; i < ns->settings.blacklist.count; i++) {
       nchan_redis_ip_range_t *entry = &ns->settings.blacklist.list[i];
-      if(entry->family != fam) {
-        continue;
-      }
-      if(fam == AF_INET) {
-        if(entry->addr_block.ipv4.s_addr == (addr.ipv4.s_addr & entry->mask.ipv4.s_addr)) {
+      if(entry->family == AF_INET && has_ipv4) {
+        if(entry->addr_block.ipv4.s_addr == (ipv4.s_addr & entry->mask.ipv4.s_addr)) {
           freeaddrinfo(res);
           return entry;
         }
       }
 #ifdef AF_INET6
-      else if(fam == AF_INET6) {
+      else if(entry->family == AF_INET6 && has_ipv6) {
         unsigned           j;
-        struct in6_addr    buf = addr.ipv6;
+        struct in6_addr    buf = ipv6;
         uint8_t           *mask = entry->mask.ipv6.s6_addr;
 
         for(j=0; j<sizeof(buf.s6_addr); j++) {
