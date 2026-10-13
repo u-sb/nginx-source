@@ -241,7 +241,7 @@ static void set_to_pam_env(pam_handle_t *pamh, ngx_http_request_t *r,
                            char *key, char *value)
 {
         if (key != NULL && value != NULL) {
-                size_t size = strlen(key) + strlen(value) + 1 * sizeof(char);
+                size_t size = strlen(key) + strlen(value) + 2;
                 char *key_value_pair = ngx_palloc(r->pool, size);
                 sprintf(key_value_pair, "%s=%s", key, value);
 
