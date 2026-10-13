@@ -2662,10 +2662,11 @@ static void node_connector_callback(redisAsyncContext *ac, void *rep, void *priv
       break;
       
     case REDIS_NODE_PUBSUB_GETTING_INFO:
-      if(reply && reply->type == REDIS_REPLY_ERROR && nchan_cstr_startswith(reply->str, "NOAUTH")) {
+      if(reply && reply->type == REDIS_REPLY_ERROR && reply->str &&
+         nchan_cstr_startswith(reply->str, "NOAUTH")) {
         return node_connector_fail(node, "authentication required");
       }
-      else if(reply == NULL || reply->type == REDIS_REPLY_ERROR) {
+      else if(!reply_str_ok(reply) || reply->str == NULL) {
         return node_connector_fail(node, "INFO command failed");
       }
       else {
