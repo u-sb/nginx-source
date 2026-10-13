@@ -9,41 +9,39 @@
 #include "redis_nodeset_parser.h"
 #include "redis_nodeset.h"
 
-#define nchan_scan_str(str_src, cur, chr, str)\
-  (str)->data = (u_char *)memchr(cur, chr, (str_src)->len - (cur - (str_src)->data));\
-  if(!(str)->data)                            \
-    (str)->data = (str_src)->data + (str_src)->len;\
-  if((str)->data) {                           \
-    (str)->len = (str)->data - cur;           \
-    (str)->data = cur;                        \
-    cur+=(str)->len+1;                        \
-  }                                           \
-  else                                        \
-    goto fail
-
-
 static cluster_nodes_line_t   cluster_node_parsed_lines[MAX_CLUSTER_NODE_PARSED_LINES];
 static redis_connect_params_t parsed_connect_params[MAX_NODE_SLAVES_PARSED];
 
 static u_char *nodeset_parser_scan_cluster_nodes_slots_string(ngx_str_t *str, u_char *cur, redis_slot_range_t *r) {
   ngx_str_t       slot_min_str, slot_max_str, slot;
   ngx_int_t       slot_min,     slot_max;
-  u_char         *dash;
+  u_char         *dash, *end, *next;
   
-  if(cur == NULL) {
-    cur = str->data;
-  }
-  else if(cur >= str->data + str->len) {
-    return NULL;
-  }
   if(str->len == 0) {
     return NULL;
   }
-  
-  nchan_scan_str(str, cur, ' ', &slot);
-  if(slot.data[0] == '[') {
-    //transitional special slot. ignore it.
-    return nodeset_parser_scan_cluster_nodes_slots_string(str, cur, r);
+  end = str->data + str->len;
+  if(cur == NULL) {
+    cur = str->data;
+  }
+  if(cur >= end) {
+    return NULL;
+  }
+
+  while(cur < end) {
+    next = memchr(cur, ' ', end - cur);
+    slot.data = cur;
+    slot.len = next ? (size_t)(next - cur) : (size_t)(end - cur);
+    cur = next ? next + 1 : end;
+
+    if(slot.len == 0 || slot.data[0] == '[') {
+      //Ignore whitespace and transitional special slots without recursing.
+      continue;
+    }
+    break;
+  }
+  if(slot.len == 0 || slot.data[0] == '[') {
+    return NULL;
   }
   
   dash = (u_char *)memchr(slot.data, '-', slot.len);
@@ -68,9 +66,6 @@ static u_char *nodeset_parser_scan_cluster_nodes_slots_string(ngx_str_t *str, u_
   r->max = slot_max;
   
   return cur;
-  
-fail:
-  return NULL;
 }
 
 int parse_cluster_node_slots(cluster_nodes_line_t *l, redis_slot_range_t *ranges) {
