@@ -172,9 +172,17 @@ ngx_auth_pam_talker(int num_msg, const struct pam_message ** msg,
         case PAM_PROMPT_ECHO_ON:
             /* on memory allocation failure, auth fails */
             response[i].resp = strdup((const char *)ainfo->username.data);
+            if (response[i].resp == NULL) {
+                free_resp(i + 1, response);
+                return PAM_CONV_ERR;
+            }
             break;
         case PAM_PROMPT_ECHO_OFF:
             response[i].resp = strdup((const char *)ainfo->password.data);
+            if (response[i].resp == NULL) {
+                free_resp(i + 1, response);
+                return PAM_CONV_ERR;
+            }
             break;
         case PAM_ERROR_MSG:
             ngx_log_error(NGX_LOG_ERR, ainfo->log, 0,
