@@ -1527,7 +1527,7 @@ static char *ngx_conf_set_redis_ip_blacklist(ngx_conf_t *cf, ngx_command_t *cmd,
     cur = &val[i];
     nchan_redis_ip_range_t *entry = &blacklist[i-1];
     entry->str = *cur;
-    int                     prefix_size;
+    ngx_int_t               prefix_size;
     u_char                 *slash = memchr(cur->data, '/', cur->len);
     if(slash) {
       prefix_size = ngx_atoi(slash+1, cur->len - (slash + 1 - cur->data));
@@ -1582,8 +1582,6 @@ static char *ngx_conf_set_redis_ip_blacklist(ngx_conf_t *cf, ngx_command_t *cmd,
       //prefix size depends on ipv4 or ipv6
       prefix_size = entry->family == AF_INET ? 32 : 128;
     }
-    entry->prefix_size = prefix_size;
-    
     if(entry->family == AF_INET) {
       if(prefix_size > 32) {
         return "netmask size cannot exceed 32 for IPv4";
@@ -1609,6 +1607,7 @@ static char *ngx_conf_set_redis_ip_blacklist(ngx_conf_t *cf, ngx_command_t *cmd,
     else {
       return "invalid address family";
     }
+    entry->prefix_size = prefix_size;
     freeaddrinfo(res);
   }
   return NGX_OK;
