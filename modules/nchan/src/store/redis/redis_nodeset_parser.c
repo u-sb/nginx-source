@@ -165,10 +165,14 @@ static char *nodeset_parser_scan_cluster_nodes_line(const char *line, cluster_no
 
 redis_connect_params_t *parse_info_slaves(redis_node_t *node, const char *info, size_t *count) {
   char                   slavebuf[20]="slave0:";
-  int                    i = 0, skipped = 0;
+  int                    i = 0;
   redis_connect_params_t rcp;
   ngx_str_t              line;
   while(nchan_get_rest_of_line_in_cstr(info, slavebuf, &line)) {
+    if(i >= MAX_NODE_SLAVES_PARSED) {
+      node_log_error(node, "too many slaves, skipping the rest");
+      break;
+    }
     //ip=localhost,port=8537,state=online,offset=420,lag=1
     ngx_str_t hostname, port;
     nchan_scan_until_chr_on_line(&line, NULL,      '='); //ip=
@@ -186,18 +190,13 @@ redis_connect_params_t *parse_info_slaves(redis_node_t *node, const char *info, 
     rcp.peername.len = 0;
     rcp.db = node->connect_params.db;
     
-    if(i < MAX_NODE_SLAVES_PARSED) {
-      parsed_connect_params[i]=rcp;
-    }
-    else {
-      node_log_error(node, "too many slaves, skipping slave %d", i+1);
-    }
+    parsed_connect_params[i]=rcp;
     i++;
     ngx_sprintf((u_char *)slavebuf, "slave%d:", i);
     
     
   }
-  *count = i - skipped;
+  *count = i;
   return parsed_connect_params;
 }
 
