@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <memory.h>
+#include <string.h>
 #include <json-c/json.h>
 #include <arpa/inet.h>
 #include "ipdb.h"
@@ -33,6 +34,33 @@ ipdb_meta_data *parse_meta_data(const char *meta_json) {
 
     json_object *obj = json_tokener_parse(meta_json);
     json_object *value = NULL;
+
+    if (obj == NULL) {
+        free(meta_data);
+        return NULL;
+    }
+    if (!json_object_is_type(obj, json_type_object)) {
+        json_object_put(obj);
+        free(meta_data);
+        return NULL;
+    }
+
+    /* Reject names that cannot fit in ipdb_meta_data_language.name. */
+    if (json_object_object_get_ex(obj, "languages", &value)
+        && json_object_is_type(value, json_type_object)) {
+        int count = json_object_object_length(value);
+        struct json_object_iterator language = json_object_iter_begin(value);
+
+        for (i = 0; i < count; ++i) {
+            if (strlen(json_object_iter_peek_name(&language))
+                >= sizeof(meta_data->language[0].name)) {
+                json_object_put(obj);
+                free(meta_data);
+                return NULL;
+            }
+            json_object_iter_next(&language);
+        }
+    }
 
     if (json_object_object_get_ex(obj, "node_count", &value)) {
         meta_data->node_count = json_object_get_int(value);
@@ -82,6 +110,7 @@ ipdb_meta_data *parse_meta_data(const char *meta_json) {
         json_object_iter_end(value);
     }
 
+    json_object_put(obj);
     return meta_data;
 }
 
