@@ -272,10 +272,13 @@ static void add_request_info_to_pam_env(pam_handle_t *pamh,
                                         ngx_http_request_t *r)
 {
         char *request_info = ngx_strncpy_s(r->request_line, r->pool);
-        char *host_info = ngx_strncpy_s(r->headers_in.host->value, r->pool);
 
         set_to_pam_env(pamh, r, "REQUEST", request_info);
-        set_to_pam_env(pamh, r, "HOST", host_info);
+        if (r->headers_in.host != NULL) {
+                char *host_info = ngx_strncpy_s(r->headers_in.host->value,
+                                                r->pool);
+                set_to_pam_env(pamh, r, "HOST", host_info);
+        }
 }
 
 static ngx_int_t
