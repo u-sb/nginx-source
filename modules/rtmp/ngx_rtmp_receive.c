@@ -39,8 +39,7 @@ ngx_rtmp_protocol_message_handler(ngx_rtmp_session_t *s,
     switch(h->type) {
         case NGX_RTMP_MSG_CHUNK_SIZE:
             /* set chunk size =val */
-            ngx_rtmp_set_chunk_size(s, val);
-            break;
+            return ngx_rtmp_set_chunk_size(s, val);
 
         case NGX_RTMP_MSG_ABORT:
             /* abort chunk stream =val */
