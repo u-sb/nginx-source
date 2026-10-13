@@ -74,7 +74,7 @@ int                    i = 0;
   redis_slot_range_t   range;
   u_char              *cur = NULL;
   while((cur = nodeset_parser_scan_cluster_nodes_slots_string(&l->slots, cur, &range)) != NULL) {
-    if(i > l->slot_ranges_count) {
+    if(i >= l->slot_ranges_count) {
       return 0; //parsing more slot ranges than was expected
     }
     ranges[i]=range;
