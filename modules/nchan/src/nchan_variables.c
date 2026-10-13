@@ -84,7 +84,7 @@ static ngx_int_t nchan_publisher_type_variable(ngx_http_request_t *r, ngx_http_v
 }
 
 static ngx_int_t nchan_message_id_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v, uintptr_t data) {
-  static u_char        msgidbuf[100];
+  u_char               *msgidbuf;
   ngx_str_t           *msgid;
   
   nchan_request_ctx_t        *ctx = get_main_request_ctx(r);
@@ -94,6 +94,10 @@ static ngx_int_t nchan_message_id_variable(ngx_http_request_t *r, ngx_http_varia
   }
   
   msgid = msgid_to_str(&ctx->msg_id);
+  msgidbuf = ngx_pnalloc(r->pool, msgid->len);
+  if(msgidbuf == NULL) {
+    return NGX_ERROR;
+  }
   ngx_memcpy(msgidbuf, msgid->data, msgid->len);
   set_varval(v, msgidbuf, msgid->len);
   
@@ -101,7 +105,7 @@ static ngx_int_t nchan_message_id_variable(ngx_http_request_t *r, ngx_http_varia
 }
 
 static ngx_int_t nchan_prev_message_id_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v, uintptr_t data) {
-  static u_char        msgidbuf[100];
+  u_char               *msgidbuf;
   ngx_str_t           *msgid;
   
   nchan_request_ctx_t        *ctx = get_main_request_ctx(r);
@@ -111,6 +115,10 @@ static ngx_int_t nchan_prev_message_id_variable(ngx_http_request_t *r, ngx_http_
   }
   
   msgid = msgid_to_str(&ctx->prev_msg_id);
+  msgidbuf = ngx_pnalloc(r->pool, msgid->len);
+  if(msgidbuf == NULL) {
+    return NGX_ERROR;
+  }
   ngx_memcpy(msgidbuf, msgid->data, msgid->len);
   set_varval(v, msgidbuf, msgid->len);
   
