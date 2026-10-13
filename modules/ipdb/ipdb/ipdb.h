@@ -5,6 +5,8 @@
 #ifndef IPDB_C_IPDB_H
 #define IPDB_C_IPDB_H
 
+#include <stddef.h>
+
 #define  IPv4  0x01
 #define  IPv6  0x02
 
@@ -55,7 +57,8 @@ int ipdb_reader_is_ipv4_support(ipdb_reader *reader);
 
 int ipdb_reader_is_ipv6_support(ipdb_reader *reader);
 
-int ipdb_reader_find(ipdb_reader *reader, const char *addr, const char *language, char *body);
+int ipdb_reader_find(ipdb_reader *reader, const char *addr, const char *language,
+                     char *body, size_t body_size);
 
 int ipdb_search(ipdb_reader *reader, const u_char *ip, int bit_count, int *node);
 int ipdb_resolve(ipdb_reader *reader, int node, const char **bytes);

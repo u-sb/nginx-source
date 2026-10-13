@@ -235,7 +235,8 @@ int ipdb_find0(ipdb_reader *reader, const char *addr, const char **body) {
     return err;
 }
 
-int ipdb_find1(ipdb_reader *reader, const char *addr, const char *language, char *body) {
+int ipdb_find1(ipdb_reader *reader, const char *addr, const char *language,
+               char *body, size_t body_size) {
     int err, i;
     off_t off = -1;
     for (i = 0; i < reader->meta->language_length; ++i) {
@@ -270,6 +271,8 @@ int ipdb_find1(ipdb_reader *reader, const char *addr, const char *language, char
     if (!e) e = p;
     if (off + len > o + 1) {
         err = ErrDatabaseError;
+    } else if (e < s || body_size == 0 || e - s >= body_size) {
+        err = ErrDatabaseError;
     } else {
         strncpy(body, content + s, e - s);
         body[e - s] = 0;
@@ -277,6 +280,7 @@ int ipdb_find1(ipdb_reader *reader, const char *addr, const char *language, char
     return err;
 }
 
-int ipdb_reader_find(ipdb_reader *reader, const char *addr, const char *language, char *body) {
-    return ipdb_find1(reader, addr, language, body);
+int ipdb_reader_find(ipdb_reader *reader, const char *addr, const char *language,
+                     char *body, size_t body_size) {
+    return ipdb_find1(reader, addr, language, body, body_size);
 }

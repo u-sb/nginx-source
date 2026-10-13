@@ -479,7 +479,7 @@ ngx_http_ipdb_get_index_item(char *v, ngx_int_t idx)
 
 static ngx_int_t
 ngx_http_ipdb_item_by_addr(ipdb_reader *reader, ngx_addr_t *addr,
-    const char *lang, char *body)
+    const char *lang, char *body, size_t body_size)
 {
     int node = 0;
     ngx_int_t err, i;
@@ -551,6 +551,8 @@ ngx_http_ipdb_item_by_addr(ipdb_reader *reader, ngx_addr_t *addr,
     if (!e) e = p;
     if (off + len > o + 1) {
         err = ErrDatabaseError;
+    } else if (e < s || body_size == 0 || e - s >= body_size) {
+        err = ErrDatabaseError;
     } else {
         strncpy(body, content + s, e - s);
         body[e - s] = 0;
@@ -615,7 +617,7 @@ ngx_http_ipdb_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v,
         t[spec_addr.len] = 0;
 
         err = ipdb_reader_find(imcf->ipdb, (const char*)t,
-            (const char *)ilcf->lang.data, body);
+            (const char *)ilcf->lang.data, body, sizeof(body));
 
         ngx_pfree(r->pool, t);
 
@@ -641,7 +643,7 @@ ngx_http_ipdb_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v,
         }
 
         err = ngx_http_ipdb_item_by_addr(imcf->ipdb, &addr,
-            (const char *)ilcf->lang.data, body);
+            (const char *)ilcf->lang.data, body, sizeof(body));
     }
 
     if (err) {
