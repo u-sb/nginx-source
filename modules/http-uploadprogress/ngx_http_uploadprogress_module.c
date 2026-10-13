@@ -1695,17 +1695,44 @@ static ngx_int_t
 ngx_http_uploadprogress_callback_variable(ngx_http_request_t *r,
     ngx_http_variable_value_t *v,  uintptr_t data)
 {
-    u_char                          *val;
+    u_char                          ch, *val;
     ngx_http_uploadprogress_conf_t  *upcf;
     ngx_str_t                        callback;
+    size_t                           i;
+    ngx_uint_t                       start;
 
     upcf = ngx_http_get_module_loc_conf(r, ngx_http_uploadprogress_module);
 
     if (r->args.data == NULL || upcf->jsonp_parameter.len == 0
         || r->args.len <= upcf->jsonp_parameter.len
         || ngx_http_arg(r, upcf->jsonp_parameter.data,
-                        upcf->jsonp_parameter.len, &callback) != NGX_OK)
+                        upcf->jsonp_parameter.len, &callback) != NGX_OK
+        || callback.len == 0)
     {
+        return NGX_ERROR;
+    }
+
+    /* A callback is an ASCII identifier, optionally in a dotted namespace. */
+    start = 1;
+    for (i = 0; i < callback.len; i++) {
+        ch = callback.data[i];
+
+        if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+            || ch == '_' || ch == '$' || (!start && ch >= '0' && ch <= '9'))
+        {
+            start = 0;
+            continue;
+        }
+
+        if (!start && ch == '.') {
+            start = 1;
+            continue;
+        }
+
+        return NGX_ERROR;
+    }
+
+    if (start) {
         return NGX_ERROR;
     }
 
