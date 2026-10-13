@@ -1033,6 +1033,7 @@ ngx_buf_t *nchan_inflate(z_stream *stream, ngx_buf_t *in, ngx_http_request_t *r,
   ngx_buf_t          *out = NULL;
   u_char              outbuf[ZLIB_CHUNK];
   unsigned            have = 0;
+  unsigned            avail;
   off_t               written = 0;
   int                 trailer_appended = 0;
   
@@ -1057,8 +1058,9 @@ ngx_buf_t *nchan_inflate(z_stream *stream, ngx_buf_t *in, ngx_http_request_t *r,
   //output
   
   do {
-    stream->avail_out = ZLIB_CHUNK;
-    stream->next_out = outbuf;
+    avail = tf ? ZLIB_CHUNK : ZLIB_CHUNK - (unsigned) written;
+    stream->avail_out = avail;
+    stream->next_out = outbuf + (tf ? 0 : written);
     
     if(stream->avail_in == 0 && !trailer_appended) {
       stream->avail_in = 4;
@@ -1070,33 +1072,42 @@ ngx_buf_t *nchan_inflate(z_stream *stream, ngx_buf_t *in, ngx_http_request_t *r,
     switch (rc) {
       case Z_DATA_ERROR:
         nchan_log_request_error(r, "inflate error %d: %s", rc, stream->msg);
-        break;
+        goto failed;
       case Z_NEED_DICT:
       case Z_MEM_ERROR:
         nchan_log_request_error(r, "inflate error %d", rc);
-        break;
+        goto failed;
     }
 
-    have = ZLIB_CHUNK - stream->avail_out;
-    
-    if(stream->avail_out == 0 && tf == NULL) {
-      //if we filled up the buffer, let's start dumping to a file.
-      tf = make_temp_file(r, pool);
-    }
-    if(tf) {
-      ngx_write_file(&tf->file, outbuf, have, written);
+    have = avail - stream->avail_out;
+    if(tf && have) {
+      if(ngx_write_file(&tf->file, outbuf, have, written) != (ssize_t) have) {
+        nchan_log_request_error(r, "failed to write inflated message to temp file");
+        goto failed;
+      }
     }
     written += have;
+
+    if(stream->avail_out == 0 && tf == NULL) {
+      //The in-memory output buffer is full; spill all accumulated bytes.
+      tf = make_temp_file(r, pool);
+      if(tf == NULL || ngx_write_file(&tf->file, outbuf, written, 0)
+                       != (ssize_t) written) {
+        nchan_log_request_error(r, "failed to store inflated message in temp file");
+        goto failed;
+      }
+    }
   } while(rc == Z_OK);
   
   if(mmapped) {
     munmap(mm_instr.data, mm_instr.len);
+    mmapped = 0;
   }
   
   if((out = ngx_palloc(pool, sizeof(*out))) == NULL) {
     nchan_log_request_error(r, "failed to allocate output buf for deflated message");
     deflateReset(deflate_zstream);
-    return NULL;
+    goto failed;
   }
   
   if(tf) { //using a tempfile
@@ -1112,7 +1123,7 @@ ngx_buf_t *nchan_inflate(z_stream *stream, ngx_buf_t *in, ngx_http_request_t *r,
     if(!outpooled) {
       nchan_log_request_error(r, "failed to allocate output data for deflated message");
       deflateReset(deflate_zstream);
-      return NULL;
+      goto failed;
     }
     ngx_memcpy(outpooled, outbuf, written);
     ngx_init_set_membuf(out, outpooled, outpooled + written);
@@ -1121,6 +1132,17 @@ ngx_buf_t *nchan_inflate(z_stream *stream, ngx_buf_t *in, ngx_http_request_t *r,
   
   deflateReset(deflate_zstream);
   return out;
+
+failed:
+  if(mmapped) {
+    munmap(mm_instr.data, mm_instr.len);
+  }
+  if(tf && tf->file.fd != NGX_INVALID_FILE) {
+    if(ngx_delete_file(tf->file.name.data) == NGX_FILE_ERROR) {
+      nchan_log_request_error(r, "failed to remove incomplete inflated message temp file");
+    }
+  }
+  return NULL;
 }
 
 
