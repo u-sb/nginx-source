@@ -2150,11 +2150,10 @@ static nchan_redis_ip_range_t *node_ip_blacklisted(redis_nodeset_t *ns, redis_co
     else if(fam == AF_INET6) {
       unsigned           j;
       struct in6_addr    buf = addr.ipv6;
-      uint8_t           *masked_addr = entry->addr_block.ipv6.s6_addr;
       uint8_t           *mask = entry->mask.ipv6.s6_addr;
       
-      for(j=0; j<sizeof(entry->addr_block.ipv6.s6_addr); j++) {
-        masked_addr[j] &= mask[j];
+      for(j=0; j<sizeof(buf.s6_addr); j++) {
+        buf.s6_addr[j] &= mask[j];
       }
       
       if(memcmp(entry->addr_block.ipv6.s6_addr, &buf, sizeof(buf)) == 0) {
