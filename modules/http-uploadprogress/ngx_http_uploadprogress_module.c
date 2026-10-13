@@ -267,11 +267,10 @@ static ngx_array_t ngx_http_uploadprogress_global_templates;
 static ngx_str_t*
 get_tracking_id(ngx_http_request_t * r)
 {
-    u_char                          *p, *start_p;
     ngx_uint_t                       i;
     ngx_list_part_t                 *part;
     ngx_table_elt_t                 *header;
-    ngx_str_t                       *ret, args;
+    ngx_str_t                       *ret, id;
     ngx_http_uploadprogress_conf_t  *upcf;
 
     upcf = ngx_http_get_module_loc_conf(r, ngx_http_uploadprogress_module);
@@ -308,46 +307,20 @@ get_tracking_id(ngx_http_request_t * r)
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, 
                     "upload-progress: get_tracking_id no header found");
 
-    /* not found, check as a request arg */
-    /* it is possible the request args have not been yet created (or already released) */
-    /* so let's try harder first from the request line */
-    args.len =  r->args.len;
-    args.data = r->args.data;
-    
-    if (args.len && args.data) {
-        ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, 
-                       "upload-progress: get_tracking_id no header found, args found");
-        i = 0;
-        p = args.data;
-        do {
-            ngx_uint_t len = args.len - (p - args.data);
-            if (len >= (upcf->header.len + 1) && ngx_strncasecmp(p, upcf->header.data, upcf->header.len) == 0
-                && p[upcf->header.len] == '=') {
-              ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, 
-                             "upload-progress: get_tracking_id found args: %s",p);
-                i = 1;
-                break;
-            }
-            if (len<=0)
-                break;
-        } 
-        while(p++);
-
-        if (i) {
-            start_p = p += upcf->header.len + 1;
-            while (p < args.data + args.len) {
-                if (*((p++) + 1) == '&') {
-                    break;
-                }
-            }
-
-            ret = ngx_calloc(sizeof(ngx_str_t), r->connection->log);
-            ret->data = start_p;
-            ret->len = p - start_p;
-            ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, 
-                           "upload-progress: get_tracking_id found args: %V",ret);
-            return ret;
+    /* Request arguments are length-delimited, not NUL-terminated. */
+    if (r->args.data != NULL && upcf->header.len != 0
+        && r->args.len > upcf->header.len
+        && ngx_http_arg(r, upcf->header.data, upcf->header.len, &id) == NGX_OK)
+    {
+        ret = ngx_calloc(sizeof(ngx_str_t), r->connection->log);
+        if (ret == NULL) {
+            return NULL;
         }
+
+        *ret = id;
+        ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                       "upload-progress: get_tracking_id found args: %V", ret);
+        return ret;
     }
 
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, 
@@ -1722,50 +1695,33 @@ static ngx_int_t
 ngx_http_uploadprogress_callback_variable(ngx_http_request_t *r,
     ngx_http_variable_value_t *v,  uintptr_t data)
 {
-    u_char                          *p, *start_p, *val, prefix[1024];
+    u_char                          *val;
     ngx_http_uploadprogress_conf_t  *upcf;
-    u_int                            len;
+    ngx_str_t                        callback;
 
     upcf = ngx_http_get_module_loc_conf(r, ngx_http_uploadprogress_module);
 
-    if (r->args.len) {
-        /* '=' has to be appended to avoid matching parameters that have the */
-        /* configured name as a prefix but are longer */
-        ngx_snprintf(prefix, sizeof(prefix) - 1, "%s=", upcf->jsonp_parameter.data);
-        len = upcf->jsonp_parameter.len + 1;
-        prefix[len] = '\0'; /* Force termination of string */
-
-        p = (u_char *) ngx_strstr(r->args.data, prefix);
-
-        if (p) {
-            p += len;
-            start_p = p;
-            while (p < r->args.data + r->args.len) {
-                if (*((p++) + 1) == '&') {
-                    break;
-                }
-            }
-
-            v->len = p - start_p;
-
-            val = ngx_palloc(r->pool, v->len + 1);
-            if (val == NULL) {
-                return NGX_ERROR;
-            }
-
-            ngx_memcpy(val, start_p, v->len);
-            val[v->len] = '\0';
-
-            v->valid = 1;
-            v->no_cacheable = 0;
-            v->not_found = 0;
-            v->data = val;
-        } else {
-            return NGX_ERROR;
-        }
-    } else {
+    if (r->args.data == NULL || upcf->jsonp_parameter.len == 0
+        || r->args.len <= upcf->jsonp_parameter.len
+        || ngx_http_arg(r, upcf->jsonp_parameter.data,
+                        upcf->jsonp_parameter.len, &callback) != NGX_OK)
+    {
         return NGX_ERROR;
     }
+
+    val = ngx_palloc(r->pool, callback.len + 1);
+    if (val == NULL) {
+        return NGX_ERROR;
+    }
+
+    ngx_memcpy(val, callback.data, callback.len);
+    val[callback.len] = '\0';
+
+    v->len = callback.len;
+    v->valid = 1;
+    v->no_cacheable = 0;
+    v->not_found = 0;
+    v->data = val;
 
     return NGX_OK;
 }
