@@ -18,7 +18,8 @@ typedef struct {
 } multipart_privdata_t;
 
 typedef struct {
-  u_char       charbuf[58 + 10*NCHAN_FIXED_MULTITAG_MAX];
+  /* Room for all message-id tags, headers, and a bounded Content-Type. */
+  u_char       charbuf[64 + 10*NCHAN_MULTITAG_MAX + 255];
   void        *prev;
   void        *next;
 } headerbuf_t;
@@ -107,7 +108,8 @@ static ngx_int_t multipart_respond_message(subscriber_t *sub,  nchan_msg_t *msg)
   }
   else {
     ngx_str_t   *tmp_etag = msgid_to_str(&msg->id);
-    cur = ngx_snprintf(cur, 58 + 10*NCHAN_FIXED_MULTITAG_MAX, "\r\nEtag: %V\r\n", tmp_etag);
+    cur = ngx_snprintf(cur, sizeof(headerbuf->charbuf) - 255,
+                       "\r\nEtag: %V\r\n", tmp_etag);
   }
   
   n=4;
@@ -145,7 +147,11 @@ static ngx_int_t multipart_respond_message(subscriber_t *sub,  nchan_msg_t *msg)
     buf->memory = 1;
     buf->start = cur;
     buf->pos = cur;
-    buf->last = ngx_snprintf(cur, 255, "Content-Type: %V\r\n\r\n", msg->content_type);
+    buf->last = ngx_snprintf(cur,
+                             ngx_min((size_t) 255,
+                                     sizeof(headerbuf->charbuf) -
+                                     (cur - headerbuf->charbuf)),
+                             "Content-Type: %V\r\n\r\n", msg->content_type);
     buf->end = buf->last;
   }
   else {
