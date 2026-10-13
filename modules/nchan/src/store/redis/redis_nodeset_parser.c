@@ -234,8 +234,8 @@ cluster_nodes_line_t *parse_cluster_nodes(redis_node_t *node, const char *cluste
   size_t                n = 0, discarded = 0;
   cluster_nodes_line_t  l;
   while((line = nodeset_parser_scan_cluster_nodes_line(line, &l)) != NULL) {
-    if(n > MAX_CLUSTER_NODE_PARSED_LINES) {
-      node_log_error(node, "too many cluster nodes, discarding line %d", n + discarded);
+    if(n >= MAX_CLUSTER_NODE_PARSED_LINES) {
+      node_log_error(node, "too many cluster nodes, discarding line %uz", n + discarded + 1);
       discarded++;
     }
     else {
