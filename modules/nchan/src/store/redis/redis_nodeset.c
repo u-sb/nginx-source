@@ -2104,7 +2104,8 @@ redisContext *node_connect_sync_context(redis_node_t *node) {
 }
 
 static nchan_redis_ip_range_t *node_ip_blacklisted(redis_nodeset_t *ns, redis_connect_params_t *rcp) {
-  struct addrinfo *res;
+  struct addrinfo *res, *cur;
+  struct addrinfo hints;
   char hostname_buf[1024];
 
   if(rcp->hostname.len >= sizeof(hostname_buf)) {
@@ -2113,56 +2114,68 @@ static nchan_redis_ip_range_t *node_ip_blacklisted(redis_nodeset_t *ns, redis_co
   }
   ngx_memcpy(hostname_buf, rcp->hostname.data, rcp->hostname.len);
   hostname_buf[rcp->hostname.len] = '\0';
+
+  ngx_memzero(&hints, sizeof(hints));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
   
-  if(getaddrinfo(hostname_buf, NULL, NULL, &res) != 0) {
+  if(getaddrinfo(hostname_buf, NULL, &hints, &res) != 0) {
     nodeset_log_error(ns, "Failed to getaddrinfo for hostname %V while deciding if IP is blacklisted", &rcp->hostname);
     return NULL;
   }
-  int fam = res->ai_family;
-  union {
-    struct in_addr  ipv4;
+  for(cur = res; cur != NULL; cur = cur->ai_next) {
+    int fam = cur->ai_family;
+    union {
+      struct in_addr  ipv4;
 #ifdef AF_INET6
-    struct in6_addr ipv6;
+      struct in6_addr ipv6;
 #endif
-  } addr;
-  
-  if(res->ai_family == AF_INET) {
-    addr.ipv4 = ((struct sockaddr_in *)res->ai_addr)->sin_addr;
-  }
-#ifdef AF_INET6
-  else if(res->ai_family == AF_INET6) {
-    addr.ipv6 = ((struct sockaddr_in6 *)res->ai_addr)->sin6_addr;
-  }
-#endif
-  freeaddrinfo(res);
-  int i;
-  for(i=0; i < ns->settings.blacklist.count; i++) {
-    nchan_redis_ip_range_t *entry = &ns->settings.blacklist.list[i];
-    if(entry->family != fam) {
-      continue;
-    }
+    } addr;
+
     if(fam == AF_INET) {
-      if(entry->addr_block.ipv4.s_addr == (addr.ipv4.s_addr & entry->mask.ipv4.s_addr)) {
-        return entry;
-      }
+      addr.ipv4 = ((struct sockaddr_in *)cur->ai_addr)->sin_addr;
     }
 #ifdef AF_INET6
     else if(fam == AF_INET6) {
-      unsigned           j;
-      struct in6_addr    buf = addr.ipv6;
-      uint8_t           *mask = entry->mask.ipv6.s6_addr;
-      
-      for(j=0; j<sizeof(buf.s6_addr); j++) {
-        buf.s6_addr[j] &= mask[j];
-      }
-      
-      if(memcmp(entry->addr_block.ipv6.s6_addr, &buf, sizeof(buf)) == 0) {
-        return entry;
-      }
+      addr.ipv6 = ((struct sockaddr_in6 *)cur->ai_addr)->sin6_addr;
     }
 #endif
+    else {
+      continue;
+    }
+
+    int i;
+    for(i=0; i < ns->settings.blacklist.count; i++) {
+      nchan_redis_ip_range_t *entry = &ns->settings.blacklist.list[i];
+      if(entry->family != fam) {
+        continue;
+      }
+      if(fam == AF_INET) {
+        if(entry->addr_block.ipv4.s_addr == (addr.ipv4.s_addr & entry->mask.ipv4.s_addr)) {
+          freeaddrinfo(res);
+          return entry;
+        }
+      }
+#ifdef AF_INET6
+      else if(fam == AF_INET6) {
+        unsigned           j;
+        struct in6_addr    buf = addr.ipv6;
+        uint8_t           *mask = entry->mask.ipv6.s6_addr;
+
+        for(j=0; j<sizeof(buf.s6_addr); j++) {
+          buf.s6_addr[j] &= mask[j];
+        }
+
+        if(memcmp(entry->addr_block.ipv6.s6_addr, &buf, sizeof(buf)) == 0) {
+          freeaddrinfo(res);
+          return entry;
+        }
+      }
+#endif
+    }
   }
-  
+  freeaddrinfo(res);
+
   return NULL;
 }
 
