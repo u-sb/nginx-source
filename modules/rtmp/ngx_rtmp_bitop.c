@@ -27,6 +27,11 @@ ngx_rtmp_bit_read(ngx_rtmp_bit_reader_t *br, ngx_uint_t n)
 
     v = 0;
 
+    if (br->err || n > 64) {
+        br->err = 1;
+        return 0;
+    }
+
     while (n) {
 
         if (br->pos >= br->last) {
@@ -56,8 +61,23 @@ uint64_t
 ngx_rtmp_bit_read_golomb(ngx_rtmp_bit_reader_t *br)
 {
     ngx_uint_t  n;
+    uint64_t    suffix;
 
-    for (n = 0; ngx_rtmp_bit_read(br, 1) == 0 && !br->err; n++);
+    for (n = 0; ngx_rtmp_bit_read(br, 1) == 0 && !br->err; n++) {
+        if (n == 63) {
+            br->err = 1;
+            return 0;
+        }
+    }
 
-    return ((uint64_t) 1 << n) + ngx_rtmp_bit_read(br, n) - 1;
+    if (br->err) {
+        return 0;
+    }
+
+    suffix = ngx_rtmp_bit_read(br, n);
+    if (br->err) {
+        return 0;
+    }
+
+    return ((uint64_t) 1 << n) + suffix - 1;
 }

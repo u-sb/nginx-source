@@ -360,6 +360,7 @@ ngx_rtmp_codec_parse_avc_header(ngx_rtmp_session_t *s, ngx_chain_t *in)
     ngx_uint_t              profile_idc, width, height, crop_left, crop_right,
                             crop_top, crop_bottom, frame_mbs_only, n, cf_idc,
                             num_ref_frames;
+    uint64_t                ref_frame_count;
     ngx_rtmp_codec_ctx_t   *ctx;
     ngx_rtmp_bit_reader_t   br;
 
@@ -470,12 +471,21 @@ ngx_rtmp_codec_parse_avc_header(ngx_rtmp_session_t *s, ngx_chain_t *in)
         ngx_rtmp_bit_read_golomb(&br);
 
         /* num ref frames in pic order */
-        num_ref_frames = (ngx_uint_t) ngx_rtmp_bit_read_golomb(&br);
+        ref_frame_count = ngx_rtmp_bit_read_golomb(&br);
+
+        if (br.err || ref_frame_count > 1024) {
+            return;
+        }
+
+        num_ref_frames = (ngx_uint_t) ref_frame_count;
 
         for (n = 0; n < num_ref_frames; n++) {
 
             /* offset for ref frame */
             ngx_rtmp_bit_read_golomb(&br);
+            if (br.err) {
+                return;
+            }
         }
     }
 
