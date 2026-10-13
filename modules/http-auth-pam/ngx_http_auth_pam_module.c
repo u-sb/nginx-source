@@ -14,11 +14,6 @@
 
 #define NGX_PAM_SERVICE_NAME    "nginx"
 
-/* Module context data */
-typedef struct {
-    ngx_str_t  passwd;
-} ngx_http_auth_pam_ctx_t;
-
 /* PAM authinfo */
 typedef struct {
     ngx_str_t  username;
@@ -39,8 +34,7 @@ static ngx_int_t ngx_http_auth_pam_handler(ngx_http_request_t *r);
 
 /* Function that authenticates the user -- is the only function that uses PAM */
 static ngx_int_t ngx_http_auth_pam_authenticate(ngx_http_request_t *r,
-                                                ngx_http_auth_pam_ctx_t *ctx,
-                                                ngx_str_t *passwd, void *conf);
+                                                void *conf);
 
 static ngx_int_t ngx_http_auth_pam_set_realm(ngx_http_request_t *r,
                                              ngx_str_t *realm);
@@ -204,19 +198,12 @@ static ngx_int_t
 ngx_http_auth_pam_handler(ngx_http_request_t *r)
 {
     ngx_int_t  rc;
-    ngx_http_auth_pam_ctx_t  *ctx;
     ngx_http_auth_pam_loc_conf_t  *alcf;
 
     alcf = ngx_http_get_module_loc_conf(r, ngx_http_auth_pam_module);
 
     if (alcf->realm.len == 0) {
         return NGX_DECLINED;
-    }
-
-    ctx = ngx_http_get_module_ctx(r, ngx_http_auth_pam_module);
-
-    if (ctx) {
-        return ngx_http_auth_pam_authenticate(r, ctx, &ctx->passwd, alcf);
     }
 
     /* Decode http auth user and passwd, leaving values on the request */
@@ -231,22 +218,38 @@ ngx_http_auth_pam_handler(ngx_http_request_t *r)
     }
 
     /* Check user & password using PAM */
-    return ngx_http_auth_pam_authenticate(r, ctx, &ctx->passwd, alcf);
+    return ngx_http_auth_pam_authenticate(r, alcf);
 }
 
 /**
  * create a key value pair from the given key and value string
  */
-static void set_to_pam_env(pam_handle_t *pamh, ngx_http_request_t *r,
-                           char *key, char *value)
+static int set_to_pam_env(pam_handle_t *pamh, ngx_http_request_t *r,
+                          char *key, char *value)
 {
-        if (key != NULL && value != NULL) {
-                size_t size = strlen(key) + strlen(value) + 2;
-                char *key_value_pair = ngx_palloc(r->pool, size);
-                sprintf(key_value_pair, "%s=%s", key, value);
+        size_t size, key_len, value_len;
+        char *key_value_pair;
 
-                pam_putenv(pamh, key_value_pair);
+        if (key == NULL || value == NULL) {
+                return PAM_BUF_ERR;
         }
+
+        key_len = strlen(key);
+        value_len = strlen(value);
+        if (key_len > (size_t) -1 - 2
+            || value_len > (size_t) -1 - key_len - 2)
+        {
+                return PAM_BUF_ERR;
+        }
+
+        size = key_len + value_len + 2;
+        key_value_pair = ngx_palloc(r->pool, size);
+        if (key_value_pair == NULL) {
+                return PAM_BUF_ERR;
+        }
+
+        sprintf(key_value_pair, "%s=%s", key, value);
+        return pam_putenv(pamh, key_value_pair);
 }
 
 /**
@@ -257,9 +260,21 @@ static void set_to_pam_env(pam_handle_t *pamh, ngx_http_request_t *r,
  */
 static char* ngx_strncpy_s(ngx_str_t source, ngx_pool_t *pool)
 {
+        char* destination;
+
+        if (source.len == (size_t) -1) {
+                return NULL;
+        }
+
         // allocate memory in pool
-        char* destination = ngx_palloc(pool, source.len + 1);
-        strncpy(destination, (char *) source.data, source.len);
+        destination = ngx_palloc(pool, source.len + 1);
+        if (destination == NULL) {
+                return NULL;
+        }
+
+        if (source.len != 0) {
+                ngx_memcpy(destination, source.data, source.len);
+        }
         // add null terminator
         destination[source.len] = '\0';
         return destination;
@@ -268,23 +283,28 @@ static char* ngx_strncpy_s(ngx_str_t source, ngx_pool_t *pool)
 /**
  * enrich pam environment with request parameters
  */
-static void add_request_info_to_pam_env(pam_handle_t *pamh,
-                                        ngx_http_request_t *r)
+static int add_request_info_to_pam_env(pam_handle_t *pamh,
+                                       ngx_http_request_t *r)
 {
         char *request_info = ngx_strncpy_s(r->request_line, r->pool);
+        int rc;
 
-        set_to_pam_env(pamh, r, "REQUEST", request_info);
+        rc = set_to_pam_env(pamh, r, "REQUEST", request_info);
+        if (rc != PAM_SUCCESS) {
+                return rc;
+        }
+
         if (r->headers_in.host != NULL) {
                 char *host_info = ngx_strncpy_s(r->headers_in.host->value,
                                                 r->pool);
-                set_to_pam_env(pamh, r, "HOST", host_info);
+                return set_to_pam_env(pamh, r, "HOST", host_info);
         }
+
+        return PAM_SUCCESS;
 }
 
 static ngx_int_t
-ngx_http_auth_pam_authenticate(ngx_http_request_t *r,
-                               ngx_http_auth_pam_ctx_t *ctx, ngx_str_t *passwd,
-                               void *conf)
+ngx_http_auth_pam_authenticate(ngx_http_request_t *r, void *conf)
 {
     ngx_int_t   rc;
     ngx_http_auth_pam_loc_conf_t  *alcf;
@@ -346,15 +366,25 @@ ngx_http_auth_pam_authenticate(ngx_http_request_t *r,
 
     /* send client IP address to PAM */
     char *client_ip_addr = ngx_strncpy_s(r->connection->addr_text, r->pool);
+    if (client_ip_addr == NULL) {
+        pam_end(pamh, PAM_BUF_ERR);
+        return NGX_HTTP_INTERNAL_SERVER_ERROR;
+    }
+
     if ((rc = pam_set_item(pamh, PAM_RHOST, client_ip_addr)) != PAM_SUCCESS) {
         ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                       "PAM: Could not set item PAM_RHOST: %s",
                       pam_strerror(pamh, rc));
+        pam_end(pamh, rc);
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
     if (alcf->set_pam_env) {
-        add_request_info_to_pam_env(pamh, r);
+        rc = add_request_info_to_pam_env(pamh, r);
+        if (rc != PAM_SUCCESS) {
+            pam_end(pamh, rc);
+            return NGX_HTTP_INTERNAL_SERVER_ERROR;
+        }
     }
 
     /* try to authenticate user, log error on failure */
