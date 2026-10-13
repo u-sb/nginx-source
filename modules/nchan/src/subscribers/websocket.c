@@ -1389,6 +1389,11 @@ retry:
             frame->payload_len = nchan_ntohll(len);
             break;
         }
+
+        if (frame->payload_len > (uint64_t) NGX_MAX_INT_T_VALUE) {
+          websocket_send_close_frame(fsub, CLOSE_MESSAGE_TOO_BIG, NULL);
+          return websocket_reading_finalize(r);
+        }
         
         frame->step = WEBSOCKET_READ_GET_MASK_KEY_STEP;
         break;
