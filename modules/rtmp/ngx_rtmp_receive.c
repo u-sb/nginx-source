@@ -279,6 +279,10 @@ ngx_rtmp_aggregate_message_handler(ngx_rtmp_session_t *s, ngx_rtmp_header_t *h,
             return NGX_OK;
         }
 
+        if (ch.type == NGX_RTMP_MSG_AGGREGATE) {
+            return NGX_ERROR;
+        }
+
         if (ngx_rtmp_fetch_uint32(&in, &ch.mlen, 3) != NGX_OK) {
             return NGX_ERROR;
         }
