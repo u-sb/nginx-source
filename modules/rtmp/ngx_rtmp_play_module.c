@@ -718,25 +718,13 @@ ngx_rtmp_play_play(ngx_rtmp_session_t *s, ngx_rtmp_play_t *v)
         goto next;
     }
 
-    /* check for double-dot in v->name;
-     * we should not move out of play directory */
-    for (p = v->name; *p; ++p) {
-        if (ngx_path_separator(p[0]) &&
-            p[1] == '.' && p[2] == '.' &&
-            ngx_path_separator(p[3]))
-        {
-            ngx_log_error(NGX_LOG_ERR, s->connection->log, 0,
-                         "play: bad name '%s'", v->name);
-            return NGX_ERROR;
-        }
-    }
-
     if (ctx == NULL) {
         ctx = ngx_palloc(s->connection->pool, sizeof(ngx_rtmp_play_ctx_t));
         ngx_rtmp_set_ctx(s, ctx, ngx_rtmp_play_module);
     }
 
     ngx_memzero(ctx, sizeof(*ctx));
+    ctx->file.fd = NGX_INVALID_FILE;
 
     ctx->session = s;
     ctx->aindex = ngx_rtmp_play_parse_index('a', v->args);
@@ -784,7 +772,18 @@ ngx_rtmp_play_play(ngx_rtmp_session_t *s, ngx_rtmp_play_t *v)
         goto next;
     }
 
-    ctx->file.fd = NGX_INVALID_FILE;
+    /* Reject parent components in the name used below to build file paths. */
+    for (p = v->name + ctx->pfx_size; *p; ++p) {
+        if ((p == v->name + ctx->pfx_size || ngx_path_separator(p[-1])) &&
+            p[0] == '.' && p[1] == '.' &&
+            (p[2] == '\0' || ngx_path_separator(p[2])))
+        {
+            ngx_log_error(NGX_LOG_ERR, s->connection->log, 0,
+                          "play: bad name '%s'", v->name);
+            return NGX_ERROR;
+        }
+    }
+
     ctx->nentry = NGX_CONF_UNSET_UINT;
     ctx->post_seek = NGX_CONF_UNSET_UINT;
 
