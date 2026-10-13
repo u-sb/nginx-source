@@ -1541,6 +1541,9 @@ static char *ngx_conf_set_redis_ip_blacklist(ngx_conf_t *cf, ngx_command_t *cmd,
     }
     
     char buf[64];
+    if((size_t)(slash - cur->data) >= sizeof(buf)) {
+      return "Redis blacklist IP address is too long";
+    }
     ngx_memzero(buf, sizeof(buf));
     memcpy(buf, cur->data, (slash - cur->data));
     
