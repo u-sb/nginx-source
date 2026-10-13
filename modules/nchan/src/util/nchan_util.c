@@ -648,11 +648,15 @@ int nchan_cstr_match_line(const char *cstr, const char *line) {
 int nchan_get_rest_of_line_in_cstr(const char *cstr, const char *line_start, ngx_str_t *rest) {
   const char *cur = cstr;
   const char *end = cur + strlen(cur);
+
+  if(rest) {
+    rest->data = (u_char *)"";
+    rest->len = 0;
+  }
   
   while(cur && cur < end) {
     const char *first = strstr(cur, line_start);
     if(!first) { //not found at all
-      if(rest) rest->len = 0;
       return 0;
     }
     
