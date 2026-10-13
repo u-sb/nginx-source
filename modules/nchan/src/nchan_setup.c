@@ -1507,7 +1507,7 @@ static void ipv6_prefix_size_to_mask(int prefix_size, struct in6_addr *mask) {
 }
 
 static void ipv4_prefix_size_to_mask(int prefix_size, struct in_addr *mask) {
-  mask->s_addr= (in_addr_t )(prefix_size > 0 ? htonl(~((1 << (32 - prefix_size)) - 1)) : 0);
+  mask->s_addr= (in_addr_t )(prefix_size > 0 ? htonl(~((1U << (32 - prefix_size)) - 1U)) : 0);
 }
 
 static char *ngx_conf_set_redis_ip_blacklist(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
