@@ -128,8 +128,7 @@ static char *nodeset_parser_scan_cluster_nodes_line(const char *line, cluster_no
     l->master = 0;
   }
   l->maybe_failed = nchan_ngx_str_substr((&l->flags), "fail?");
-  if(!l->maybe_failed)
-    l->failed = nchan_ngx_str_substr((&l->flags), "fail");
+  l->failed = !l->maybe_failed && nchan_ngx_str_substr((&l->flags), "fail");
 
   l->self = nchan_ngx_str_substr((&l->flags), "myself");
   l->noaddr = nchan_ngx_str_substr((&l->flags), "noaddr");
