@@ -650,7 +650,7 @@ int nchan_get_rest_of_line_in_cstr(const char *cstr, const char *line_start, ngx
   const char *end = cur + strlen(cur);
   
   while(cur && cur < end) {
-    char *first = strstr(cstr, line_start);
+    const char *first = strstr(cur, line_start);
     if(!first) { //not found at all
       if(rest) rest->len = 0;
       return 0;
@@ -672,7 +672,10 @@ int nchan_get_rest_of_line_in_cstr(const char *cstr, const char *line_start, ngx
     }
     else {
       //we found a match in the middle of the string
-      cur = strchr(cur, '\n'); //move on, redo
+      cur = strchr(first, '\n'); //move to the next line
+      if(cur) {
+        cur++;
+      }
     }
   }
   return 0;
