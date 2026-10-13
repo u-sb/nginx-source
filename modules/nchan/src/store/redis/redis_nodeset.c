@@ -2105,12 +2105,17 @@ redisContext *node_connect_sync_context(redis_node_t *node) {
 
 static nchan_redis_ip_range_t *node_ip_blacklisted(redis_nodeset_t *ns, redis_connect_params_t *rcp) {
   struct addrinfo *res;
-  char hostname_buf[128];
-  ngx_memzero(hostname_buf, sizeof(hostname_buf));
+  char hostname_buf[1024];
+
+  if(rcp->hostname.len >= sizeof(hostname_buf)) {
+    nodeset_log_error(ns, "Hostname is too long to check against Redis IP blacklist: %V", &rcp->hostname);
+    return NULL;
+  }
   ngx_memcpy(hostname_buf, rcp->hostname.data, rcp->hostname.len);
+  hostname_buf[rcp->hostname.len] = '\0';
   
   if(getaddrinfo(hostname_buf, NULL, NULL, &res) != 0) {
-    nodeset_log_error(ns, "Failed to getaddrinfo for hostname %V while deciding if IP is blacklisted");
+    nodeset_log_error(ns, "Failed to getaddrinfo for hostname %V while deciding if IP is blacklisted", &rcp->hostname);
     return NULL;
   }
   int fam = res->ai_family;
