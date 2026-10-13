@@ -3,187 +3,260 @@
 //
 
 #include <stdio.h>
-#include <memory.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <limits.h>
 #include <json-c/json.h>
 #include <arpa/inet.h>
 #include "ipdb.h"
 
-int is_big_endian(void) {
-    union {
-        uint32_t i;
-        char c[4];
-    } e = {0x01000000};
+static void ipdb_meta_free(ipdb_meta_data *meta) {
+    int i;
 
-    return e.c[0];
+    if (meta == NULL) {
+        return;
+    }
+    if (meta->fields != NULL) {
+        for (i = 0; i < meta->fields_length; ++i) {
+            free(meta->fields[i]);
+        }
+    }
+    free(meta->fields);
+    free(meta->language);
+    free(meta);
 }
 
-unsigned int l2b(unsigned int x) {
-    return (((x >> 24) & 0x000000ff) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | ((x << 24) & 0xff000000));
+static int ipdb_json_int(json_object *obj, const char *key, int *result) {
+    json_object *value;
+    int64_t number;
+
+    if (!json_object_object_get_ex(obj, key, &value)
+        || !json_object_is_type(value, json_type_int)) {
+        return 0;
+    }
+    number = json_object_get_int64(value);
+    if (number < 0 || number > INT_MAX) {
+        return 0;
+    }
+    *result = (int) number;
+    return 1;
 }
 
 ipdb_meta_data *parse_meta_data(const char *meta_json) {
-    int i = 0;
-
-    ipdb_meta_data *meta_data = (ipdb_meta_data *) malloc(sizeof(ipdb_meta_data));
-    if (meta_data == NULL) {
-        return NULL;
-    }
-
-    memset(meta_data, 0, sizeof(ipdb_meta_data));
-
+    int i, version;
+    size_t count, length;
+    int64_t offset;
+    const char *name;
+    json_object *value, *it;
+    struct json_object_iterator language;
     json_object *obj = json_tokener_parse(meta_json);
-    json_object *value = NULL;
+    ipdb_meta_data *meta = calloc(1, sizeof(ipdb_meta_data));
 
-    if (obj == NULL) {
-        free(meta_data);
-        return NULL;
+    if (meta == NULL || obj == NULL
+        || !json_object_is_type(obj, json_type_object)) {
+        goto failed;
     }
-    if (!json_object_is_type(obj, json_type_object)) {
-        json_object_put(obj);
-        free(meta_data);
-        return NULL;
+    if (!ipdb_json_int(obj, "node_count", &meta->node_count)
+        || !ipdb_json_int(obj, "total_size", &meta->total_size)
+        || !ipdb_json_int(obj, "ip_version", &version)
+        || version == 0 || (version & ~(IPv4 | IPv6)) != 0
+        || meta->node_count == 0
+        || meta->node_count > meta->total_size / 8) {
+        goto failed;
     }
+    meta->ip_version = (short) version;
+    if (json_object_object_get_ex(obj, "build", &value)) {
+        int64_t build;
 
-    /* Reject names that cannot fit in ipdb_meta_data_language.name. */
-    if (json_object_object_get_ex(obj, "languages", &value)
-        && json_object_is_type(value, json_type_object)) {
-        int count = json_object_object_length(value);
-        struct json_object_iterator language = json_object_iter_begin(value);
-
-        for (i = 0; i < count; ++i) {
-            if (strlen(json_object_iter_peek_name(&language))
-                >= sizeof(meta_data->language[0].name)) {
-                json_object_put(obj);
-                free(meta_data);
-                return NULL;
-            }
-            json_object_iter_next(&language);
+        if (!json_object_is_type(value, json_type_int)) {
+            goto failed;
         }
-    }
-
-    if (json_object_object_get_ex(obj, "node_count", &value)) {
-        meta_data->node_count = json_object_get_int(value);
-    }
-
-    if (json_object_object_get_ex(obj, "total_size", &value)) {
-        meta_data->total_size = json_object_get_int(value);
-    }
-
-    if (json_object_object_get_ex(obj, "build", &value)){
-        meta_data->build_time = json_object_get_int64(value);
-    }
-
-    if (json_object_object_get_ex(obj, "ip_version", &value)) {
-        meta_data->ip_version = (short) json_object_get_int(value);
-    }
-
-    if (json_object_object_get_ex(obj, "fields", &value)) {
-        meta_data->fields_length = json_object_array_length(value);
-    }
-
-    meta_data->fields = (char **) malloc(sizeof(char *) * meta_data->fields_length);
-    if (meta_data->fields == NULL) {
-        return NULL;
-    }
-    for (i = 0; i < meta_data->fields_length; ++i) {
-        json_object *it = json_object_array_get_idx(value, i);
-        meta_data->fields[i] = malloc(sizeof(char) * json_object_get_string_len(it) + 1);
-        strcpy(meta_data->fields[i], json_object_get_string(it));
-    }
-
-    if (json_object_object_get_ex(obj, "languages", &value)) {
-        meta_data->language_length = json_object_object_length(value);
-        meta_data->language = (ipdb_meta_data_language *) malloc(
-                sizeof(ipdb_meta_data_language) * meta_data->language_length);
-        if (meta_data->language == NULL) {
-            return NULL;
+        build = json_object_get_int64(value);
+        if (build < 0 || build > LONG_MAX) {
+            goto failed;
         }
-
-        struct json_object_iterator language = json_object_iter_begin(value);
-        for (i = 0; i < meta_data->language_length; ++i) {
-            strcpy(meta_data->language[i].name, json_object_iter_peek_name(&language));
-            struct json_object *it = json_object_iter_peek_value(&language);
-            meta_data->language[i].offset = json_object_get_int(it);
-            json_object_iter_next(&language);
-        }
-        json_object_iter_end(value);
+        meta->build_time = (long) build;
     }
 
+    if (!json_object_object_get_ex(obj, "fields", &value)
+        || !json_object_is_type(value, json_type_array)) {
+        goto failed;
+    }
+    count = json_object_array_length(value);
+    if (count == 0 || count > INT_MAX || count > SIZE_MAX / sizeof(char *)) {
+        goto failed;
+    }
+    meta->fields_length = (int) count;
+    meta->fields = calloc(count, sizeof(char *));
+    if (meta->fields == NULL) {
+        goto failed;
+    }
+    for (i = 0; i < meta->fields_length; ++i) {
+        it = json_object_array_get_idx(value, i);
+        if (!json_object_is_type(it, json_type_string)) {
+            goto failed;
+        }
+        length = (size_t) json_object_get_string_len(it);
+        if (length == SIZE_MAX) {
+            goto failed;
+        }
+        meta->fields[i] = malloc(length + 1);
+        if (meta->fields[i] == NULL) {
+            goto failed;
+        }
+        memcpy(meta->fields[i], json_object_get_string(it), length);
+        meta->fields[i][length] = '\0';
+    }
+
+    if (!json_object_object_get_ex(obj, "languages", &value)
+        || !json_object_is_type(value, json_type_object)) {
+        goto failed;
+    }
+    count = (size_t) json_object_object_length(value);
+    if (count == 0 || count > INT_MAX
+        || count > SIZE_MAX / sizeof(ipdb_meta_data_language)) {
+        goto failed;
+    }
+    meta->language_length = (int) count;
+    meta->language = calloc(count, sizeof(ipdb_meta_data_language));
+    if (meta->language == NULL) {
+        goto failed;
+    }
+    language = json_object_iter_begin(value);
+    for (i = 0; i < meta->language_length; ++i) {
+        name = json_object_iter_peek_name(&language);
+        it = json_object_iter_peek_value(&language);
+        if (strlen(name) >= sizeof(meta->language[i].name)
+            || !json_object_is_type(it, json_type_int)) {
+            goto failed;
+        }
+        offset = json_object_get_int64(it);
+        if (offset < 0 || offset > INT_MAX - meta->fields_length) {
+            goto failed;
+        }
+        strcpy(meta->language[i].name, name);
+        meta->language[i].offset = (int) offset;
+        json_object_iter_next(&language);
+    }
     json_object_put(obj);
-    return meta_data;
+    return meta;
+
+failed:
+    if (obj != NULL) {
+        json_object_put(obj);
+    }
+    ipdb_meta_free(meta);
+    return NULL;
 }
 
-int ipdb_read_node(ipdb_reader *reader, int node, int index) {
-    int off = node * 8 + index * 4;
-    int tar = *(int *) &reader->data[off];
-    return l2b((unsigned int) tar);
+static uint32_t ipdb_read_uint32(const unsigned char *data) {
+    return ((uint32_t) data[0] << 24) | ((uint32_t) data[1] << 16)
+           | ((uint32_t) data[2] << 8) | data[3];
 }
 
-int ipdb_reader_new(const char *file, ipdb_reader **reader) {
-    FILE *fd = fopen(file, "rb");
-    if (!fd) {
-        return ErrFileSize;
+static int ipdb_read_node(ipdb_reader *reader, int node, int index, int *target) {
+    size_t off;
+    uint32_t value;
+
+    if (node < 0 || node >= reader->meta->node_count
+        || (index != 0 && index != 1)) {
+        return ErrDatabaseError;
     }
-    *reader = malloc(sizeof(ipdb_reader));
-    ipdb_reader *rd = *reader;
-
-    fseek(fd, 0, SEEK_END);
-    long fsize = ftell(fd);
-    fseek(fd, 0, SEEK_SET);
-    unsigned int meta_length = 0;
-    if (fread(&meta_length, sizeof(meta_length), 1, fd)) { /* fvck compiler */ };
-    meta_length = is_big_endian() ? meta_length : l2b(meta_length);
-
-    char *meta_json = (char *) malloc(meta_length + 1);
-    meta_json[meta_length] = 0;
-    if (fread(meta_json, sizeof(char), meta_length, fd)) { /* fvck compiler */ };
-    rd->meta = parse_meta_data(meta_json);
-    free(meta_json);
-    if (rd->meta == NULL || rd->meta->language_length == 0 || rd->meta->fields_length == 0) {
-        return ErrMetaData;
+    off = (size_t) node * 8 + (size_t) index * 4;
+    if (off > (size_t) reader->data_size
+        || (size_t) reader->data_size - off < 4) {
+        return ErrDatabaseError;
     }
-
-    if (fsize != (4 + meta_length + rd->meta->total_size)) {
-        return ErrFileSize;
+    value = ipdb_read_uint32(reader->data + off);
+    if (value > INT_MAX) {
+        return ErrDatabaseError;
     }
-    rd->file_size = (int) fsize;
-    int data_len = (int) fsize - 4 - meta_length;
-    rd->data = (unsigned char *) malloc(sizeof(unsigned char) * data_len);
-    if (fread(rd->data, sizeof(unsigned char), (size_t) data_len, fd)) { /* fvck compiler */ };
-    rd->data_size = data_len;
-
-    int node = 0;
-    int i = 0;
-    for (i = 0; i < 96 && node < rd->meta->node_count; ++i) {
-        if (i >= 80) {
-            node = ipdb_read_node(rd, node, 1);
-        } else {
-            node = ipdb_read_node(rd, node, 0);
-        }
-    }
-    rd->v4offset = node;
-
-    fclose(fd);
+    *target = (int) value;
     return ErrNoErr;
 }
 
-void ipdb_reader_free(ipdb_reader **reader) {
-    int i = 0;
-    if ((*reader)->meta) {
-        ipdb_meta_data *meta_data = (*reader)->meta;
-        for (i = 0; i < meta_data->fields_length; ++i) {
-            free(meta_data->fields[i]);
+int ipdb_reader_new(const char *file, ipdb_reader **reader) {
+    FILE *fd;
+    long fsize;
+    size_t meta_length;
+    unsigned char header[4];
+    char *meta_json = NULL;
+    ipdb_reader *rd = NULL;
+    int node, i, err = ErrFileSize;
+
+    if (reader == NULL) {
+        return ErrDatabaseError;
+    }
+    *reader = NULL;
+    fd = fopen(file, "rb");
+    if (fd == NULL) {
+        return err;
+    }
+    if (fseek(fd, 0, SEEK_END) != 0 || (fsize = ftell(fd)) < 4
+        || fsize > INT_MAX || fseek(fd, 0, SEEK_SET) != 0
+        || fread(header, 1, sizeof(header), fd) != sizeof(header)) {
+        goto failed;
+    }
+    meta_length = ipdb_read_uint32(header);
+    if (meta_length == 0 || meta_length > (size_t) fsize - 4) {
+        goto failed;
+    }
+    rd = calloc(1, sizeof(ipdb_reader));
+    meta_json = malloc(meta_length + 1);
+    if (rd == NULL || meta_json == NULL
+        || fread(meta_json, 1, meta_length, fd) != meta_length) {
+        goto failed;
+    }
+    meta_json[meta_length] = '\0';
+    if (memchr(meta_json, '\0', meta_length) != NULL) {
+        err = ErrMetaData;
+        goto failed;
+    }
+    rd->meta = parse_meta_data(meta_json);
+    free(meta_json);
+    meta_json = NULL;
+    if (rd->meta == NULL) {
+        err = ErrMetaData;
+        goto failed;
+    }
+    if ((size_t) rd->meta->total_size != (size_t) fsize - 4 - meta_length) {
+        goto failed;
+    }
+    rd->file_size = (int) fsize;
+    rd->data_size = rd->meta->total_size;
+    rd->data = malloc((size_t) rd->data_size);
+    if (rd->data == NULL
+        || fread(rd->data, 1, (size_t) rd->data_size, fd) != (size_t) rd->data_size) {
+        goto failed;
+    }
+    node = 0;
+    for (i = 0; i < 96 && node < rd->meta->node_count; ++i) {
+        err = ipdb_read_node(rd, node, i >= 80, &node);
+        if (err != ErrNoErr) {
+            goto failed;
         }
-        free(meta_data->fields);
-        free(meta_data->language);
-        free(meta_data);
     }
-    if ((*reader)->data) {
-        free((*reader)->data);
+    rd->v4offset = node;
+    fclose(fd);
+    *reader = rd;
+    return ErrNoErr;
+
+failed:
+    free(meta_json);
+    ipdb_reader_free(&rd);
+    fclose(fd);
+    return err;
+}
+
+void ipdb_reader_free(ipdb_reader **reader) {
+    if (reader == NULL || *reader == NULL) {
+        return;
     }
+    ipdb_meta_free((*reader)->meta);
+    free((*reader)->data);
     free(*reader);
-    *reader = 0;
+    *reader = NULL;
 }
 
 int ipdb_reader_is_ipv4_support(ipdb_reader *reader) {
@@ -196,52 +269,97 @@ int ipdb_reader_is_ipv6_support(ipdb_reader *reader) {
 
 }
 
-int ipdb_resolve(ipdb_reader *reader, int node, const char **bytes) {
-    int resolved = node - reader->meta->node_count + reader->meta->node_count * 8;
-    if (resolved >= reader->file_size) {
+int ipdb_resolve(ipdb_reader *reader, int node, const char **bytes, size_t *size) {
+    size_t resolved, length;
+
+    if (node <= reader->meta->node_count) {
         return ErrDatabaseError;
     }
 
-    int size = (reader->data[resolved] << 8) | reader->data[resolved + 1];
-    if ((resolved + 2 + size) > reader->data_size) {
+    resolved = (size_t) (node - reader->meta->node_count)
+               + (size_t) reader->meta->node_count * 8;
+    if (resolved > (size_t) reader->data_size
+        || (size_t) reader->data_size - resolved < 2) {
+        return ErrDatabaseError;
+    }
+    length = ((size_t) reader->data[resolved] << 8) | reader->data[resolved + 1];
+    if (length > (size_t) reader->data_size - resolved - 2) {
         return ErrDatabaseError;
     }
     *bytes = (const char *) reader->data + resolved + 2;
+    *size = length;
     return ErrNoErr;
 }
 
 int ipdb_search(ipdb_reader *reader, const u_char *ip, int bit_count, int *node) {
-    int i = 0;
+    int i, err;
 
-    *node = 0;
-
-    if (bit_count == 32) {
-        *node = reader->v4offset;
-    } else {
-        *node = 0;
+    if (bit_count != 32 && bit_count != 128) {
+        return ErrIPFormat;
     }
-
+    *node = bit_count == 32 ? reader->v4offset : 0;
     for (i = 0; i < bit_count; ++i) {
-        if (*node > reader->meta->node_count) {
+        if (*node >= reader->meta->node_count) {
             break;
         }
-
-        *node = ipdb_read_node(reader, *node,
-                               ((0xFF & ((int) ip[i >> 3])) >> (unsigned int) (7 - (i % 8))) & 1);
+        err = ipdb_read_node(reader, *node,
+                             (ip[i >> 3] >> (7 - (i % 8))) & 1, node);
+        if (err != ErrNoErr) {
+            return err;
+        }
     }
-
-    if (*node > reader->meta->node_count) {
-        return ErrNoErr;
-    }
-    return ErrDataNotExists;
+    return *node > reader->meta->node_count ? ErrNoErr : ErrDataNotExists;
 }
 
-int ipdb_find0(ipdb_reader *reader, const char *addr, const char **body) {
+int ipdb_copy_language(ipdb_reader *reader, const char *language,
+                       const char *content, size_t content_len,
+                       char *body, size_t body_size) {
+    int i;
+    size_t off, count, field = 0, start = 0, p, length;
+
+    for (i = 0; i < reader->meta->language_length; ++i) {
+        if (strcmp(language, reader->meta->language[i].name) == 0) {
+            break;
+        }
+    }
+    if (i == reader->meta->language_length) {
+        return ErrNoSupportLanguage;
+    }
+    if (body_size == 0 || memchr(content, '\0', content_len) != NULL) {
+        return ErrDatabaseError;
+    }
+    off = (size_t) reader->meta->language[i].offset;
+    count = (size_t) reader->meta->fields_length;
+
+    /* Records are length-prefixed, and may not have a trailing NUL. */
+    for (p = 0; p <= content_len; ++p) {
+        if (p != content_len && content[p] != '\t') {
+            continue;
+        }
+        if (field == off + count - 1) {
+            length = p - start;
+            if (length >= body_size) {
+                return ErrDatabaseError;
+            }
+            memcpy(body, content + start, length);
+            body[length] = '\0';
+            return ErrNoErr;
+        }
+        ++field;
+        if (field == off) {
+            start = p + 1;
+        }
+    }
+    return ErrDatabaseError;
+}
+
+int ipdb_find0(ipdb_reader *reader, const char *addr, const char **body,
+               size_t *body_len) {
     int node = 0;
     int err;
     struct in_addr addr4;
     struct in6_addr addr6;
-    if (inet_pton(AF_INET, addr, &addr4)) {
+    if (inet_pton(AF_INET, addr, &addr4) == 1) {
         if (!ipdb_reader_is_ipv4_support(reader)) {
             return ErrNoSupportIPv4;
         }
@@ -249,7 +367,7 @@ int ipdb_find0(ipdb_reader *reader, const char *addr, const char **body) {
         if (err != ErrNoErr) {
             return err;
         }
-    } else if (inet_pton(AF_INET6, addr, &addr6)) {
+    } else if (inet_pton(AF_INET6, addr, &addr6) == 1) {
         if (!ipdb_reader_is_ipv6_support(reader)) {
             return ErrNoSupportIPv6;
         }
@@ -260,53 +378,22 @@ int ipdb_find0(ipdb_reader *reader, const char *addr, const char **body) {
     } else {
         return ErrIPFormat;
     }
-    err = ipdb_resolve(reader, node, body);
+    err = ipdb_resolve(reader, node, body, body_len);
     return err;
 }
 
 int ipdb_find1(ipdb_reader *reader, const char *addr, const char *language,
                char *body, size_t body_size) {
-    int err, i;
-    off_t off = -1;
-    for (i = 0; i < reader->meta->language_length; ++i) {
-        if (strcmp(language, reader->meta->language[i].name) == 0) {
-            off = reader->meta->language[i].offset;
-            break;
-        }
-    }
-    if (off == -1) {
-        return ErrNoSupportLanguage;
-    }
+    int err;
     const char *content;
-    err = ipdb_find0(reader, addr, &content);
+    size_t content_len;
+
+    err = ipdb_find0(reader, addr, &content, &content_len);
     if (err != ErrNoErr) {
         return err;
     }
-    size_t p = 0, o = 0, s = 0, e = 0;
-    size_t len = reader->meta->fields_length;
-
-    while (*(content + p)) {
-        if (*(content + p) == '\t') {
-            ++o;
-        }
-        if ((!e) && o == off + len) {
-            e = p;
-        }
-        ++p;
-        if (off && (!s) && (off_t)o == off) {
-            s = p;
-        }
-    }
-    if (!e) e = p;
-    if (off + len > o + 1) {
-        err = ErrDatabaseError;
-    } else if (e < s || body_size == 0 || e - s >= body_size) {
-        err = ErrDatabaseError;
-    } else {
-        strncpy(body, content + s, e - s);
-        body[e - s] = 0;
-    }
-    return err;
+    return ipdb_copy_language(reader, language, content, content_len,
+                              body, body_size);
 }
 
 int ipdb_reader_find(ipdb_reader *reader, const char *addr, const char *language,

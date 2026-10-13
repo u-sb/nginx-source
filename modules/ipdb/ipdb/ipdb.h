@@ -61,5 +61,8 @@ int ipdb_reader_find(ipdb_reader *reader, const char *addr, const char *language
                      char *body, size_t body_size);
 
 int ipdb_search(ipdb_reader *reader, const u_char *ip, int bit_count, int *node);
-int ipdb_resolve(ipdb_reader *reader, int node, const char **bytes);
+int ipdb_resolve(ipdb_reader *reader, int node, const char **bytes, size_t *size);
+int ipdb_copy_language(ipdb_reader *reader, const char *language,
+                       const char *content, size_t content_len,
+                       char *body, size_t body_size);
 #endif //IPDB_C_IPDB_H

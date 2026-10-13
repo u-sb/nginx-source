@@ -482,22 +482,9 @@ ngx_http_ipdb_item_by_addr(ipdb_reader *reader, ngx_addr_t *addr,
     const char *lang, char *body, size_t body_size)
 {
     int node = 0;
-    ngx_int_t err, i;
-    off_t off = -1;
-    size_t p = 0, o = 0, s = 0, e = 0;
-    size_t len = reader->meta->fields_length;
+    ngx_int_t err;
+    size_t content_len;
     const char *content;
-
-    for (i = 0; i < reader->meta->language_length; ++i) {
-        if (ngx_strcmp(lang, reader->meta->language[i].name) == 0) {
-            off = reader->meta->language[i].offset;
-            break;
-        }
-    }
-
-    if (off == -1) {
-        return ErrNoSupportLanguage;
-    }
 
     if (addr->sockaddr->sa_family == AF_INET) {
         if (!ipdb_reader_is_ipv4_support(reader)) {
@@ -531,34 +518,12 @@ ngx_http_ipdb_item_by_addr(ipdb_reader *reader, ngx_addr_t *addr,
         return ErrIPFormat;
     }
 
-    err = ipdb_resolve(reader, node, &content);
+    err = ipdb_resolve(reader, node, &content, &content_len);
     if (err) {
         return err;
     }
-
-    while (*(content + p)) {
-        if (*(content + p) == '\t') {
-            ++o;
-        }
-        if ((!e) && o == off + len) {
-            e = p;
-        }
-        ++p;
-        if (off && (!s) && (off_t)o == off) {
-            s = p;
-        }
-    }
-    if (!e) e = p;
-    if (off + len > o + 1) {
-        err = ErrDatabaseError;
-    } else if (e < s || body_size == 0 || e - s >= body_size) {
-        err = ErrDatabaseError;
-    } else {
-        strncpy(body, content + s, e - s);
-        body[e - s] = 0;
-    }
-
-    return err;
+    return ipdb_copy_language(reader, lang, content, content_len,
+                              body, body_size);
 }
 
 static ngx_int_t
