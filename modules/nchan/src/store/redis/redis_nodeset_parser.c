@@ -94,6 +94,8 @@ static char *nodeset_parser_scan_cluster_nodes_line(const char *line, cluster_no
   
   if(cur[0]=='\0')
     return NULL;
+
+  ngx_memzero(l, sizeof(*l));
   
   nchan_scan_split_by_chr(&max, strlen((char *)max), &rest_line, '\n');
   l->line = rest_line;
