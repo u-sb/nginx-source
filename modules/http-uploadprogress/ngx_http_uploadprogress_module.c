@@ -296,6 +296,10 @@ get_tracking_id(ngx_http_request_t * r)
             && ngx_strncasecmp(header[i].key.data, upcf->header.data,
                            header[i].key.len) == 0) {
             ret = ngx_calloc(sizeof(ngx_str_t), r->connection->log );
+            if (ret == NULL) {
+                return NULL;
+            }
+
             ret->data = header[i].value.data;
             ret->len = header[i].value.len;
             ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, 
@@ -437,6 +441,7 @@ static void ngx_http_uploadprogress_event_handler(ngx_http_request_t *r)
     
 
     rb = r->request_body;
+    module_ctx = ngx_http_get_module_ctx(r, ngx_http_uploadprogress_module);
 
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "upload-progress: ngx_http_uploadprogress_event_handler");
     
@@ -446,12 +451,21 @@ static void ngx_http_uploadprogress_event_handler(ngx_http_request_t *r)
     if (id == NULL) {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, ngx_cycle->log, 0,
                        "upload-progress: read_event_handler cant find id");
+        if (module_ctx != NULL) {
+            module_ctx->read_event_handler(r);
+        }
         return;
     }
 
     /* perform a deep copy of id */
     id = ngx_http_uploadprogress_strdup(id, r->connection->log);
     ngx_free(oldid);
+    if (id == NULL) {
+        if (module_ctx != NULL) {
+            module_ctx->read_event_handler(r);
+        }
+        return;
+    }
 
     ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                    "upload-progress: read_event_handler found id: %V", id);
@@ -459,7 +473,6 @@ static void ngx_http_uploadprogress_event_handler(ngx_http_request_t *r)
     shm_zone = upcf->shm_zone;
     
     /* call the original read event handler */
-    module_ctx = ngx_http_get_module_ctx(r, ngx_http_uploadprogress_module);
     if (module_ctx != NULL ) {
         module_ctx->read_event_handler(r);
     }
