@@ -1,3 +1,10 @@
+nginx (1.31.9-1nwtf) unstable; urgency=medium
+
+  * New upstream version
+  * Fix potential security bugs
+
+ -- Xiufeng Guo <i@m.ac>  Thu, 19 Nov 2026 00:00:00 +0900
+
 nginx (1.31.8-1nwtf) unstable; urgency=medium
 
   * New upstream version
