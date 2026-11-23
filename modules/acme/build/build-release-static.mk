@@ -1,3 +1,2 @@
-NGINX_CONFIGURE	= \
-	$(NGINX_CONFIGURE_BASE) \
-		--add-module="$(CURDIR)"
+NGINX_CONFIGURE_ARGS	+= --add-module="$(MODULE_SOURCE_DIR)"
+CARGO_PROFILE		= release

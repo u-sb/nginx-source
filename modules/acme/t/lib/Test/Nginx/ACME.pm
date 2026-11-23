@@ -16,12 +16,14 @@ use base qw/ Exporter /;
 our @EXPORT_OK = qw/ acme_test_daemon /;
 
 use File::Spec;
-use IO::Socket::SSL::Utils;
 use POSIX qw/ gmtime strftime /;
 use Socket qw/ CRLF /;
 use Test::More qw//;
 
 use Test::Nginx qw//;
+
+eval { require IO::Socket::SSL::Utils; };
+Test::More::plan(skip_all => "IO::Socket::SSL not installed") if $@;
 
 eval { require JSON::PP; };
 Test::More::plan(skip_all => "JSON::PP not installed") if $@;
@@ -156,8 +158,8 @@ sub peer_certificate {
 	# Convert the result, as X509 will be destroyed with the socket.
 
 	return $format->($x509) if ref($format) eq 'CODE';
-	return CERT_asHash($x509) if $format eq 'hash';
-	return PEM_cert2string($x509);
+	return IO::Socket::SSL::Utils::CERT_asHash($x509) if $format eq 'hash';
+	return IO::Socket::SSL::Utils::PEM_cert2string($x509);
 }
 
 sub wait_certificate {
@@ -167,11 +169,14 @@ sub wait_certificate {
 		'{www.,}' . $cert . '*.crt');
 
 	my $timeout = ($extra{'timeout'} // 20) * 5;
+	my @found;
 
 	for (1 .. $timeout) {
-		return 1 if scalar @{[ glob $file ]};
+		return @found if scalar(@found = glob $file);
 		select undef, undef, undef, 0.2;
 	}
+
+	return;
 }
 
 sub has {

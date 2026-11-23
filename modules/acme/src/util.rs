@@ -4,12 +4,13 @@
 // LICENSE file in the root directory of this source tree.
 
 use core::ops::{Deref, DerefMut};
-use core::ptr::NonNull;
+use core::ptr::{self, NonNull};
 use std::io::{self, Read};
 
 use nginx_sys::{ngx_conf_full_name, ngx_conf_t, ngx_log_t, ngx_pool_t, ngx_str_t, ngx_uint_t};
 use ngx::allocator::{AllocError, Allocator, Box};
 use ngx::core::{Pool, Status};
+use zeroize::{Zeroize, ZeroizeOnDrop};
 
 use crate::conf::ext::NgxConfExt;
 
@@ -43,7 +44,31 @@ pub fn ngx_process() -> NgxProcess {
     }
 }
 
-pub fn read_to_ngx_str(cf: &ngx_conf_t, path: &ngx_str_t) -> Result<ngx_str_t, io::Error> {
+pub fn decode_base64url(src: &ngx_str_t, pool: &Pool) -> Result<ngx_str_t, Status> {
+    let len = src.len.div_ceil(4) * 3;
+    let mut dst = ngx_str_t { data: pool.alloc_unaligned(len).cast(), len };
+
+    if dst.data.is_null() {
+        return Err(Status::NGX_ERROR);
+    }
+
+    // SAFETY: ngx_decode_base64url does not mutate the input string and will fully initialize the
+    // output on success
+    if Status(unsafe { nginx_sys::ngx_decode_base64url(&mut dst, ptr::from_ref(src).cast_mut()) })
+        .is_ok()
+    {
+        Ok(dst)
+    } else {
+        Err(Status::NGX_DECLINED)
+    }
+}
+
+/// Reads the file contents to a [ngx_str_t] allocated on a temporary pool.
+pub fn read_to_temp_str(
+    cf: &ngx_conf_t,
+    path: &ngx_str_t,
+    size_hint: Option<usize>,
+) -> Result<ngx_str_t, io::Error> {
     let mut path = *path;
     if !Status(unsafe { ngx_conf_full_name(cf.cycle, &mut path, 1) }).is_ok() {
         return Err(io::ErrorKind::OutOfMemory.into());
@@ -54,7 +79,7 @@ pub fn read_to_ngx_str(cf: &ngx_conf_t, path: &ngx_str_t) -> Result<ngx_str_t, i
 
     let buf = match file.metadata().map(|x| x.len() as usize) {
         Ok(len) => {
-            let mut buf = ngx_str_t { data: cf.pool().alloc_unaligned(len).cast(), len };
+            let mut buf = ngx_str_t { data: cf.temp_pool().alloc_unaligned(len).cast(), len };
             if buf.data.is_null() {
                 return Err(io::ErrorKind::OutOfMemory.into());
             }
@@ -63,10 +88,15 @@ pub fn read_to_ngx_str(cf: &ngx_conf_t, path: &ngx_str_t) -> Result<ngx_str_t, i
             buf
         }
         _ => {
-            let mut buf = std::vec::Vec::new();
+            let mut buf = zeroize::Zeroizing::new(std::vec::Vec::new());
+            if let Some(hint) = size_hint {
+                buf.try_reserve(hint)?;
+            }
+
             file.read_to_end(&mut buf)?;
 
-            unsafe { ngx_str_t::from_bytes(cf.pool, &buf) }.ok_or(io::ErrorKind::OutOfMemory)?
+            unsafe { ngx_str_t::from_bytes(cf.temp_pool, &buf) }
+                .ok_or(io::ErrorKind::OutOfMemory)?
         }
     };
 
@@ -75,7 +105,13 @@ pub fn read_to_ngx_str(cf: &ngx_conf_t, path: &ngx_str_t) -> Result<ngx_str_t, i
 
 pub fn ngx_str_trim(val: &mut ngx_str_t) {
     let b = val.as_bytes();
+
     let start = b.iter().take_while(|x| x.is_ascii_whitespace()).count();
+    if start == b.len() {
+        val.len = 0;
+        return;
+    }
+
     let end = b.iter().rev().take_while(|x| x.is_ascii_whitespace()).count();
 
     val.len -= start + end;
@@ -173,3 +209,21 @@ impl Drop for OwnedPool {
         unsafe { nginx_sys::ngx_destroy_pool(self.0.as_mut()) };
     }
 }
+
+/// A [ngx_str_t] wrapper that zeroizes itself on [Drop].
+#[derive(Debug)]
+pub struct ZeroizingStrT(pub ngx_str_t);
+
+impl AsRef<[u8]> for ZeroizingStrT {
+    fn as_ref(&self) -> &[u8] {
+        self.0.as_bytes()
+    }
+}
+
+impl Drop for ZeroizingStrT {
+    fn drop(&mut self) {
+        self.0.as_bytes_mut().zeroize();
+    }
+}
+
+impl ZeroizeOnDrop for ZeroizingStrT {}

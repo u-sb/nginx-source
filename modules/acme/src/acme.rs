@@ -105,12 +105,6 @@ impl NoncePool {
     pub fn add(&self, nonce: String) {
         self.0.borrow_mut().push_back(nonce);
     }
-
-    pub fn add_from_response<T>(&self, res: &http::Response<T>) {
-        if let Some(nonce) = try_get_header(res.headers(), &REPLAY_NONCE) {
-            self.add(nonce.to_string());
-        }
-    }
 }
 
 #[inline]
@@ -240,18 +234,20 @@ where
         url: &Uri,
         payload: P,
     ) -> Result<http::Response<Bytes>, RequestError> {
-        let mut nonce =
-            if let Some(nonce) = self.nonce.get() { nonce } else { self.get_nonce().await? };
-
+        let mut nonce = self.nonce.get();
         let mut tries = core::iter::repeat(DEFAULT_RETRY_INTERVAL).take(self.network_error_retries);
 
         debug!(self, "sending request to {url:?}");
         let res = loop {
+            if nonce.is_none() {
+                nonce = Some(self.get_nonce().await?);
+            }
+
             let body = crate::jws::sign_jws(
                 &self.key,
                 self.account.as_deref(),
                 &url.to_string(),
-                Some(&nonce),
+                nonce.as_deref(),
                 payload.as_ref(),
             )?
             .to_string();
@@ -280,15 +276,16 @@ where
                 }
             };
 
-            if res.status().is_success() {
-                break res;
-            }
-
-            // 8555.6.5, when retrying in response to a "badNonce" error, the client MUST use
+            // Replace consumed nonce with a fresh one from the response.
+            // If there's no Replay-Nonce, just discard the old value and fetch a fresh one later.
+            //
+            // RFC8555 § 6.5, when retrying in response to a "badNonce" error, the client MUST use
             // the nonce provided in the error response.
-            nonce = try_get_header(res.headers(), &REPLAY_NONCE)
-                .ok_or(RequestError::Nonce)?
-                .to_string();
+            nonce = try_get_header(res.headers(), &REPLAY_NONCE).map(ToString::to_string);
+
+            if res.status().is_success() {
+                break Ok(res);
+            }
 
             let err: resource::Problem = deserialize_body(res.body())?;
 
@@ -301,7 +298,7 @@ where
                         .and_then(headers::parse_retry_after)
                         .filter(|x| x > &MAX_SERVER_RETRY_INTERVAL)
                     {
-                        return Err(RequestError::RateLimited(val));
+                        break Err(RequestError::RateLimited(val));
                     }
                     true
                 }
@@ -314,13 +311,15 @@ where
                 continue;
             }
 
-            self.nonce.add(nonce);
-            return Err(err.into());
+            break Err(err.into());
         };
 
-        self.nonce.add_from_response(&res);
+        // Return unused nonce to the pool
+        if let Some(x) = nonce {
+            self.nonce.add(x)
+        }
 
-        Ok(res)
+        res
     }
 
     pub async fn new_account(&mut self) -> Result<NewAccountOutput<'_>, NewAccountError> {
@@ -479,8 +478,8 @@ where
             self.do_authorization(&order, url, authorization).await?;
         }
 
-        let mut res = self.post(&order_url, b"").await?;
-        let mut order: resource::Order = deserialize_body(res.body())?;
+        let res = self.post(&order_url, b"").await?;
+        let order: resource::Order = deserialize_body(res.body())?;
 
         if order.status != OrderStatus::Ready {
             if let Some(err) = order.error {
@@ -492,29 +491,8 @@ where
         let csr = make_certificate_request(req, &pkey, self.issuer.common_name_in_csr != 0)
             .and_then(|x| x.to_der())
             .map_err(NewCertificateError::Csr)?;
-        let payload = std::format!(r#"{{"csr":"{}"}}"#, crate::jws::base64url(csr));
 
-        match self.post(&order.finalize, payload).await {
-            Ok(x) => {
-                drop(order);
-                res = x;
-                order = deserialize_body(res.body())?;
-            }
-            Err(RequestError::Protocol(problem)) if problem.is_bad_order() => {
-                return Err(problem.into())
-            }
-            _ => order.status = OrderStatus::Processing,
-        };
-
-        let mut tries = backoff(MAX_BACKOFF_INTERVAL, self.finalize_timeout);
-
-        while order.status == OrderStatus::Processing && wait_for_retry(&res, &mut tries).await {
-            drop(order);
-            res = self.post(&order_url, b"").await?;
-            order = deserialize_body(res.body())?;
-        }
-
-        let certificate = order.certificate.ok_or(NewCertificateError::MissingCertificate)?;
+        let certificate = self.finalize(&order_url, &order.finalize, &csr).await?;
 
         let res = self.post(&certificate, b"").await?;
 
@@ -643,6 +621,34 @@ where
         }
 
         Ok(())
+    }
+
+    async fn finalize(
+        &self,
+        order_url: &Uri,
+        finalize_url: &Uri,
+        csr: &[u8],
+    ) -> Result<Uri, NewCertificateError> {
+        let payload = std::format!(r#"{{"csr":"{}"}}"#, crate::jws::base64url(csr));
+
+        let mut res = self.post(finalize_url, payload).await?;
+        let mut order: resource::Order = deserialize_body(res.body())?;
+        let mut tries = backoff(MAX_BACKOFF_INTERVAL, self.finalize_timeout);
+
+        while order.status == OrderStatus::Processing && wait_for_retry(&res, &mut tries).await {
+            drop(order);
+            res = self.post(order_url, b"").await?;
+            order = deserialize_body(res.body())?;
+        }
+
+        if order.status != OrderStatus::Valid {
+            if let Some(err) = order.error {
+                return Err(err.into());
+            }
+            return Err(NewCertificateError::OrderStatus(order.status));
+        }
+
+        order.certificate.ok_or(NewCertificateError::MissingCertificate)
     }
 
     pub async fn renewal_info<A: Allocator>(

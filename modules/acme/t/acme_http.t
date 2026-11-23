@@ -73,7 +73,10 @@ $t->write_file('openssl.conf', <<EOF);
 default_bits = 2048
 encrypt_key = no
 distinguished_name = req_distinguished_name
+x509_extensions = v3_req
 [ req_distinguished_name ]
+[ v3_req ]
+subjectAltName = DNS:acme.test
 EOF
 
 my $d = $t->testdir();
@@ -107,14 +110,23 @@ port(8980, socket => 1)->close();
 $t->run_daemon(\&Test::Nginx::ACME::acme_test_daemon, $t, $acme);
 $t->waitforsocket('127.0.0.1:' . $acme->port());
 
+# Create account key file with relaxed permissions
+$t->write_file('account.key', '');
+chmod(0755, "$d/account.key");
+
 $t->write_file('index.html', 'SUCCESS');
-$t->plan(1)->run();
+$t->plan(4)->run();
 
 ###############################################################################
 
-$acme->wait_certificate('example.test') or die "no certificate";
+my ($cert) = $acme->wait_certificate('example.test') or die "no certificate";
 
 like(get('example.test'), qr/SUCCESS/, 'tls request');
+
+is(mode("$d/account.key"), 0600, 'account key permissions');
+is(mode($cert), 0600, 'certificate permissions');
+$cert =~ s/\.crt$/.key/;
+is(mode($cert), 0600, 'private key permissions');
 
 ###############################################################################
 
@@ -128,5 +140,7 @@ sub get {
 		SSL_verifycn_name => $host,
 	);
 }
+
+sub mode { (stat($_[0]))[2] & 07777; }
 
 ###############################################################################

@@ -24,17 +24,16 @@ BUILD_ENV		+= OPENSSL_LIB_DIR="$(LIBSSL_DESTDIR)/lib"
 BUILD_ENV		+= OPENSSL_STATIC=0
 
 TEST_ENV		+= LD_LIBRARY_PATH="$(LIBSSL_DESTDIR)/lib"
-TEST_NGINX_GLOBALS	+= load_module $(NGINX_BUILT_MODULE);
+TEST_NGINX_GLOBALS	+= $(LOAD_NGINX_BUILT_MODULE)
 
-NGINX_CONFIGURE		= \
-	$(NGINX_CONFIGURE_BASE) \
-		--with-cc-opt="-I$(LIBSSL_DESTDIR)/include" \
-		--with-ld-opt="-L$(LIBSSL_DESTDIR)/lib -lstdc++" \
-		--with-debug \
-		--add-dynamic-module="$(CURDIR)"
+NGINX_CONFIGURE_ARGS	+= \
+	--with-cc-opt="-I$(LIBSSL_DESTDIR)/include" \
+	--with-ld-opt="-L$(LIBSSL_DESTDIR)/lib -lstdc++" \
+	--with-debug \
+	--add-dynamic-module="$(MODULE_SOURCE_DIR)"
 
 
-build: $(NGINX_BUILT_MODULE)
+modules: $(NGINX_BUILT_MODULE)
 
 $(LIBSSL_BUILDDIR)/CMakeCache.txt: $(LIBSSL_SRCDIR)/CMakeLists.txt
 	cmake -S $(LIBSSL_SRCDIR) \

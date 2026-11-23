@@ -14,9 +14,6 @@ use strict;
 
 use Test::More;
 
-use IO::Socket::SSL::Utils;
-use Net::SSLeay;
-
 BEGIN { use FindBin; chdir($FindBin::Bin); }
 
 use lib 'lib';
@@ -106,7 +103,10 @@ $t->write_file('openssl.conf', <<EOF);
 default_bits = 2048
 encrypt_key = no
 distinguished_name = req_distinguished_name
+x509_extensions = v3_req
 [ req_distinguished_name ]
+[ v3_req ]
+subjectAltName = DNS:acme.test
 EOF
 
 my $d = $t->testdir();
@@ -185,14 +185,14 @@ sub get {
 sub cert_name {
 	my ($filename) = @_;
 
-	my $cert = PEM_file2cert($filename);
+	my $cert = IO::Socket::SSL::Utils::PEM_file2cert($filename);
 
 	my $name = Net::SSLeay::X509_NAME_get_text_by_NID(
 		Net::SSLeay::X509_get_subject_name($cert),
 		Net::SSLeay::NID_commonName()
 	);
 
-	CERT_free($cert);
+	IO::Socket::SSL::Utils::CERT_free($cert);
 
 	return $name;
 }

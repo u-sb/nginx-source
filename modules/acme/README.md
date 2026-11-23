@@ -17,7 +17,7 @@ The module implements following specifications:
   Extension)
 - [RFC8738] (ACME IP Identifier Validation Extension)
 - [RFC9773] (ACME Renewal Information (ARI) Extension)
-- [draft-ietf-acme-profiles] (ACME Profiles Extension, version 01)
+- [draft-ietf-acme-profiles] (ACME Profiles Extension, version 03)
 
 [NGINX]: https://nginx.org/
 [RFC8555]: https://datatracker.ietf.org/doc/html/rfc8555
@@ -122,6 +122,28 @@ auto/configure \
     --add-dynamic-module=/path/to/nginx-acme
 make
 ```
+
+#### Debug logging
+
+The module respects the `--with-debug` option of NGINX; all the debug logs
+are disabled when compiling against an NGINX source tree configured without
+debug.
+
+A few extra debug messages with potentially sensitive information are hidden
+behind the `trace` cargo feature.  For example, this feature would enable
+logging all communications with the ACME server.  This can be useful for
+figuring out why the module fails to parse server responses.
+
+You can turn this on by passing `--features trace` when building with `cargo`,
+or by setting `ngx_rust_target_features` to `trace` in [`config`] when building
+with NGINX configure script.
+
+> [!NOTE]
+> The module uses global log configuration.  To see the debug logs, you need to
+> specify `error_log <file> debug;` on the main configuration level, outside of
+> any configuration blocks.
+
+[`config`]: https://github.com/nginx/nginx-acme/blob/main/config
 
 ### Testing
 
