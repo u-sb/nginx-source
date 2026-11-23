@@ -1,3 +1,9 @@
+nginx (1.31.10-1nwtf) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Xinyue Lu <i@7086.in>  Mon, 23 Nov 2026 00:00:00 -0800
+
 nginx (1.31.9-1nwtf) unstable; urgency=medium
 
   * New upstream version
